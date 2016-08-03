@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
@@ -79,7 +80,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
                         mDrawerLayout.closeDrawers();
-                        return true;
+
+                        //Check to see which item was being clicked and perform appropriate action
+                        switch (menuItem.getItemId()){
+
+                            case R.id.drawer_item_home:
+                                Toast.makeText(getApplicationContext(),"Home Selected",Toast.LENGTH_SHORT).show();
+                                return true;
+                            //Replacing the main content with ContentFragment Which is our Inbox View;
+                            case R.id.drawer_item_categories:
+                                Toast.makeText(getApplicationContext(),"Categories Selected",Toast.LENGTH_SHORT).show();
+                                CategoryFragment fragment = new CategoryFragment();
+                                android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                fragmentTransaction.replace(R.id.main_fragment_container,fragment);
+                                fragmentTransaction.commit();
+                                return true;
+
+                            // For rest of the options we just show a toast on click
+
+                            case R.id.drawer_item_how_to:
+                                Toast.makeText(getApplicationContext(),"How to Selected",Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.drawer_item_shopping_list:
+                                Toast.makeText(getApplicationContext(),"Shopping list Selected",Toast.LENGTH_SHORT).show();
+                                return true;
+                            case R.id.drawer_item_favourite:
+                                Toast.makeText(getApplicationContext(),"Favourites Selected",Toast.LENGTH_SHORT).show();
+                                return true;
+                            default:
+                                Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();
+                                return true;
+                        }
                     }
                 });
     }
