@@ -1,3 +1,4 @@
+//noinspection GradleCompatible
 //
 // Copyright 2016 Amazon.com, Inc. or its affiliates (Amazon). All Rights Reserved.
 //
@@ -13,7 +14,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.amazon.mysampleapp"
+        applicationId "com.dmfm.appetite"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
@@ -44,8 +45,10 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'app/libs')
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:support-v4:23.1.0'
+    compile 'com.android.support:design:23.1.0'
     compile('com.amazonaws:aws-android-sdk-core:2.2.18')
     compile('com.amazonaws:aws-android-sdk-cognito:2.2.18')
     compile('com.amazonaws:aws-android-sdk-ddb:2.2.18')
     compile('com.amazonaws:aws-android-sdk-ddb-mapper:2.2.18')
+
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_item_home"
+            android:title="@string/drawer_item_home" />
+        <item
+            android:id="@+id/drawer_item_categories"
+            android:title="@string/drawer_item_categories" />
+        <item
+            android:id="@+id/drawer_item_how_to"
+            android:title="@string/drawer_item_how_to"/>
+        <item
+            android:id="@+id/drawer_item_shopping_list"
+            android:title="@string/drawer_item_shopping_list"/>
+        <item
+            android:id="@+id/drawer_item_favourite"
+            android:title="@string/drawer_item_favourite"/>
+    </group>
+</menu>
