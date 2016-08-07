@@ -8,8 +8,6 @@
 //
 package com.appetite;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -21,7 +19,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,13 +27,11 @@ import android.widget.Toast;
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
 
-import java.util.logging.Logger;
-
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     /**
      * Class name for log messages.
      */
-    private final static String LOG_TAG = MainActivity.class.getSimpleName();
+    private final static String LOG_TAG = ActivityMain.class.getSimpleName();
 
     /**
      * Bundle key for saving/restoring the toolbar title.
@@ -85,13 +80,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // we could end up with overlapping fragments.
             if (savedInstanceState == null) {
                 // Create a new Fragment to be placed in the activity layout
-                HomeFragment homeFragment = new HomeFragment();
+                FragmentHome fragmentHome = new FragmentHome();
                 // In case this activity was started with special instructions from an
                 // Intent, pass the Intent's extras to the fragment as arguments
-                homeFragment.setArguments(getIntent().getExtras());
+                fragmentHome.setArguments(getIntent().getExtras());
                 // Add the fragment to the 'fragment_container' FrameLayout
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.main_fragment_container, homeFragment).commit();
+                        .add(R.id.main_fragment_container, fragmentHome).commit();
             }
         }
 
@@ -143,12 +138,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.drawer_item_home:
                 Toast.makeText(getApplicationContext(), "Home Selected", Toast.LENGTH_SHORT).show();
-                fragmentClass = HomeFragment.class;
+                fragmentClass = FragmentHome.class;
                 break;
             //Replacing the main content with ContentFragment Which is our Inbox View;
             case R.id.drawer_item_categories:
                 Toast.makeText(getApplicationContext(), "Categories Selected", Toast.LENGTH_SHORT).show();
-                fragmentClass = CategoryFragment.class;
+                fragmentClass = FragmentCategory.class;
                 break;
             // For rest of the options we just show a toast on click
             case R.id.drawer_item_how_to:
@@ -156,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
             case R.id.drawer_item_shopping_list:
                 Toast.makeText(getApplicationContext(), "Shopping list Selected", Toast.LENGTH_SHORT).show();
-                fragmentClass = ShoppingListFragment.class;
+                fragmentClass = FragmentShoppingList.class;
                 break;
             case R.id.drawer_item_favourite:
                 Toast.makeText(getApplicationContext(), "Favourites Selected", Toast.LENGTH_SHORT).show();
@@ -180,8 +175,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             return;
         }
         if (fragmentManager.getBackStackEntryCount() == 0) {
-            if (fragmentManager.findFragmentByTag(HomeFragment.class.getSimpleName()) == null) {
-                final Class fragmentClass = HomeFragment.class;
+            if (fragmentManager.findFragmentByTag(FragmentHome.class.getSimpleName()) == null) {
+                final Class fragmentClass = FragmentHome.class;
                 // if we aren't on the home fragment, navigate home.
                 final Fragment fragment = Fragment.instantiate(this, fragmentClass.getName());
 
@@ -246,4 +241,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onPause() {
         super.onPause();
     }
+
 }

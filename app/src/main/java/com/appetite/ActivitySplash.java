@@ -21,8 +21,8 @@ import java.util.concurrent.CountDownLatch;
  * or the user taps the screen.  When the splash activity starts, various app
  * initialization operations are performed.
  */
-public class SplashActivity extends Activity {
-    private final static String LOG_TAG = SplashActivity.class.getSimpleName();
+public class ActivitySplash extends Activity {
+    private final static String LOG_TAG = ActivitySplash.class.getSimpleName();
     private final CountDownLatch timeoutLatch = new CountDownLatch(1);
 
     @Override
@@ -67,7 +67,7 @@ public class SplashActivity extends Activity {
                 } catch (InterruptedException e) {
                 }
 
-                SplashActivity.this.runOnUiThread(new Runnable() {
+                ActivitySplash.this.runOnUiThread(new Runnable() {
                     public void run() {
                         startActivity(intent);
                         // finish should always be called on the main thread.
@@ -84,6 +84,6 @@ public class SplashActivity extends Activity {
      */
     protected void goMain() {
         Log.d(LOG_TAG, "Launching Main Activity...");
-        goAfterSplashTimeout(new Intent(this, MainActivity.class));
+        goAfterSplashTimeout(new Intent(this, ActivityMain.class));
     }
 }
