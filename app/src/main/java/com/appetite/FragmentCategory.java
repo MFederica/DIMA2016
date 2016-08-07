@@ -1,15 +1,20 @@
 package com.appetite;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.amazonaws.auth.policy.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,16 +86,46 @@ public class FragmentCategory extends Fragment {
         //Use array adapter here
 
         //Use AdapterCategory witha a custom object
-        adapter = new AdapterCategory(categoryList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
+        adapter = new AdapterCategory(getContext(), categoryList);
+        int columns;
+        //Set the grid layout manager
+        //Calculate number of columns needed
+        if(getScreenOrientation() == Configuration.ORIENTATION_PORTRAIT)
+            columns = 2;
+        else
+            columns = 3;
+        GridLayoutManager layoutManager = new GridLayoutManager(getContext(), columns);
+
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
 
         recyclerView.setAdapter(adapter);
 
         prepareCategoryData();
 
         return rootView;
+    }
+
+
+    /**
+     * This function will check the orientation of the screen
+     * @return orientation in witch the device is
+     */
+    public int getScreenOrientation()
+    {
+        Display getOrient = getActivity().getWindowManager().getDefaultDisplay();
+        int orientation = Configuration.ORIENTATION_UNDEFINED;
+        if(getOrient.getWidth()==getOrient.getHeight()){
+            orientation = Configuration.ORIENTATION_SQUARE;
+        } else{
+            if(getOrient.getWidth() < getOrient.getHeight()){
+                orientation = Configuration.ORIENTATION_PORTRAIT;
+            }else {
+                orientation = Configuration.ORIENTATION_LANDSCAPE;
+            }
+        }
+        return orientation;
     }
 
     //Function that populates the object that has to be inflated in the frame
