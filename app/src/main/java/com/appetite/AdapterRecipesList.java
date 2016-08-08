@@ -1,9 +1,7 @@
 package com.appetite;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-/**
- * Created by Federica on 06/08/2016.
- */
-public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyViewHolder> {
 
-    private List<Category> categoryList;
+public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.MyViewHolder> {
+
+    private List<Recipe> recipesList;
     private Context context;
     private OnItemClickListener listener;
 
@@ -29,8 +25,8 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
 
         public MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.fragment_category_title);
-            image = (ImageView) view.findViewById(R.id.fragment_category_image);
+            title = (TextView) view.findViewById(R.id.fragment_recipes_list_title);
+            image = (ImageView) view.findViewById(R.id.fragment_recipes_list_image);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -41,8 +37,8 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
         }
     }
 
-    public AdapterCategory(Context context, List<Category> categoryList) {
-        this.categoryList = categoryList;
+    public AdapterRecipesList(Context context, List<Recipe> recipesList) {
+        this.recipesList = recipesList;
         this.context = context;
     }
 
@@ -50,7 +46,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_category_item, null);
+                .inflate(R.layout.fragment_recipes_list_item, null);
 
         return new MyViewHolder(itemView);
     }
@@ -58,15 +54,15 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Category category = categoryList.get(position);
-        holder.title.setText(category.getTitle());
-        holder.image.setImageResource(category.getImage());
+        Recipe recipe = recipesList.get(position);
+        holder.title.setText(recipe.getTitle());
+        holder.image.setImageResource(recipe.getImage());
     }
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return categoryList.size();
+        return recipesList.size();
     }
 
     public void setOnItemClickListener(OnItemClickListener listener){

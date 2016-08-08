@@ -7,17 +7,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
-
-import com.amazonaws.auth.policy.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,27 +25,22 @@ import java.util.List;
  * Activities that contain this fragment must implement the
  *
  * to handle interaction events.
- * Use the {@link FragmentCategory#newInstance} factory method to
+ * Use the {@link FragmentRecipesList#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentCategory extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+public class FragmentRecipesList extends Fragment {
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private static final String ARG_RECIPENAME = "recipeName";
+
+    private String recipeName;
 
     //Variables for the recycler view
-    private List<Category> categoryList = new ArrayList<Category>();
+    private List<Recipe> recipesList = new ArrayList<Recipe>();
     private RecyclerView recyclerView;
-    private AdapterCategory adapter;
+    private AdapterRecipesList adapter;
 
-    //Variable to communicate to the activity
-    OnCategorySelectedListener mCallback;
-
-    public FragmentCategory() {
+    public FragmentRecipesList() {
 
     }
 
@@ -57,16 +48,14 @@ public class FragmentCategory extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      * {} interface
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param recipeName name of the recipe.
      * @return A new instance of fragment FragmentCategory.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentCategory newInstance(String param1, String param2) {
-        FragmentCategory fragment = new FragmentCategory();
+    public static FragmentRecipesList newInstance(String recipeName) {
+        FragmentRecipesList fragment = new FragmentRecipesList();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_RECIPENAME, recipeName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -74,26 +63,8 @@ public class FragmentCategory extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prepareCategoryData();
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-
-        super.onAttach(context);
-        Activity activity = (Activity) context;
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (OnCategorySelectedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnCategorySelectedListener");
+            recipeName = getArguments().getString(ARG_RECIPENAME);
         }
     }
 
@@ -101,14 +72,14 @@ public class FragmentCategory extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_category, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_recipes_list, container, false);
 
-        recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_category_recycler_view);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_recipes_list_recycler_view);
 
         //Use array adapter here
 
         //Use AdapterCategory with a custom object
-        adapter = new AdapterCategory(getContext(), categoryList);
+        adapter = new AdapterRecipesList(getContext(), recipesList);
         int columns;
         //Set the grid layout manager
         //Calculate number of columns needed
@@ -123,16 +94,16 @@ public class FragmentCategory extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(new AdapterCategory.OnItemClickListener(){
+        adapter.setOnItemClickListener(new AdapterRecipesList.OnItemClickListener(){
             public void onItemClick(String textName){
                 Toast.makeText(getContext(), textName, Toast.LENGTH_SHORT).show();
-                mCallback.onCategorySelected(textName);
-                Log.e("FragmentCategory", "onItemClick: " + textName);
+                Log.e("FragmentRecipesList", "onItemClick: " + textName);
                 /*EventFragment eventFragment = EventFragment.newInstance();
                 //replace content frame with your own view.
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();    ft.replace(R.id.content_frame, eventFragment).commit() */
             }
         });
+        prepareRecipesListData();
 
         return rootView;
     }
@@ -159,43 +130,41 @@ public class FragmentCategory extends Fragment {
     }
 
     //Function that populates the object that has to be inflated in the frame
-    private void prepareCategoryData() {
-        //set the uri of the string (now is equal for every entry)
+    private void prepareRecipesListData() {
+        //TODO set the uri of the string (now is equal for every entry)
         String uri = "@drawable/breakfast";
         int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
 
-        Category category = new Category("Breakfast", imageResource);
-        categoryList.add(category);
+        Recipe recipe = new Recipe(recipeName + " 0", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("First Dishes", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 1", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("Second Dishes", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 2", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("Salad", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 3", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("Vegetarian", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 4", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("Dessert", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 5", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("Appetizers", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 6", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("Drinks & Beverages", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 7", imageResource);
+        recipesList.add(recipe);
 
-        category = new Category("Low Calories", imageResource);
-        categoryList.add(category);
+        recipe = new Recipe(recipeName + " 8", imageResource);
+        recipesList.add(recipe);
 
-        //adapter.notifyDataSetChanged();
+
+        adapter.notifyDataSetChanged();
 
     }
 
-    public interface OnCategorySelectedListener {
-        public void onCategorySelected(String textName);
-    }
 }

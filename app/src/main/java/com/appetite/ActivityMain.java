@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
 
-public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategory.OnCategorySelectedListener {
     /**
      * Class name for log messages.
      */
@@ -132,7 +132,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         mDrawerLayout.closeDrawers();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        // Clear back stack when navigating from the Nav Drawer.
+        android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
         Class fragmentClass;
         Fragment fragment;
 
@@ -164,6 +168,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 return true;
         }
         fragment = Fragment.instantiate(this, fragmentClass.getName());
+
         fragmentTransaction.replace(R.id.main_fragment_container, fragment, fragmentClass.getSimpleName());
         fragmentTransaction.commit();
         return true;
@@ -172,6 +177,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         final FragmentManager fragmentManager = this.getSupportFragmentManager();
+        Log.e(LOG_TAG, "onBackPressed: BackStackEntryCount = " + fragmentManager.getBackStackEntryCount() );
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
@@ -201,6 +207,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             }
         }
         super.onBackPressed();
+
     }
 
     @Override
@@ -245,6 +252,42 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void onCategorySelected(String textName) {
+        // The user selected a category from FragmentCategory
+        Log.e(LOG_TAG, "onCategorySelected: " + textName);
+
+            // Do something here to display that article
+
+                //TODO checkare 2 pane layout or not
+                /*
+            FragmentRecipesList articleFrag = (FragmentRecipesList)
+                    getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+
+            if (articleFrag != null) {
+                // If article frag is available, we're in two-pane layout...
+
+                // Call a method in the ArticleFragment to update its content
+                articleFrag.updateArticleView(position);
+
+            } else  */ {
+                // Otherwise, we're in the one-pane layout and must swap frags...
+
+                // Create fragment and give it an argument for the selected category
+                FragmentRecipesList newFragment = FragmentRecipesList.newInstance(textName);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                // Replace whatever is in the main_fragment_container view with this fragment,
+                // and add the transaction to the back stack so the user can navigate back
+                transaction.replace(R.id.main_fragment_container, newFragment);
+                transaction.addToBackStack(FragmentRecipesList.class.getName());
+
+                // Commit the transaction
+                transaction.commit();
+            }
     }
 
 }
