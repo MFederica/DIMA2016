@@ -18,6 +18,9 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
     private List<Category> categoryList;
     private Context context;
 
+    // Provide a reference to the views for each data item
+    // Complex data items may need more than one view per item, and
+    // you provide access to all the views for a data item in a view holder
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public ImageView image;
@@ -35,6 +38,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
         this.context = context;
     }
 
+    // Create new views (invoked by the layout manager)
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
@@ -43,6 +47,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
         return new MyViewHolder(itemView);
     }
 
+    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Category category = categoryList.get(position);
@@ -50,6 +55,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
         holder.image.setImageResource(category.getImage());
     }
 
+    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return categoryList.size();

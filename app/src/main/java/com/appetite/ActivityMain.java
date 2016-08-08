@@ -123,6 +123,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().findItem(R.id.drawer_item_home).setChecked(true);
 
         mTitle = mDrawerTitle = getTitle();
 
@@ -187,6 +188,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                         .commit();
 
+                ///////TODO considerare se tenere questo metodo anzichè le righe sopra
+                ///////onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_home));
+
+                navigationView.getMenu().findItem(R.id.drawer_item_home).setChecked(true);
                     // Set the title for the fragment.
                     final ActionBar actionBar = this.getSupportActionBar();
                     if (actionBar != null) {
