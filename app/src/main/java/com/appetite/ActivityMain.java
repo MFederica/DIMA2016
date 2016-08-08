@@ -19,6 +19,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,13 +81,14 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             // we could end up with overlapping fragments.
             if (savedInstanceState == null) {
                 // Create a new Fragment to be placed in the activity layout
-                FragmentHome fragmentHome = new FragmentHome();
+                Class fragmentClass = FragmentHome.class;
+                Fragment fragmentHome = Fragment.instantiate(this, fragmentClass.getName());
                 // In case this activity was started with special instructions from an
                 // Intent, pass the Intent's extras to the fragment as arguments
                 fragmentHome.setArguments(getIntent().getExtras());
                 // Add the fragment to the 'fragment_container' FrameLayout
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.main_fragment_container, fragmentHome).commit();
+                        .add(R.id.main_fragment_container, fragmentHome, fragmentClass.getSimpleName()).commit();
             }
         }
 
@@ -169,7 +171,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         final FragmentManager fragmentManager = this.getSupportFragmentManager();
-
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
@@ -187,7 +188,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         .commit();
 
                     // Set the title for the fragment.
-
                     final ActionBar actionBar = this.getSupportActionBar();
                     if (actionBar != null) {
                         actionBar.setTitle(getString(R.string.app_name));
