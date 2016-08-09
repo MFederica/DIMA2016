@@ -3,6 +3,7 @@ package com.appetite;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -18,9 +19,18 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.amazonaws.auth.policy.Resource;
+import com.amazonaws.mobile.AWSMobileClient;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.appetite.model.Category;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //import com.dmfm.appetite.R;
 
@@ -45,6 +55,8 @@ public class FragmentCategory extends Fragment {
     private List<Category> categoryList = new ArrayList<Category>();
     private RecyclerView recyclerView;
     private AdapterCategory adapter;
+    AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
+    DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
 
     //Variable to communicate to the activity
     OnCategorySelectedListener mCallback;
@@ -74,7 +86,9 @@ public class FragmentCategory extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        prepareCategoryData();
+        CategoryData data = new CategoryData();
+        data.execute("");
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -158,42 +172,42 @@ public class FragmentCategory extends Fragment {
         return orientation;
     }
 
-    //Function that populates the object that has to be inflated in the frame
-    private void prepareCategoryData() {
-        //set the uri of the string (now is equal for every entry)
-        String uri = "@drawable/breakfast";
-        int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
+    /**
+     * Private class that performs task of retrieving data in background
+     */
+    private class CategoryData extends AsyncTask<String, Void, ScanResult> {
 
-        Category category = new Category("Breakfast", imageResource);
-        categoryList.add(category);
+        protected CategoryData() {
 
-        category = new Category("First Dishes", imageResource);
-        categoryList.add(category);
+        }
+        /**
+         * This method runs in background to retrieve data from database
+         * @param strings
+         * @return
+         */
+        public ScanResult doInBackground(String...strings) {
+            //set the uri of the string (now is equal for every entry)
+            String tableName = "dima-mobilehub-516910810-Category";
+            ScanRequest scanRequest = new ScanRequest().withTableName(tableName);
+            ScanResult result = dynamoDBClient.scan(scanRequest);
+            return result;
+        }
 
-        category = new Category("Second Dishes", imageResource);
-        categoryList.add(category);
+        protected void onPostExecute(ScanResult result) {
+            List<String> names = new ArrayList<String>();
+            List<String> images = new ArrayList<String>();
+            for (Map<String, AttributeValue> item : result.getItems()) {
+                String name = item.get("name").getS();
+                String uri = "@drawable/" + item.get("image").getS();
+                int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
+                Category category = new Category(name, String.valueOf(imageResource));
+                categoryList.add(category);
 
-        category = new Category("Salad", imageResource);
-        categoryList.add(category);
-
-        category = new Category("Vegetarian", imageResource);
-        categoryList.add(category);
-
-        category = new Category("Dessert", imageResource);
-        categoryList.add(category);
-
-        category = new Category("Appetizers", imageResource);
-        categoryList.add(category);
-
-        category = new Category("Drinks & Beverages", imageResource);
-        categoryList.add(category);
-
-        category = new Category("Low Calories", imageResource);
-        categoryList.add(category);
-
-        //adapter.notifyDataSetChanged();
-
+            }
+            adapter.notifyDataSetChanged();
+        }
     }
+
 
     public interface OnCategorySelectedListener {
         public void onCategorySelected(String textName);

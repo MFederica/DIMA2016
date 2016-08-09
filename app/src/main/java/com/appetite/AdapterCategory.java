@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appetite.model.Category;
+
 import java.util.List;
 /**
  * Created by Federica on 06/08/2016.
@@ -59,8 +61,8 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         Category category = categoryList.get(position);
-        holder.title.setText(category.getTitle());
-        holder.image.setImageResource(category.getImage());
+        holder.title.setText(category.getName());
+        holder.image.setImageResource(Integer.parseInt(category.getImage()));
     }
 
     // Return the size of your dataset (invoked by the layout manager)
