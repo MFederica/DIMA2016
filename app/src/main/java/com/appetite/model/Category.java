@@ -1,44 +1,58 @@
 package com.appetite.model;
 
 
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexRangeKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+public class Category implements Parcelable{
+    private String name;
+    private String image;
 
-@DynamoDBTable(tableName = "dima-mobilehub-516910810-Category")
-
-public class Category {
-    private String _name;
-    private String _image;
-
-    public Category(String _name, String _image) {
-        this._image = _image;
-        this._name = _name;
+    public Category(String name, String image) {
+        this.image = image;
+        this.name = name;
     }
 
-    @DynamoDBHashKey(attributeName = "name")
-    @DynamoDBAttribute(attributeName = "name")
     public String getName() {
-        return _name;
+        return name;
     }
 
-    public void setName(final String _name) {
-        this._name = _name;
+    public void setName(final String name) {
+        this.name = name;
     }
-    @DynamoDBAttribute(attributeName = "image")
+
     public String getImage() {
-        return _image;
+        return image;
     }
 
-    public void setImage(final String _image) {
-        this._image = _image;
+    public void setImage(final String image) {
+        this.image = image;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(image);
+        dest.writeString(name);
+    }
+
+    private Category(Parcel in) {
+        image = in.readString();
+        name = in.readString();
+    }
+
+    public static final Parcelable.Creator<Category> CREATOR = new Parcelable.Creator<Category>() {
+        public Category createFromParcel(Parcel in) {
+            return new Category(in);
+        }
+
+        public Category[] newArray(int size) {
+            return new Category[size];
+        }
+    };
 
 }

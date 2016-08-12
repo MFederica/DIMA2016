@@ -27,10 +27,13 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.appetite.model.Category;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 //import com.dmfm.appetite.R;
 
@@ -52,11 +55,17 @@ public class FragmentCategory extends Fragment {
     private String mParam2;
 
     //Variables for the recycler view
-    private List<Category> categoryList = new ArrayList<Category>();
+    private ArrayList<Category> categoryList = new ArrayList<Category>();
     private RecyclerView recyclerView;
     private AdapterCategory adapter;
+    private ImageLoader imageLoader;
+
+    //Variables for the db
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
     DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
+    //Constans TODO: Create a Class that contans all the constants needed
+    private final String categoryTable = "dima-mobilehub-516910810-Category";
+    private final String categoryBucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/category/";
 
     //Variable to communicate to the activity
     OnCategorySelectedListener mCallback;
@@ -86,13 +95,26 @@ public class FragmentCategory extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CategoryData data = new CategoryData();
-        data.execute("");
+        Bundle bundle = ((ActivityMain) getActivity()).getCategoryBundle();
+        if(bundle != null) {savedInstanceState = bundle;}
+        if(savedInstanceState == null || !savedInstanceState.containsKey("key")) {
+                Log.e("FragmentCategory:", "The first time that the fragment is called");
+                CategoryData data = new CategoryData();
+                data.execute("");
+        } else {
+            Log.e("FragmentCategory:", "Other times the database is not queried anymore");
+            //Use AdapterCategory with a custom object
+
+            adapter = new AdapterCategory(getContext(), categoryList);
+            categoryList = savedInstanceState.getParcelableArrayList("key");
+            adapter.notifyDataSetChanged();
+        }
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
@@ -100,7 +122,6 @@ public class FragmentCategory extends Fragment {
 
         super.onAttach(context);
         Activity activity = (Activity) context;
-
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
@@ -119,12 +140,11 @@ public class FragmentCategory extends Fragment {
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_category_recycler_view);
 
-        //Use array adapter here
+        int columns;
+        //Set the grid layout manager
 
         //Use AdapterCategory with a custom object
         adapter = new AdapterCategory(getContext(), categoryList);
-        int columns;
-        //Set the grid layout manager
         //Calculate number of columns needed
         if(getScreenOrientation() == Configuration.ORIENTATION_PORTRAIT)
             columns = 2;
@@ -175,7 +195,7 @@ public class FragmentCategory extends Fragment {
     /**
      * Private class that performs task of retrieving data in background
      */
-    private class CategoryData extends AsyncTask<String, Void, ScanResult> {
+    private class CategoryData extends AsyncTask<String, Void, ArrayList<Category>> {
 
         protected CategoryData() {
 
@@ -185,29 +205,37 @@ public class FragmentCategory extends Fragment {
          * @param strings
          * @return
          */
-        public ScanResult doInBackground(String...strings) {
+        public ArrayList<Category> doInBackground(String...strings) {
             //set the uri of the string (now is equal for every entry)
-            String tableName = "dima-mobilehub-516910810-Category";
-            ScanRequest scanRequest = new ScanRequest().withTableName(tableName);
-            ScanResult result = dynamoDBClient.scan(scanRequest);
-            return result;
-        }
+            try {
+                ScanRequest scanRequest = new ScanRequest().withTableName(categoryTable);
+                ScanResult result = dynamoDBClient.scan(scanRequest);
+                for (Map<String, AttributeValue> item : result.getItems()) {
 
-        protected void onPostExecute(ScanResult result) {
-            List<String> names = new ArrayList<String>();
-            List<String> images = new ArrayList<String>();
-            for (Map<String, AttributeValue> item : result.getItems()) {
-                String name = item.get("name").getS();
-                String uri = "@drawable/" + item.get("image").getS();
-                int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
-                Category category = new Category(name, String.valueOf(imageResource));
-                categoryList.add(category);
-
+                    String name = item.get("name").getS();
+                    String imageUri = categoryBucket + item.get("image").getS() + ".png";
+                    Log.e("ImageURI:", imageUri);
+                    //int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
+                    Category category = new Category(name, imageUri);
+                    categoryList.add(category);
+                }
+                return categoryList;
+            } catch (RuntimeException e) {
+                Log.e("FragmentCategory", "doInBackground: Error");
+                return null;
             }
-            adapter.notifyDataSetChanged();
         }
-    }
 
+        protected void onPostExecute(ArrayList<Category> result) {
+                adapter.notifyDataSetChanged();
+            }
+        }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("key", categoryList);
+        super.onSaveInstanceState(outState);
+    }
 
     public interface OnCategorySelectedListener {
         public void onCategorySelected(String textName);

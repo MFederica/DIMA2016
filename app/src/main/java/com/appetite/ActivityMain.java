@@ -56,6 +56,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private CharSequence mTitle;
 
     /**
+     * All the bundle saved from the fragments
+     */
+    private Bundle categoryBundle;
+
+    /**
      * The helper class used to toggle the left navigation drawer open and closed.
      */
     private ActionBarDrawerToggle drawerToggle;
@@ -290,4 +295,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             }
     }
 
+    public Bundle getCategoryBundle() {
+        return categoryBundle;
+    }
 }
