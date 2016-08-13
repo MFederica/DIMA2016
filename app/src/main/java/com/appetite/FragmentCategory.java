@@ -65,7 +65,7 @@ public class FragmentCategory extends Fragment {
     DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
     //Constans TODO: Create a Class that contans all the constants needed
     private final String categoryTable = "dima-mobilehub-516910810-Category";
-    private final String categoryBucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/category/";
+    private final String categoryBucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/Category/";
 
     //Variable to communicate to the activity
     OnCategorySelectedListener mCallback;
