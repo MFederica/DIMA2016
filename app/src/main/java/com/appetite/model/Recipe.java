@@ -3,6 +3,14 @@ package com.appetite.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBAttribute;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBHashKey;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHashKey;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
+
+@DynamoDBTable(tableName = "dima-mobilehub-516910810-Recipe")
+
 public class Recipe implements Parcelable {
 
     private String name;
@@ -12,18 +20,18 @@ public class Recipe implements Parcelable {
     private String introduction;
     private String category;
     private String country;
-    private int amount;
-    private int cookingTime;
-    private int preparationTime;
-    private int difficoulty;
-    private int vegetarian;
+    private String amount;
+    private String cookingTime;
+    private String preparationTime;
+    private int difficulty;
+    private String vegetarian;
 
 
         public Recipe() {
         }
 
-        public Recipe(String name, String image, String advice, String introduction, String category, int amount, int cookingTime, int preparationTime,
-                      int difficoulty, int vegetarian) {
+        public Recipe(String name, String image, String advice, String introduction, String category, String amount, String cookingTime, String preparationTime,
+                      int difficulty, String vegetarian) {
             this.name = name;
             this.image = image;
             this.advice = advice;
@@ -32,97 +40,93 @@ public class Recipe implements Parcelable {
             this.amount = amount;
             this.cookingTime = cookingTime;
             this.preparationTime = preparationTime;
-            this.difficoulty = difficoulty;
+            this.difficulty = difficulty;
             this.vegetarian = vegetarian;
         }
 
+    @DynamoDBHashKey(attributeName = "Name")
+    @DynamoDBAttribute(attributeName = "Name")
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
 
+    @DynamoDBRangeKey(attributeName = "Difficulty")
+    @DynamoDBAttribute(attributeName = "Difficulty")
+    public int getDifficulty() {
+        return difficulty;
+    }
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    @DynamoDBAttribute(attributeName = "Image")
     public String getImage() {
         return image;
     }
-
     public void setImage(String image) {
         this.image = image;
     }
 
-    public int getVegetarian() {
+    @DynamoDBAttribute(attributeName = "Vegetarian")
+    public String getVegetarian() {
         return vegetarian;
     }
-
-    public void setVegetarian(int vegetarian) {
+    public void setVegetarian(String vegetarian) {
         this.vegetarian = vegetarian;
     }
 
-    public int getDifficoulty() {
-        return difficoulty;
-    }
-
-    public void setDifficoulty(int difficoulty) {
-        this.difficoulty = difficoulty;
-    }
-
+    @DynamoDBAttribute(attributeName = "Advice")
     public String getAdvice() {
         return advice;
     }
-
     public void setAdvice(String advice) {
         this.advice = advice;
     }
 
+    @DynamoDBAttribute(attributeName = "Introduction")
     public String getIntroduction() {
         return introduction;
     }
-
     public void setIntroduction(String introduction) {
         this.introduction = introduction;
     }
 
-    public String getCategory() {
-        return category;
-    }
+    @DynamoDBIndexHashKey(attributeName = "Category", globalSecondaryIndexName = "Category")
+    public String getCategory() {return category; }
+    public void setCategory(String category) {this.category = category;}
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
+    @DynamoDBAttribute(attributeName = "Country")
     public String getCountry() {
         return country;
     }
-
     public void setCountry(String country) {
         this.country = country;
     }
 
-    public int getAmount() {
+    @DynamoDBAttribute(attributeName = "Amount")
+    public String getAmount() {
         return amount;
     }
-
-    public void setAmount(int amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
-    public int getCookingTime() {
+    @DynamoDBAttribute(attributeName = "CookingTime")
+    public String getCookingTime() {
         return cookingTime;
     }
-
-    public void setCookingTime(int cookingTime) {
+    public void setCookingTime(String cookingTime) {
         this.cookingTime = cookingTime;
     }
 
-    public int getPreparationTime() {
+    @DynamoDBAttribute(attributeName = "PreparationTime")
+    public String getPreparationTime() {
         return preparationTime;
     }
-
-    public void setPreparationTime(int preparationTime) {
-        this.preparationTime = preparationTime;
-    }
+    public void setPreparationTime(String preparationTime) {this.preparationTime = preparationTime;}
 
     @Override
     public int describeContents() {
@@ -136,11 +140,11 @@ public class Recipe implements Parcelable {
         dest.writeString(advice);
         dest.writeString(introduction);
         dest.writeString(category);
-        dest.writeInt(amount);
-        dest.writeInt(cookingTime);
-        dest.writeInt(preparationTime);
-        dest.writeInt(difficoulty);
-        dest.writeInt(vegetarian);
+        dest.writeString(amount);
+        dest.writeString(cookingTime);
+        dest.writeString(preparationTime);
+        dest.writeInt(difficulty);
+        dest.writeString(vegetarian);
     }
 
     private Recipe(Parcel in) {
@@ -149,11 +153,11 @@ public class Recipe implements Parcelable {
         advice = in.readString();
         introduction = in.readString();
         category = in.readString();
-        amount = in.readInt();
-        cookingTime = in.readInt();
-        preparationTime = in.readInt();
-        difficoulty = in.readInt();
-        vegetarian = in.readInt();
+        amount = in.readString();
+        cookingTime = in.readString();
+        preparationTime = in.readString();
+        difficulty = in.readInt();
+        vegetarian = in.readString();
 
     }
 

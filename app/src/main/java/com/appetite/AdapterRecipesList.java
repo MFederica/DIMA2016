@@ -1,6 +1,7 @@
 package com.appetite;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appetite.model.Recipe;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 import java.util.List;
 
 public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.MyViewHolder> {
@@ -15,6 +24,7 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
     private List<Recipe> recipesList;
     private Context context;
     private OnItemClickListener listener;
+    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -53,10 +63,43 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
         Recipe recipe = recipesList.get(position);
-        holder.title.setText(recipe.getTitle());
-        holder.image.setImageResource(recipe.getImage());
+        holder.title.setText(recipe.getName());
+
+        holder.image.setImageBitmap(null);
+
+        if (recipe.getImage() != null && !recipe.getImage().equals("")) {
+            final File image = DiskCacheUtils.findInCache(recipe.getImage(), imageLoader.getDiskCache());
+            if (image!= null && image.exists()) {
+                Picasso.with(context).load(image).fit().centerCrop().into(holder.image);
+            } else {
+                imageLoader.loadImage(recipe.getImage(), new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String s, View view) {
+                        holder.image.setImageBitmap(null);
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                        Picasso.with(context).load(s).fit().centerCrop().into(holder.image);
+
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String s, View view) {
+
+                    }
+                });
+            }
+        }else {
+            holder.image.setImageBitmap(null);
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

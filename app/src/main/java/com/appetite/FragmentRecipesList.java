@@ -1,8 +1,7 @@
 package com.appetite;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -15,8 +14,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.amazonaws.mobile.AWSMobileClient;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.appetite.model.Category;
+import com.appetite.model.Recipe;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //import com.dmfm.appetite.R;
 
@@ -31,14 +44,21 @@ import java.util.List;
 public class FragmentRecipesList extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_RECIPENAME = "recipeName";
+    private static final String ARG_RECIPENAME = "categoryName";
 
-    private String recipeName;
+    private String categoryName;
 
     //Variables for the recycler view
-    private List<Recipe> recipesList = new ArrayList<Recipe>();
+    private ArrayList<Recipe> recipesList = new ArrayList<Recipe>();
     private RecyclerView recyclerView;
     private AdapterRecipesList adapter;
+
+    //Variables for the db
+    AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
+    DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
+    //Constans TODO: Create a Class that contans all the constants needed
+    private final String recipeTable = "dima-mobilehub-516910810-Recipe";
+    private final String bucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
 
     public FragmentRecipesList() {
 
@@ -64,7 +84,21 @@ public class FragmentRecipesList extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            recipeName = getArguments().getString(ARG_RECIPENAME);
+            categoryName = getArguments().getString(ARG_RECIPENAME);
+        }
+        Bundle bundle = ((ActivityMain) getActivity()).getCategoryBundle();
+        if(bundle != null) {savedInstanceState = bundle;}
+        if(savedInstanceState == null || !savedInstanceState.containsKey("key")) {
+            Log.e("FragmentCategory:", "The first time that the fragment is called");
+            RecipeData data = new RecipeData();
+            data.execute("");
+        } else {
+            Log.e("FragmentCategory:", "Other times the database is not queried anymore");
+            //Use AdapterCategory with a custom object
+
+            adapter = new AdapterRecipesList(getContext(), recipesList);
+            recipesList = savedInstanceState.getParcelableArrayList("key");
+            adapter.notifyDataSetChanged();
         }
     }
 
@@ -103,7 +137,6 @@ public class FragmentRecipesList extends Fragment {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();    ft.replace(R.id.content_frame, eventFragment).commit() */
             }
         });
-        prepareRecipesListData();
 
         return rootView;
     }
@@ -129,42 +162,55 @@ public class FragmentRecipesList extends Fragment {
         return orientation;
     }
 
-    //Function that populates the object that has to be inflated in the frame
-    private void prepareRecipesListData() {
-        //TODO set the uri of the string (now is equal for every entry)
-        String uri = "@drawable/breakfast";
-        int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
 
-        Recipe recipe = new Recipe(recipeName + " 0", imageResource);
-        recipesList.add(recipe);
+    /**
+     * Private class that performs task of retrieving data in background
+     */
+    private class RecipeData extends AsyncTask<String, Void, ArrayList<Recipe>> {
 
-        recipe = new Recipe(recipeName + " 1", imageResource);
-        recipesList.add(recipe);
+        protected RecipeData() {
 
-        recipe = new Recipe(recipeName + " 2", imageResource);
-        recipesList.add(recipe);
+        }
+        /**
+         * This method runs in background to retrieve data from database
+         * @param strings
+         * @return
+         */
+        public ArrayList<Recipe> doInBackground(String...strings) {
+            //set the uri of the string (now is equal for every entry)
 
-        recipe = new Recipe(recipeName + " 3", imageResource);
-        recipesList.add(recipe);
+                Log.e("RecipeList:", "The name of the category is:" + categoryName);
+                Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+                eav.put(":category", new AttributeValue().withS(categoryName));
 
-        recipe = new Recipe(recipeName + " 4", imageResource);
-        recipesList.add(recipe);
+                DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                        .withFilterExpression("Category = :category")
+                        .withExpressionAttributeValues(eav);
 
-        recipe = new Recipe(recipeName + " 5", imageResource);
-        recipesList.add(recipe);
+                List<Recipe> result = mapper.scan(Recipe.class, scanExpression);
 
-        recipe = new Recipe(recipeName + " 6", imageResource);
-        recipesList.add(recipe);
+                Log.e("RecipeList", "The results are:" + result.toString());
 
-        recipe = new Recipe(recipeName + " 7", imageResource);
-        recipesList.add(recipe);
+                for (Recipe item : result) {
 
-        recipe = new Recipe(recipeName + " 8", imageResource);
-        recipesList.add(recipe);
+                    //Get all attributes from the DB
+                    //modify the image uri , save it back and save in list
+                    String imageUri = bucket + categoryName + "/" + item.getImage() + ".jpg";
+                    item.setImage(imageUri);
+                    recipesList.add(item);
+                }
+                return recipesList;
+        }
 
+        protected void onPostExecute(ArrayList<Recipe> result) {
+            adapter.notifyDataSetChanged();
+        }
+    }
 
-        adapter.notifyDataSetChanged();
-
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("key", recipesList);
+        super.onSaveInstanceState(outState);
     }
 
 }
