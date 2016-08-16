@@ -1,6 +1,7 @@
 package com.appetite;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,11 +20,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appetite.R;
 import com.appetite.model.Recipe;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class ActivityRecipe extends AppCompatActivity {
 
@@ -38,6 +47,8 @@ public class ActivityRecipe extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private Recipe recipeSelected;
+
+    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -57,6 +68,7 @@ public class ActivityRecipe extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(recipeSelected.getName());
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -77,7 +89,9 @@ public class ActivityRecipe extends AppCompatActivity {
             }
         });
 
+        setAppBarImage();
     }
+
 
 
     @Override
@@ -187,6 +201,41 @@ public class ActivityRecipe extends AppCompatActivity {
                     return "PREPARATION";
             }
             return null;
+        }
+    }
+
+    private void setAppBarImage() {
+        final ImageView image = (ImageView) findViewById(R.id.activity_recipe_appbar_image);
+        if (recipeSelected.getImage() != null && !recipeSelected.getImage().equals("")) {
+            final File imageFile = DiskCacheUtils.findInCache(recipeSelected.getImage(), imageLoader.getDiskCache());
+            if (imageFile!= null && imageFile.exists()) {
+                Picasso.with(getApplicationContext()).load(imageFile).fit().centerCrop().into(image);
+            } else {
+                imageLoader.loadImage(recipeSelected.getImage(), new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String s, View view) {
+                        image.setImageBitmap(null);
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                        Picasso.with(getApplicationContext()).load(s).fit().centerCrop().into(image);
+
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String s, View view) {
+
+                    }
+                });
+            }
+        }else {
+            image.setImageBitmap(null);
         }
     }
 }
