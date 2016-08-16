@@ -1,5 +1,7 @@
 package com.appetite;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,14 +46,17 @@ import java.util.Map;
 public class FragmentRecipesList extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_RECIPENAME = "categoryName";
+    private static final String ARG_CATEGORY_SELECTED_NAME = "com.appetite.CATEGORY_SELECTED";
 
-    private String categoryName;
+    private String categorySelectedName;
 
     //Variables for the recycler view
     private ArrayList<Recipe> recipesList = new ArrayList<Recipe>();
     private RecyclerView recyclerView;
     private AdapterRecipesList adapter;
+
+    //Variable to communicate to the activity
+    OnRecipeSelectedListener mCallBack;
 
     //Variables for the db
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
@@ -68,14 +73,14 @@ public class FragmentRecipesList extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      * {} interface
-     * @param recipeName name of the recipe.
+     * @param categorySelectedName name of the category selected.
      * @return A new instance of fragment FragmentCategory.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentRecipesList newInstance(String recipeName) {
+    public static FragmentRecipesList newInstance(String categorySelectedName) {
         FragmentRecipesList fragment = new FragmentRecipesList();
         Bundle args = new Bundle();
-        args.putString(ARG_RECIPENAME, recipeName);
+        args.putString(ARG_CATEGORY_SELECTED_NAME, categorySelectedName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,7 +89,7 @@ public class FragmentRecipesList extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            categoryName = getArguments().getString(ARG_RECIPENAME);
+            categorySelectedName = getArguments().getString(ARG_CATEGORY_SELECTED_NAME);
         }
         Bundle bundle = ((ActivityMain) getActivity()).getCategoryBundle();
         if(bundle != null) {savedInstanceState = bundle;}
@@ -129,9 +134,10 @@ public class FragmentRecipesList extends Fragment {
 
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new AdapterRecipesList.OnItemClickListener(){
-            public void onItemClick(String textName){
-                Toast.makeText(getContext(), textName, Toast.LENGTH_SHORT).show();
-                Log.e("FragmentRecipesList", "onItemClick: " + textName);
+            public void onItemClick(Recipe recipe){
+                Toast.makeText(getContext(), recipe.getName(), Toast.LENGTH_SHORT).show();
+                mCallBack.onRecipeSelected(recipe);
+                Log.e("FragmentRecipesList", "onItemClick: " + recipe.getName());
                 /*EventFragment eventFragment = EventFragment.newInstance();
                 //replace content frame with your own view.
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();    ft.replace(R.id.content_frame, eventFragment).commit() */
@@ -139,6 +145,20 @@ public class FragmentRecipesList extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity activity = (Activity) context;
+        //This makes sure that the container activity has implemented
+        //the callback interface. If not, it thows an exception
+        try {
+            mCallBack = (OnRecipeSelectedListener) activity;
+        } catch (ClassCastException e) {
+
+            throw new ClassCastException(activity.toString() + "must implement OnCategorySelectedListener");
+        }
     }
 
 
@@ -179,9 +199,9 @@ public class FragmentRecipesList extends Fragment {
         public ArrayList<Recipe> doInBackground(String...strings) {
             //set the uri of the string (now is equal for every entry)
 
-                Log.e("RecipeList:", "The name of the category is:" + categoryName);
+                Log.e("RecipeList:", "The name of the category is:" + categorySelectedName);
                 Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
-                eav.put(":category", new AttributeValue().withS(categoryName));
+                eav.put(":category", new AttributeValue().withS(categorySelectedName));
 
                 DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
                         .withFilterExpression("Category = :category")
@@ -195,7 +215,7 @@ public class FragmentRecipesList extends Fragment {
 
                     //Get all attributes from the DB
                     //modify the image uri , save it back and save in list
-                    String imageUri = bucket + categoryName + "/" + item.getImage() + ".jpg";
+                    String imageUri = bucket + categorySelectedName + "/" + item.getImage() + ".jpg";
                     item.setImage(imageUri);
                     recipesList.add(item);
                 }
@@ -211,6 +231,10 @@ public class FragmentRecipesList extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("key", recipesList);
         super.onSaveInstanceState(outState);
+    }
+
+    public interface OnRecipeSelectedListener {
+        public void onRecipeSelected(Recipe recipeSelected);
     }
 
 }

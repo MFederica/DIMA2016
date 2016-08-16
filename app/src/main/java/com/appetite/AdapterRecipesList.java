@@ -30,20 +30,16 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public class MyViewHolder extends RecyclerView.ViewHolder {
+        public View myView;
         public TextView title;
         public ImageView image;
+        public Recipe recipe;
 
         public MyViewHolder(View view) {
             super(view);
+            myView = view;
             title = (TextView) view.findViewById(R.id.fragment_recipes_list_title);
             image = (ImageView) view.findViewById(R.id.fragment_recipes_list_image);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if(listener!=null)
-                        listener.onItemClick(title.getText().toString());
-                }
-            });
         }
     }
 
@@ -64,17 +60,17 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        Recipe recipe = recipesList.get(position);
-        holder.title.setText(recipe.getName());
+        holder.recipe = recipesList.get(position);
+        holder.title.setText(holder.recipe.getName());
 
         holder.image.setImageBitmap(null);
 
-        if (recipe.getImage() != null && !recipe.getImage().equals("")) {
-            final File image = DiskCacheUtils.findInCache(recipe.getImage(), imageLoader.getDiskCache());
+        if (holder.recipe.getImage() != null && !holder.recipe.getImage().equals("")) {
+            final File image = DiskCacheUtils.findInCache(holder.recipe.getImage(), imageLoader.getDiskCache());
             if (image!= null && image.exists()) {
                 Picasso.with(context).load(image).fit().centerCrop().into(holder.image);
             } else {
-                imageLoader.loadImage(recipe.getImage(), new ImageLoadingListener() {
+                imageLoader.loadImage(holder.recipe.getImage(), new ImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String s, View view) {
                         holder.image.setImageBitmap(null);
@@ -100,6 +96,14 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
         }else {
             holder.image.setImageBitmap(null);
         }
+
+        holder.myView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(listener!=null)
+                    listener.onItemClick(holder.recipe);
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -113,7 +117,7 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
     }
 
     public interface OnItemClickListener{
-        public void onItemClick(String textName);
+        public void onItemClick(Recipe recipe);
     }
 
 }

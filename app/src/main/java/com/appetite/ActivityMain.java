@@ -8,6 +8,7 @@
 //
 package com.appetite;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -23,16 +24,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
+import com.appetite.model.Recipe;
 
-public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategory.OnCategorySelectedListener {
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategory.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener {
     /**
      * Class name for log messages.
      */
     private final static String LOG_TAG = ActivityMain.class.getSimpleName();
+
+    public final static String RECIPE_SELECTED = "com.appetite.RECIPE";
 
     /**
      * Bundle key for saving/restoring the toolbar title.
@@ -182,7 +187,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         final FragmentManager fragmentManager = this.getSupportFragmentManager();
-        Log.e(LOG_TAG, "onBackPressed: BackStackEntryCount = " + fragmentManager.getBackStackEntryCount() );
+        Log.e(LOG_TAG, "onBackPressed: BackStackEntryCount = " + fragmentManager.getBackStackEntryCount());
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
@@ -203,12 +208,12 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 ///////onNavigationItemSelected(navigationView.getMenu().findItem(R.id.drawer_item_home));
 
                 navigationView.getMenu().findItem(R.id.drawer_item_home).setChecked(true);
-                    // Set the title for the fragment.
-                    final ActionBar actionBar = this.getSupportActionBar();
-                    if (actionBar != null) {
-                        actionBar.setTitle(getString(R.string.app_name));
-                    }
-                    return;
+                // Set the title for the fragment.
+                final ActionBar actionBar = this.getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setTitle(getString(R.string.app_name));
+                }
+                return;
             }
         }
         super.onBackPressed();
@@ -260,13 +265,13 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onCategorySelected(String textName) {
+    public void onCategorySelected(String categorySelectedName) {
         // The user selected a category from FragmentCategory
-        Log.e(LOG_TAG, "onCategorySelected: " + textName);
+        Log.e(LOG_TAG, "onCategorySelected: " + categorySelectedName);
 
-            // Do something here to display that article
+        // Do something here to display that article
 
-                //TODO checkare 2 pane layout or not
+        //TODO checkare 2 pane layout or not
                 /*
             FragmentRecipesList articleFrag = (FragmentRecipesList)
                     getSupportFragmentManager().findFragmentById(R.id.article_fragment);
@@ -277,25 +282,36 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 // Call a method in the ArticleFragment to update its content
                 articleFrag.updateArticleView(position);
 
-            } else  */ {
-                // Otherwise, we're in the one-pane layout and must swap frags...
+            } else  */
+        {
+            // Otherwise, we're in the one-pane layout and must swap frags...
 
-                // Create fragment and give it an argument for the selected category
-                FragmentRecipesList newFragment = FragmentRecipesList.newInstance(textName);
+            // Create fragment and give it an argument for the selected category
+            FragmentRecipesList newFragment = FragmentRecipesList.newInstance(categorySelectedName);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-                // Replace whatever is in the main_fragment_container view with this fragment,
-                // and add the transaction to the back stack so the user can navigate back
-                transaction.replace(R.id.main_fragment_container, newFragment);
-                transaction.addToBackStack(FragmentRecipesList.class.getName());
+            // Replace whatever is in the main_fragment_container view with this fragment,
+            // and add the transaction to the back stack so the user can navigate back
+            transaction.replace(R.id.main_fragment_container, newFragment);
+            transaction.addToBackStack(FragmentRecipesList.class.getName());
 
-                // Commit the transaction
-                transaction.commit();
-            }
+            // Commit the transaction
+            transaction.commit();
+        }
     }
 
     public Bundle getCategoryBundle() {
         return categoryBundle;
+    }
+
+    @Override
+    public void onRecipeSelected(Recipe recipeSelected) {
+        // The user selected a recipe from FragmentRecipesList
+        Log.e(LOG_TAG, "onRecipeSelected: " + recipeSelected.getName());
+
+        Intent intent = new Intent(this, ActivityRecipe.class);
+        intent.putExtra(RECIPE_SELECTED, recipeSelected);
+        startActivity(intent);
     }
 }
