@@ -2,9 +2,7 @@ package com.appetite;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +21,7 @@ import java.util.List;
 /**
  * Created by Federica on 06/08/2016.
  */
-public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyViewHolder> {
+public class AdapterCategoriesList extends RecyclerView.Adapter<AdapterCategoriesList.MyViewHolder> {
 
     private List<Category> categoryList;
     private Context context;
@@ -51,7 +49,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
         }
     }
 
-    public AdapterCategory(Context context, List<Category> categoryList) {
+    public AdapterCategoriesList(Context context, List<Category> categoryList) {
         this.categoryList = categoryList;
         this.context = context;
     }
@@ -60,7 +58,7 @@ public class AdapterCategory extends RecyclerView.Adapter<AdapterCategory.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_category_item, null);
+                .inflate(R.layout.fragment_categories_list_item, null);
 
         return new MyViewHolder(itemView);
     }

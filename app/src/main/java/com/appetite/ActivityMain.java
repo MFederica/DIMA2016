@@ -24,14 +24,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
 import com.appetite.model.Recipe;
 
-public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategory.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener {
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener {
     /**
      * Class name for log messages.
      */
@@ -160,7 +159,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             //Replacing the main content with ContentFragment Which is our Inbox View;
             case R.id.drawer_item_categories:
                 Toast.makeText(getApplicationContext(), "Categories Selected", Toast.LENGTH_SHORT).show();
-                fragmentClass = FragmentCategory.class;
+                fragmentClass = FragmentCategoriesList.class;
                 break;
             // For rest of the options we just show a toast on click
             case R.id.drawer_item_how_to:
@@ -266,7 +265,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onCategorySelected(String categorySelectedName) {
-        // The user selected a category from FragmentCategory
+        // The user selected a category from FragmentCategoriesList
         Log.e(LOG_TAG, "onCategorySelected: " + categorySelectedName);
 
         // Do something here to display that article

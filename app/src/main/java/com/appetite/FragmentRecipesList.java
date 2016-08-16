@@ -74,7 +74,7 @@ public class FragmentRecipesList extends Fragment {
      * this fragment using the provided parameters.
      * {} interface
      * @param categorySelectedName name of the category selected.
-     * @return A new instance of fragment FragmentCategory.
+     * @return A new instance of fragment FragmentCategoriesList.
      */
     // TODO: Rename and change types and number of parameters
     public static FragmentRecipesList newInstance(String categorySelectedName) {
@@ -94,12 +94,12 @@ public class FragmentRecipesList extends Fragment {
         Bundle bundle = ((ActivityMain) getActivity()).getCategoryBundle();
         if(bundle != null) {savedInstanceState = bundle;}
         if(savedInstanceState == null || !savedInstanceState.containsKey("key")) {
-            Log.e("FragmentCategory:", "The first time that the fragment is called");
+            Log.e("FragmentCategoriesList:", "The first time that the fragment is called");
             RecipeData data = new RecipeData();
             data.execute("");
         } else {
-            Log.e("FragmentCategory:", "Other times the database is not queried anymore");
-            //Use AdapterCategory with a custom object
+            Log.e("FragmentCategoriesList:", "Other times the database is not queried anymore");
+            //Use AdapterCategoriesList with a custom object
 
             adapter = new AdapterRecipesList(getContext(), recipesList);
             recipesList = savedInstanceState.getParcelableArrayList("key");
@@ -117,7 +117,7 @@ public class FragmentRecipesList extends Fragment {
 
         //Use array adapter here
 
-        //Use AdapterCategory with a custom object
+        //Use AdapterCategoriesList with a custom object
         adapter = new AdapterRecipesList(getContext(), recipesList);
         int columns;
         //Set the grid layout manager
