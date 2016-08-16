@@ -60,6 +60,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private CharSequence mTitle;
 
     /**
+     * The navigation view for the drawer item for filters.
+     */
+    private NavigationView navigationViewForFilters;
+
+    /**
      * All the bundle saved from the fragments
      */
     private Bundle categoryBundle;
@@ -135,6 +140,39 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         navigationView.getMenu().findItem(R.id.drawer_item_home).setChecked(true);
 
         mTitle = mDrawerTitle = getTitle();
+
+        navigationViewForFilters = (NavigationView) findViewById(R.id.nav_view_filters);
+        navigationViewForFilters.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                mDrawerLayout.closeDrawers();
+                //TODO IMPLEMENTARE FILTRI PER QUERY AL DATABASE QUA
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+
+                    case R.id.drawer_filters_item_home:
+                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                        return true;
+                    //Replacing the main content with ContentFragment Which is our Inbox View;
+                    case R.id.drawer_filters_item_categories:
+                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                        return true;
+                    // For rest of the options we just show a toast on click
+                    case R.id.drawer_filters_item_how_to:
+                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.drawer_filters_item_shopping_list:
+                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                        return true;
+                    case R.id.drawer_filters_item_favourite:
+                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                        return true;
+                    default:
+                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+                        return false;
+                }
+            }
+        });
 
     }
 
