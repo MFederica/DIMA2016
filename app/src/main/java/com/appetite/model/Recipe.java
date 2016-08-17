@@ -32,12 +32,13 @@ public class Recipe implements Parcelable {
     private List<String> ingredient_name;
     private List<String> ingredient_quantity;
     private List<String> ingredient_unit;
+    private List<String> step;
 
         public Recipe() {
         }
 
         public Recipe(String name, String image, String advice, String introduction, String category, String country, String amount, String cookingTime, String preparationTime,
-                String vegetarian, int difficulty, List<String> ingredient_name, List<String> ingredient_unit, List<String> ingredient_quantity ) {
+                String vegetarian, int difficulty, List<String> ingredient_name, List<String> ingredient_unit, List<String> ingredient_quantity, List<String> step) {
             this.name = name;
             this.image = image;
             this.advice = advice;
@@ -52,6 +53,7 @@ public class Recipe implements Parcelable {
             this.ingredient_name = ingredient_name;
             this.ingredient_quantity = ingredient_quantity;
             this.ingredient_unit = ingredient_unit;
+            this.step = step;
         }
 
     @DynamoDBHashKey(attributeName = "Name")
@@ -148,6 +150,10 @@ public class Recipe implements Parcelable {
     public List<String> getIngredient_unit() {return ingredient_unit;}
     public void setIngredient_unit(List<String> ingredient_unit) {this.ingredient_unit = ingredient_unit;}
 
+    @DynamoDBAttribute(attributeName = "Step")
+    public List<String> getStep() {return step;}
+    public void setStep(List<String> ingredient_unit) {this.step = step;}
+
     @Override
     public int describeContents() {
         return 0;
@@ -169,6 +175,7 @@ public class Recipe implements Parcelable {
         dest.writeStringList(ingredient_name);
         dest.writeStringList(ingredient_quantity);
         dest.writeStringList(ingredient_unit);
+        dest.writeStringList(step);
     }
 
     private Recipe(Parcel in) {
@@ -186,9 +193,11 @@ public class Recipe implements Parcelable {
         ingredient_name = new ArrayList<String>();
         ingredient_unit = new ArrayList<String>();
         ingredient_quantity = new ArrayList<String>();
+        step = new ArrayList<String>();
         in.readStringList(ingredient_name);
         in.readStringList(ingredient_quantity);
         in.readStringList(ingredient_unit);
+        in.readStringList(step);
 
     }
 
