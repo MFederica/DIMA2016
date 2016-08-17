@@ -175,7 +175,7 @@ public class ActivityRecipe extends AppCompatActivity {
                 case 0:
                     return FragmentRecipeInformation.newInstance(recipeSelected);
                 case 1:
-                    return PlaceholderFragment.newInstance(position + 1);
+                    return FragmentRecipeIngredients.newInstance(recipeSelected);
                 case 2:
                     return PlaceholderFragment.newInstance(position + 1);
                 default:
