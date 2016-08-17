@@ -211,8 +211,8 @@ public class FragmentRecipesList extends Fragment {
 
                 Log.e("RecipeList", "The results are:" + result.toString());
 
-                for (Recipe item : result) {
 
+                for (Recipe item : result) {
                     //Get all attributes from the DB
                     //modify the image uri , save it back and save in list
                     String imageUri = bucket + categorySelectedName + "/" + item.getImage() + ".jpg";
@@ -222,9 +222,7 @@ public class FragmentRecipesList extends Fragment {
                 return recipesList;
         }
 
-        protected void onPostExecute(ArrayList<Recipe> result) {
-            adapter.notifyDataSetChanged();
-        }
+        protected void onPostExecute(ArrayList<Recipe> result) {adapter.notifyDataSetChanged();}
     }
 
     @Override

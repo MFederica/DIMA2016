@@ -9,6 +9,10 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBIndexHas
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBRangeKey;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBTable;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 @DynamoDBTable(tableName = "dima-mobilehub-516910810-Recipe")
 
 public class Recipe implements Parcelable {
@@ -23,25 +27,31 @@ public class Recipe implements Parcelable {
     private String amount;
     private String cookingTime;
     private String preparationTime;
-    private int difficulty;
     private String vegetarian;
-
+    private int difficulty;
+    private List<String> ingredient_name;
+    private List<String> ingredient_quantity;
+    private List<String> ingredient_unit;
 
         public Recipe() {
         }
 
-        public Recipe(String name, String image, String advice, String introduction, String category, String amount, String cookingTime, String preparationTime,
-                      int difficulty, String vegetarian) {
+        public Recipe(String name, String image, String advice, String introduction, String category, String country, String amount, String cookingTime, String preparationTime,
+                String vegetarian, int difficulty, List<String> ingredient_name, List<String> ingredient_unit, List<String> ingredient_quantity ) {
             this.name = name;
             this.image = image;
             this.advice = advice;
             this.introduction = introduction;
+            this.country = country;
             this.category = category;
             this.amount = amount;
             this.cookingTime = cookingTime;
             this.preparationTime = preparationTime;
             this.difficulty = difficulty;
             this.vegetarian = vegetarian;
+            this.ingredient_name = ingredient_name;
+            this.ingredient_quantity = ingredient_quantity;
+            this.ingredient_unit = ingredient_unit;
         }
 
     @DynamoDBHashKey(attributeName = "Name")
@@ -123,10 +133,20 @@ public class Recipe implements Parcelable {
     }
 
     @DynamoDBAttribute(attributeName = "PreparationTime")
-    public String getPreparationTime() {
-        return preparationTime;
-    }
+    public String getPreparationTime() {return preparationTime;}
     public void setPreparationTime(String preparationTime) {this.preparationTime = preparationTime;}
+
+    @DynamoDBAttribute(attributeName = "Ingredient_name")
+    public List<String> getIngredient_name() {return ingredient_name;}
+    public void setIngredient_name(List<String> ingredient_name) {this.ingredient_name = ingredient_name;}
+
+    @DynamoDBAttribute(attributeName = "Ingredient_quantity")
+    public List<String> getIngredient_quantity() {return ingredient_quantity;}
+    public void setIngredient_quantity(List<String> ingredient_quantity) {this.ingredient_quantity = ingredient_quantity;}
+
+    @DynamoDBAttribute(attributeName = "Ingredient_unit")
+    public List<String> getIngredient_unit() {return ingredient_unit;}
+    public void setIngredient_unit(List<String> ingredient_unit) {this.ingredient_unit = ingredient_unit;}
 
     @Override
     public int describeContents() {
@@ -140,11 +160,15 @@ public class Recipe implements Parcelable {
         dest.writeString(advice);
         dest.writeString(introduction);
         dest.writeString(category);
+        dest.writeString(country);
         dest.writeString(amount);
         dest.writeString(cookingTime);
         dest.writeString(preparationTime);
         dest.writeInt(difficulty);
         dest.writeString(vegetarian);
+        dest.writeStringList(ingredient_name);
+        dest.writeStringList(ingredient_quantity);
+        dest.writeStringList(ingredient_unit);
     }
 
     private Recipe(Parcel in) {
@@ -153,11 +177,18 @@ public class Recipe implements Parcelable {
         advice = in.readString();
         introduction = in.readString();
         category = in.readString();
+        country = in.readString();
         amount = in.readString();
         cookingTime = in.readString();
         preparationTime = in.readString();
         difficulty = in.readInt();
         vegetarian = in.readString();
+        ingredient_name = new ArrayList<String>();
+        ingredient_unit = new ArrayList<String>();
+        ingredient_quantity = new ArrayList<String>();
+        in.readStringList(ingredient_name);
+        in.readStringList(ingredient_quantity);
+        in.readStringList(ingredient_unit);
 
     }
 
