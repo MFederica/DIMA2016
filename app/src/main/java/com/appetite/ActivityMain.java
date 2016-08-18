@@ -8,29 +8,45 @@
 //
 package com.appetite;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.appetite.model.Recipe;
+import com.appetite.style.ArrayAdapterSearchView;
 
-public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener {
+import java.util.ArrayList;
+import java.util.Set;
+
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
+        SearchView.OnQueryTextListener{
     /**
      * Class name for log messages.
      */
@@ -74,8 +90,12 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
      */
     private ActionBarDrawerToggle drawerToggle;
 
+    private ArrayList<String> recipeNameList;
+
+    AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
+
     @Override
-    protected void onCreate(final Bundle savedInstanceState) {
+    protected void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Obtain a reference to the mobile client. It is created in the Application class,
         // but in case a custom Application class is not used, we initialize it here if necessary.
@@ -85,6 +105,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         // Obtain a reference to the identity manager.
         identityManager = awsMobileClient.getIdentityManager();
 
+        setSharedPref();
+
+        if(recipeNameList != null) {
+            Log.e("MainActivity:", recipeNameList.toString());
+        }
         setContentView(R.layout.activity_main);
 
         // Check that the activity is using the layout version with
@@ -261,6 +286,12 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main, menu);
+
+        // Associate searchable configuration with the SearchView
+        // Add SearchWidget.
+        SearchManager searchManager = (SearchManager) getSystemService( Context.SEARCH_SERVICE );
+        SearchView searchView = (SearchView) menu.findItem( R.id.action_search ).getActionView();
+        searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
         return true;
     }
 
@@ -277,17 +308,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    //Amazon Methods
-    @Override
-    protected void onSaveInstanceState(final Bundle bundle) {
-        super.onSaveInstanceState(bundle);
-        // Save the title so it will be restored properly to match the view loaded when rotation
-        // was changed or in case the activity was destroyed.
-        if (toolbar != null) {
-            bundle.putCharSequence(BUNDLE_KEY_TOOLBAR_TITLE, toolbar.getTitle());
-        }
     }
 
     @Override
@@ -350,5 +370,45 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, ActivityRecipe.class);
         intent.putExtra(RECIPE_SELECTED, recipeSelected);
         startActivity(intent);
+    }
+
+
+    /**
+     * Method needed to retireve shared preferences when they are set
+     */
+    public void setSharedPref() {
+
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean sharedNotNull = false;
+                SharedPreferences sharedPref = null;
+                 while(!sharedNotNull) {
+                     sharedPref = getSharedPreferences(
+                             "recipeNameList", Context.MODE_PRIVATE);
+                     if (sharedPref != null) {
+                         sharedNotNull = true;
+                     }
+                 }
+                    Set<String> s = sharedPref.getStringSet("recipeNameList", null);
+                    recipeNameList = new ArrayList<String>(s);
+                }
+        });
+        thread2.start();
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+
+        return false;
     }
 }

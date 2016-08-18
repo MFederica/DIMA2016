@@ -42,15 +42,26 @@
             android:name=".ActivityMain"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
+        <meta-data android:name="android.app.searchable"
+            android:resource="@xml/searchable" />
+
         <activity
             android:name=".ActivityRecipe"
-            android:label="@string/title_activity_activity_recipe"
+            android:label="@string/title_activity_recipe"
             android:parentActivityName=".ActivityMain"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.appetite.ActivityMain" />
         </activity>
-    </application>
 
+
+        <activity
+            android:name=".ActivitySearchResult"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>

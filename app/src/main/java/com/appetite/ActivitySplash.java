@@ -9,11 +9,25 @@
 package com.appetite;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.amazonaws.mobile.AWSMobileClient;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -24,6 +38,8 @@ import java.util.concurrent.CountDownLatch;
 public class ActivitySplash extends Activity {
     private final static String LOG_TAG = ActivitySplash.class.getSimpleName();
     private final CountDownLatch timeoutLatch = new CountDownLatch(1);
+    private final String tableName = "dima-mobilehub-516910810-RecipeName";
+    private ArrayList<String> recipeNameList = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +47,33 @@ public class ActivitySplash extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
+                    DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
+                    //Retrieve the name of the recipies from the DB, is not done anymore if already present
+                    //Are saved the sharedPreferences for the search
+                    ScanRequest scanRequest = new ScanRequest().withTableName(tableName);
+                    ScanResult result = dynamoDBClient.scan(scanRequest);
+                    for (Map<String, AttributeValue> item : result.getItems()) {
+                        String name = item.get("Name").getS();
+                        recipeNameList.add(name);
+                    }
+                    //Saving it in the shared preferences, they will be used to search recipies
+                    SharedPreferences sharedPref = getSharedPreferences("recipeNameList", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    Set<String> r = new HashSet<String>(recipeNameList);
+                    editor.putStringSet("recipeNameList", r);
+                    editor.apply();
+                } catch (RuntimeException e) {
+                    Log.e("ActivitySplash", "HTTP exception");
+                }
+            }
+        });
+        thread2.start();
 
         final Thread thread = new Thread(new Runnable() {
             public void run() {
