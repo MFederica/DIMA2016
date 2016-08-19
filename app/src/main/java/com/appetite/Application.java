@@ -12,6 +12,7 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.amazonaws.mobile.AWSMobileClient;
+import com.appetite.model.ShoppingListHelper;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -48,7 +49,19 @@ public class Application extends MultiDexApplication {
         ImageLoader.getInstance().init(config);
         // END - UNIVERSAL IMAGE LOADER SETUP
 
+        // SHOPPING LIST HELPER SETUP
+        ShoppingListHelper.getInstance(getApplicationContext());
+        // END - SHOPPING LIST HELPER SETUP
 
+        // TODO rimuovere: da qua (logger)
+        ShoppingListHelper slh = ShoppingListHelper.getInstance(getApplicationContext());
+        Log.d(LOG_TAG, "Instance of ShoppingListHelper contains "+ String.valueOf(slh.shoppingList.size()) + " items");
+        String string = "";
+        for (int i =0; i < slh.shoppingList.size(); i++) {
+            string.concat(" "+slh.shoppingList.get(i).getRecipe());
+        }
+        Log.d(LOG_TAG, "Instance of ShoppingListHelper contains recipes: "+ string);
+        //TODO rimuovere: fino a qua (logger)
     }
 
     private void initializeApplication() {

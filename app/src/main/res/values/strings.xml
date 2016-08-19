@@ -25,7 +25,8 @@
 
     <string name="servings_picker_done">done</string>
     <string name="fragment_recipeingredients_dialog_title">Servings</string>
-    <string name="fragment_recipeingredients_snackbar_message">Added to shopping list!</string>
+    <string name="fragment_recipeingredients_snackbar_add_message">Added to shopping list!</string>
+    <string name="fragment_recipeingredients_snackbar_remove_message">Removed from shopping list</string>
     <string name="fragment_recipeingredients_snackbar_action">view</string>
 
 

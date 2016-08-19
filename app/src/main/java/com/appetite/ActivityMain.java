@@ -53,6 +53,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private final static String LOG_TAG = ActivityMain.class.getSimpleName();
 
     public final static String RECIPE_SELECTED = "com.appetite.RECIPE";
+    public final static String FRAGMENT = "com.appetite.ActivityMain.FRAGMENT";
+    public final static String fileShoppingListName = "shopping_list";
 
     /**
      * Bundle key for saving/restoring the toolbar title.
@@ -95,7 +97,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
 
     @Override
-    protected void onCreate( Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Obtain a reference to the mobile client. It is created in the Application class,
         // but in case a custom Application class is not used, we initialize it here if necessary.
@@ -199,6 +201,25 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        //If an intent has been received, let's switch from HomeFragment to another one
+        Intent intent = getIntent();
+        String fragmentName = intent.getStringExtra(ActivityMain.FRAGMENT);
+        Log.i(LOG_TAG, "onCreate: (intent)" + fragmentName + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
+        if (fragmentName != null) {
+            android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+            Class fragmentClass;
+            Fragment fragment;
+            if (fragmentName.equals(FragmentShoppingList.class.getSimpleName())) {
+                Log.i(LOG_TAG, "onCreate (intent): " + FragmentShoppingList.class.getSimpleName());
+                fragmentClass = FragmentShoppingList.class;
+            } else {
+                fragmentClass = FragmentHome.class;
+            }
+            fragment = Fragment.instantiate(this, fragmentClass.getName());
+            fragmentTransaction.replace(R.id.main_fragment_container, fragment, fragmentClass.getSimpleName());
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
@@ -207,6 +228,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         // Clear back stack when navigating from the Nav Drawer.
         android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        Log.i(LOG_TAG, "onNavigationItemSelected: CANCELLATO IL BACK STACK");
 
         android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
         Class fragmentClass;

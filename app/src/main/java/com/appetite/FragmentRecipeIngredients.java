@@ -55,7 +55,7 @@ public class FragmentRecipeIngredients extends Fragment {
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static FragmentRecipeIngredients newInstance(Recipe recipe) {
-        Log.i(TAG, "newInstance: !!");
+        Log.i(TAG, "newInstance: ");
         FragmentRecipeIngredients fragment = new FragmentRecipeIngredients();
         Bundle args = new Bundle();
         //args.putInt(ARG_COLUMN_COUNT, columnCount);
@@ -106,7 +106,7 @@ public class FragmentRecipeIngredients extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             //TODO INTERFACCIA: decommenta 2/5 e cambia costruttore
             //recyclerView.setAdapter(new AdapterRecipeIngredients(DummyContent.ITEMS, mListener));
-            adapter = new AdapterRecipeIngredients(recipeIngredients, Integer.valueOf(currentServings));
+            adapter = new AdapterRecipeIngredients(getContext(), recipe, recipeIngredients, Integer.valueOf(currentServings));
             recyclerView.setAdapter(adapter);
         }
 
