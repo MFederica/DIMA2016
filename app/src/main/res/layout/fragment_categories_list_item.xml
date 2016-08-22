@@ -4,10 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
+    android:padding="1dp"
     android:clickable="true"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
@@ -22,7 +19,10 @@
     <TextView
         android:id="@+id/fragment_category_title"
         android:textColor="@color/title"
+        android:height="48dp"
         android:textSize="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:textStyle="normal"
         android:gravity="center"
         android:layout_below="@+id/fragment_category_image"

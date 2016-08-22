@@ -1,8 +1,9 @@
 package com.appetite.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class RecipeIngredient {
+public class RecipeIngredient implements Serializable {
 
     private String name;
     private String quantity;

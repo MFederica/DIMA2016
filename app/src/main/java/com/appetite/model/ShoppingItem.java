@@ -1,23 +1,32 @@
 package com.appetite.model;
 
+import android.util.Pair;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ShoppingItem implements Serializable{
+public class ShoppingItem implements Serializable {
 
     //private Recipe recipe;
     //private List<RecipeIngredient> ingredientsList;
     private String recipe;
-    private List<String> ingredientsList;
+    private int servings;
+    private Map<RecipeIngredient, Boolean> ingredientsMapping;
+    private List<RecipeIngredient> ingredientsList;
 
-    public ShoppingItem(Recipe recipe, List<RecipeIngredient> ingredientsList ) {
+    public ShoppingItem(Recipe recipe, int servings) {
         this.recipe = recipe.getName();
-        List<String> list = new ArrayList<>();
-        for(RecipeIngredient ri : ingredientsList) {
-            list.add(ri.getName());
+        this.servings = servings;
+        ingredientsMapping = new HashMap<>();
+        ingredientsList = new ArrayList<>();
+        for (int i = 0; i < recipe.getIngredient_name().size(); i++) {
+            RecipeIngredient ri = new RecipeIngredient(recipe.getIngredient_name().get(i), recipe.getIngredient_quantity().get(i), recipe.getIngredient_unit().get(i));
+            this.ingredientsMapping.put(ri, false);
+            this.ingredientsList.add(ri);
         }
-        this.ingredientsList = list;
     }
 /*
     public Recipe getRecipe() {
@@ -32,7 +41,20 @@ public class ShoppingItem implements Serializable{
         return recipe;
     }
 
-    public List<String> getIngredientsList() {
+    /**
+     * list of ingredients of the recipe.
+     *
+     * @return name of the ingredient and true (if already bought) or false (if we still have o buy it)
+     */
+    public Map<RecipeIngredient, Boolean> getIngredientsMapping() {
+        return ingredientsMapping;
+    }
+
+    public List<RecipeIngredient> getIngredientsList() {
         return ingredientsList;
+    }
+
+    public int getServings(){
+        return servings;
     }
 }

@@ -3,7 +3,9 @@ package com.appetite;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,7 @@ import android.widget.NumberPicker;
 //import com.dmfm.appetite.R;
 import com.appetite.model.Recipe;
 import com.appetite.model.RecipeIngredient;
+import com.appetite.model.ShoppingListHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,8 +142,41 @@ public class FragmentRecipeIngredients extends Fragment {
 
             }
         });
-
-
+        Button addToSLButton = (Button) view.findViewById(R.id.fragment_recipeingredients_add_to_shopping_list);
+        addToSLButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!(ShoppingListHelper.getInstance(getContext()).isInShoppingList(recipe))) {
+                    Snackbar snackbar = Snackbar.make(view, R.string.fragment_recipeingredients_snackbar_add_message, Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //Redirects the user to the FragmentShoppingList
+                            Intent intent = new Intent(view.getContext(), ActivityMain.class);
+                            intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
+                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                            view.getContext().startActivity(intent);
+                        }
+                    });
+                    snackbar.show();
+                    if (ShoppingListHelper.getInstance(getContext()).addRecipe(recipe, currentServings))
+                        ShoppingListHelper.saveShoppingList(getContext());
+                } else {
+                    Snackbar snackbar = Snackbar.make(view, R.string.fragment_recipeingredients_snackbar_already_added_message, Snackbar.LENGTH_LONG);
+                    snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //Redirects the user to the FragmentShoppingList
+                            Intent intent = new Intent(view.getContext(), ActivityMain.class);
+                            intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
+                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                            view.getContext().startActivity(intent);
+                        }
+                    });
+                    snackbar.show();
+                }
+            }
+        });
         return view;
     }
 

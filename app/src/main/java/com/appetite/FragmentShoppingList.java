@@ -22,6 +22,11 @@ import com.appetite.model.ShoppingListHelper;
  */
 public class FragmentShoppingList extends Fragment {
 
+    //TODO implementare la possibilità di cambiare il numero di servings nella shopping list
+    //TODO (o perlomeno mostrarlo perchè ora si moltiplica..)!!
+
+    //TODO fare un fragment di lista di ricette e poi una volta dentro vedere gli ingredienti comprati
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters

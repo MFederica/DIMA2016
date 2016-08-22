@@ -98,58 +98,26 @@ public class ShoppingListHelper implements Serializable {
         return null;
     }
 
-    /**
-     * Add an ingredient and its recipe (if they are not already in the shopping list)
-     * @param recipe
-     * @param recipeIngredient
-     * @return true, if it has been added; false, if it's already in the shopping list
-     */
-    public boolean addIngredient(Recipe recipe, RecipeIngredient recipeIngredient) {
-        for(ShoppingItem si : shoppingList) {
-            if(si.getRecipe().equals(recipe.getName())) {
-                if(!(si.getIngredientsList().contains(recipeIngredient.getName()))) {
-                    //if i'm here it's because I found the recipe in the list but not the ingredient
-                    si.getIngredientsList().add(recipeIngredient.getName());
-                    return true;
-                } else {
-                    //if i'm here it's because I found the recipe in the list and the ingredient
-                    return false;
-                }
-            }
-        }
-        //if i'm here it's because I haven't found the recipe in the list, so we add it
-        shoppingList.add(createShoppingItem(recipe, recipeIngredient));
-        return true;
+    public boolean addRecipe(Recipe recipe, int servings) {
+        return shoppingList.add(new ShoppingItem(recipe, servings));
     }
 
-    /**
-     * Removes an ingredient from the shopping list, if present
-     * @param recipe
-     * @param recipeIngredient
-     * @return true, if it has been removed; false, otherwise
-     */
-    public boolean removeIngredient(Recipe recipe, RecipeIngredient recipeIngredient) {
-        for(ShoppingItem si : shoppingList) {
-            if(si.getRecipe().equals(recipe.getName())) {
-                si.getIngredientsList().remove(recipeIngredient.getName());
-                if(si.getIngredientsList().size() == 0)
+    public boolean removeRecipe(ShoppingItem shoppingItem) {
+         for(ShoppingItem si : shoppingList) {
+            if(si.getRecipe().equals(shoppingItem.getRecipe())) {
                     shoppingList.remove(si);
                 return true;
             }
         }
-        //if i'm here it's because I haven't found the recipeIngredient in the list
+        //if i'm here it's because I haven't found the recipe in the list
         return false;
     }
 
-    /**
-     * Helper method that creates a shopping item
-     * @param recipe
-     * @param recipeIngredient
-     * @return
-     */
-    private ShoppingItem createShoppingItem(Recipe recipe, RecipeIngredient recipeIngredient) {
-        List ingredientsList = new ArrayList();
-        ingredientsList.add(recipeIngredient);
-        return new ShoppingItem(recipe, ingredientsList);
+    public void ingredientChecked(ShoppingItem shoppingItem, RecipeIngredient recipeIngredient, boolean checked) {
+        for(ShoppingItem si : shoppingList) {
+            if(si.getRecipe().equals(shoppingItem.getRecipe())) {
+                si.getIngredientsMapping().put(recipeIngredient, checked);
+            }
+        }
     }
 }

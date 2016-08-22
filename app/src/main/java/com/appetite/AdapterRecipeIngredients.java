@@ -75,66 +75,6 @@ public class AdapterRecipeIngredients extends RecyclerView.Adapter<AdapterRecipe
         } else {
             holder.mUnitView.setText(tempUnit);
         }
-        ShoppingItem si = ShoppingListHelper.getInstance(context).getShoppingItem(recipe);
-        if(si != null) {
-            if(si.getIngredientsList().contains(ingredientName)) {
-                holder.mCheckBox.setChecked(true);
-            } else {
-                holder.mCheckBox.setChecked(false);
-            }
-        } else {
-            holder.mCheckBox.setChecked(false);
-        }
-        holder.mCheckBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //TODO INTERFACCIA: decommenta 3/3
-                /*if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                    } */
-
-                // Is the view now checked?
-                boolean checked = ((CheckBox) view).isChecked();
-                // Check which checkbox was clicked
-                switch(view.getId()) {
-                    case R.id.fragment_recipeingredients_checkbox:
-                        if (checked) {
-                            Log.i(TAG, "onCheckboxClicked: " + ((TextView) ((View) view.getParent()).findViewById(R.id.fragment_recipeingredients_name)).getText());
-                            Snackbar snackbar = Snackbar.make(view, R.string.fragment_recipeingredients_snackbar_add_message, Snackbar.LENGTH_LONG);
-                            snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener(){
-                                @Override
-                                public void onClick(View view) {
-                                    //Redirects the user to the FragmentShoppingList
-                                    Intent intent = new Intent(view.getContext(), ActivityMain.class);
-                                    intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
-                                    view.getContext().startActivity(intent);
-                                }
-                            });
-                            snackbar.show();
-                            if(ShoppingListHelper.getInstance(context).addIngredient(recipe, holder.mItem))
-                                ShoppingListHelper.saveShoppingList(context);
-                        }
-                        else {
-                            Snackbar snackbar = Snackbar.make(view, R.string.fragment_recipeingredients_snackbar_remove_message, Snackbar.LENGTH_LONG);
-                            snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener(){
-                                @Override
-                                public void onClick(View view) {
-                                    //Redirects the user to the FragmentShoppingList
-                                    Intent intent = new Intent(view.getContext(), ActivityMain.class);
-                                    intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
-                                    view.getContext().startActivity(intent);
-                                }
-                            });
-                            snackbar.show();
-                            if(ShoppingListHelper.getInstance(context).removeIngredient(recipe, holder.mItem))
-                                ShoppingListHelper.saveShoppingList(context);
-                        }
-                        break;
-                }
-            }
-        });
     }
 
     @Override
@@ -148,7 +88,6 @@ public class AdapterRecipeIngredients extends RecyclerView.Adapter<AdapterRecipe
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final CheckBox mCheckBox;
         public final TextView mNameView;
         public final TextView mQuantityView;
         public final TextView mUnitView;
@@ -157,7 +96,6 @@ public class AdapterRecipeIngredients extends RecyclerView.Adapter<AdapterRecipe
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mCheckBox = (CheckBox) view.findViewById(R.id.fragment_recipeingredients_checkbox);
             mNameView = (TextView) view.findViewById(R.id.fragment_recipeingredients_name);
             mQuantityView = (TextView) view.findViewById(R.id.fragment_recipeingredients_quantity);
             mUnitView = (TextView) view.findViewById(R.id.fragment_recipeingredients_unit);
