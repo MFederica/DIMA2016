@@ -97,7 +97,7 @@ public class FragmentRecipeIngredients extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView");
-        final View view = inflater.inflate(R.layout.fragment_recipeingredients_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_recipe_ingredients_list, container, false);
         Button button = (Button) view.findViewById(R.id.fragment_recipeingredients_servings);
         button.setText(String.valueOf(currentServings));
 
@@ -116,7 +116,7 @@ public class FragmentRecipeIngredients extends Fragment {
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                final View viewServings = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_recipeingredients_servingsdialog, null);
+                final View viewServings = getLayoutInflater(savedInstanceState).inflate(R.layout.fragment_recipe_ingredients_servingsdialog, null);
 
                 final NumberPicker numberPicker = (NumberPicker) viewServings.findViewById(R.id.numberPicker);
                 numberPicker.setMinValue(1);

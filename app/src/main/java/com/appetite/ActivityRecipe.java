@@ -88,6 +88,32 @@ public class ActivityRecipe extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        fab.hide();
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                switch (position) {
+                    case 2:
+                        ((FloatingActionButton) findViewById(R.id.fab)).show();
+                        break;
+
+                    default:
+                        ((FloatingActionButton) findViewById(R.id.fab)).hide();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         setAppBarImage();
     }
@@ -177,7 +203,7 @@ public class ActivityRecipe extends AppCompatActivity {
                 case 1:
                     return FragmentRecipeIngredients.newInstance(recipeSelected);
                 case 2:
-                    return PlaceholderFragment.newInstance(position + 1);
+                    return FragmentRecipePreparation.newInstance(recipeSelected);
                 default:
                     Log.e("ActivityRecipe", "getItem: ERROR default in switch" );
                     return PlaceholderFragment.newInstance(position + 1);

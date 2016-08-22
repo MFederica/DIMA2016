@@ -1,22 +1,16 @@
 package com.appetite;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 //TODO INTERFACCIA: decommenta 1/3
 //import com.appetite.FragmentRecipeIngredients.OnListFragmentInteractionListener;
 import com.appetite.model.Recipe;
 import com.appetite.model.RecipeIngredient;
-import com.appetite.model.ShoppingItem;
-import com.appetite.model.ShoppingListHelper;
 
 import java.util.List;
 
@@ -52,7 +46,7 @@ public class AdapterRecipeIngredients extends RecyclerView.Adapter<AdapterRecipe
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_recipeingredients_list_item, parent, false);
+                .inflate(R.layout.fragment_recipe_ingredients_list_item, parent, false);
         return new ViewHolder(view);
     }
 

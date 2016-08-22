@@ -33,5 +33,5 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context="com.appetite.FragmentRecipeIngredients"
-    tools:listitem="@layout/fragment_recipeingredients_list_item" />
+    tools:listitem="@layout/fragment_recipe_ingredients_list_item" />
 </LinearLayout>

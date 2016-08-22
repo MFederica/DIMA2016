@@ -152,7 +152,7 @@ public class Recipe implements Parcelable {
 
     @DynamoDBAttribute(attributeName = "Step")
     public List<String> getStep() {return step;}
-    public void setStep(List<String> ingredient_unit) {this.step = step;}
+    public void setStep(List<String> step) {this.step = step;}
 
     @Override
     public int describeContents() {
