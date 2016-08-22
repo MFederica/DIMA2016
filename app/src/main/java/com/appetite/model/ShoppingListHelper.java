@@ -133,7 +133,7 @@ public class ShoppingListHelper implements Serializable {
             if(si.getRecipe().equals(recipe.getName())) {
                 si.getIngredientsList().remove(recipeIngredient.getName());
                 if(si.getIngredientsList().size() == 0)
-                    shoppingList.remove(si); //TODO checkare se crea casini!!
+                    shoppingList.remove(si);
                 return true;
             }
         }

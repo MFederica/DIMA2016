@@ -8,24 +8,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.appetite.FragmentShoppingList.OnListFragmentInteractionListener;
+import com.appetite.FragmentShoppingList.OnShoppingListFragmentInteractionListener;
 import com.appetite.model.ShoppingItem;
 
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ShoppingItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnShoppingListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingList.ViewHolder> {
 
     private final List<ShoppingItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnShoppingListFragmentInteractionListener mListener;
 
     private Context context;
 
-    public AdapterShoppingList(Context context, List<ShoppingItem> items, OnListFragmentInteractionListener listener) {
+    public AdapterShoppingList(Context context, List<ShoppingItem> items, OnShoppingListFragmentInteractionListener listener) {
         this.context = context;
         mValues = items;
         mListener = listener;
@@ -51,7 +51,7 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onShoppingListFragmentInteraction(holder.mItem);
                 }
             }
         });

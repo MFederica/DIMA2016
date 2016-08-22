@@ -12,6 +12,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -38,14 +39,21 @@ import android.widget.Toast;
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.appetite.model.Recipe;
+import com.appetite.model.ShoppingItem;
 import com.appetite.style.ArrayAdapterSearchView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener, FragmentShoppingList.OnShoppingListFragmentInteractionListener,
         SearchView.OnQueryTextListener{
     /**
      * Class name for log messages.
@@ -94,7 +102,12 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     private ArrayList<String> recipeNameList;
 
+    //Variables for the db
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
+    DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
+    //Constants TODO: Create a Class that contans all the constants needed (ci sono pure in FragmentRecipesList)
+    private final String recipeTable = "dima-mobilehub-516910810-Recipe";
+    private final String bucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -392,6 +405,57 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, ActivityRecipe.class);
         intent.putExtra(RECIPE_SELECTED, recipeSelected);
         startActivity(intent);
+    }
+
+    @Override
+    public void onShoppingListFragmentInteraction(ShoppingItem item) {
+        Log.e(LOG_TAG, "onShoppingListFragmentInteraction: SONO DENTRO ACTIVITYMANIN");
+        RecipeData data = new RecipeData();
+        data.execute(item);
+    }
+
+    /**
+     * Private class that performs task of retrieving data in background
+     */
+    private class RecipeData extends AsyncTask<ShoppingItem, Void, Recipe> {
+
+        protected RecipeData() {
+
+        }
+        /**
+         * This method runs in background to retrieve data from database
+         * @param items
+         * @return
+         */
+        public Recipe doInBackground(ShoppingItem...items) {
+            Log.e(LOG_TAG, "doInBackground: SONO DENTRO ACTIVITYMAIN BACKGROUND");
+            Recipe recipeItem = new Recipe();
+            recipeItem.setName(items[0].getRecipe());
+            DynamoDBQueryExpression<Recipe> queryExpression = new DynamoDBQueryExpression<Recipe>()
+                    .withHashKeyValues(recipeItem);
+
+            List<Recipe> result = mapper.query(Recipe.class, queryExpression);
+            if(result.size() != 0) {
+                String categorySelectedName = result.get(0).getCategory();
+                String imageUri = bucket + categorySelectedName + "/" + result.get(0).getImage() + ".jpg";
+                result.get(0).setImage(imageUri);
+                return result.get(0);
+            }  else {
+                return null;
+            }
+        }
+
+        protected void onPostExecute(Recipe result) {
+            if(result != null) {
+                Log.e(LOG_TAG, "onShoppingListFragmentInteraction: recipe selected from the shopping list FOUND in DB, called " + result.getName());
+                //..we start its activity
+                Intent intent = new Intent(getApplication(), ActivityRecipe.class);
+                intent.putExtra(RECIPE_SELECTED, result);
+                startActivity(intent);
+            } else {
+                Log.e(LOG_TAG, "onShoppingListFragmentInteraction: recipe selected from the shopping list not found in DB" );
+            }
+        }
     }
 
 
