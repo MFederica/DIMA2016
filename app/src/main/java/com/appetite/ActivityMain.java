@@ -105,7 +105,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     //Variables for the db
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
     DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
-    //Constants TODO: Create a Class that contans all the constants needed (ci sono pure in FragmentRecipesList)
+    //Constants TODO: Create a Class that contains all the constants needed (ci sono pure in FragmentRecipesList)
     private final String recipeTable = "dima-mobilehub-516910810-Recipe";
     private final String bucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
 
@@ -135,14 +135,25 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             // we could end up with overlapping fragments.
             if (savedInstanceState == null) {
                 // Create a new Fragment to be placed in the activity layout
-                Class fragmentClass = FragmentHome.class;
-                Fragment fragmentHome = Fragment.instantiate(this, fragmentClass.getName());
+                Class fragmentClass = null;
+                Fragment fragment = null;
                 // In case this activity was started with special instructions from an
-                // Intent, pass the Intent's extras to the fragment as arguments
-                fragmentHome.setArguments(getIntent().getExtras());
+                // Intent, pass the Intent's extras to the fragment as arguments and instantiate
+                // the right fragment
+                if (getIntent().getStringExtra(FRAGMENT) != null) {
+                    if (getIntent().getStringExtra(FRAGMENT).equals(FragmentShoppingList.class.getSimpleName())) {
+                        Log.i(LOG_TAG, "onCreate (intent): " + FragmentShoppingList.class.getSimpleName());
+                        fragmentClass = FragmentShoppingList.class;
+                        fragment = Fragment.instantiate(this, fragmentClass.getName());
+                    }
+                } else {
+                    fragmentClass = FragmentHome.class;
+                    fragment = Fragment.instantiate(this, fragmentClass.getName());
+                    fragment.setArguments(getIntent().getExtras());
+                }
                 // Add the fragment to the 'fragment_container' FrameLayout
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.main_fragment_container, fragmentHome, fragmentClass.getSimpleName()).commit();
+                        .add(R.id.main_fragment_container, fragment, fragmentClass.getSimpleName()).commit();
             }
         }
 
@@ -213,26 +224,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
-        //If an intent has been received, let's switch from HomeFragment to another one
-        Intent intent = getIntent();
-        String fragmentName = intent.getStringExtra(ActivityMain.FRAGMENT);
-        Log.i(LOG_TAG, "onCreate: (intent)" + fragmentName + " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
-        if (fragmentName != null) {
-            android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
-            Class fragmentClass;
-            Fragment fragment;
-            if (fragmentName.equals(FragmentShoppingList.class.getSimpleName())) {
-                Log.i(LOG_TAG, "onCreate (intent): " + FragmentShoppingList.class.getSimpleName());
-                fragmentClass = FragmentShoppingList.class;
-            } else {
-                fragmentClass = FragmentHome.class;
-            }
-            fragment = Fragment.instantiate(this, fragmentClass.getName());
-            fragmentTransaction.replace(R.id.main_fragment_container, fragment, fragmentClass.getSimpleName());
-            fragmentTransaction.commit();
-        }
     }
 
     @Override
