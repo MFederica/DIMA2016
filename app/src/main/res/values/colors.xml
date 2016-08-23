@@ -19,4 +19,5 @@
     <!-- Added for displaying the recycle view -->
     <color name="year">#999999</color>
     <color name="title">#222222</color>
+
 </resources>

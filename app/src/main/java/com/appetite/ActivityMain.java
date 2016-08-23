@@ -8,12 +8,14 @@
 //
 package com.appetite;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -26,35 +28,28 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.ArraySet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingItem;
-import com.appetite.style.ArrayAdapterSearchView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener, FragmentShoppingList.OnShoppingListFragmentInteractionListener,
-        SearchView.OnQueryTextListener{
+public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
+        FragmentShoppingList.OnShoppingListFragmentInteractionListener{
     /**
      * Class name for log messages.
      */
@@ -84,6 +79,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle mDrawerToggle;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+    private SearchView searchView;
+    private MenuItem searchMenuItem;
 
     /**
      * The navigation view for the drawer item for filters.
@@ -102,7 +99,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     private ArrayList<String> recipeNameList;
 
-    //Variables for the db
+    private SimpleCursorAdapter mAdapter;
+
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
     DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
     //Constants TODO: Create a Class that contains all the constants needed (ci sono pure in FragmentRecipesList)
@@ -159,6 +157,12 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Set things for the research
+        final String[] from = new String[] {"recipeName"};
+        final int[] to = new int[] {android.R.id.text1};
+        mAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,null, from, to,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar,
@@ -312,12 +316,73 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         // Associate searchable configuration with the SearchView
         // Add SearchWidget.
-        SearchManager searchManager = (SearchManager) getSystemService( Context.SEARCH_SERVICE );
-        SearchView searchView = (SearchView) menu.findItem( R.id.action_search ).getActionView();
-        searchView.setSearchableInfo( searchManager.getSearchableInfo( getComponentName() ) );
+        searchView = (SearchView) MenuItemCompat
+                .getActionView(menu.findItem(R.id.search));
+        searchView.setQueryHint("Search recipe..");
+        searchView.setSuggestionsAdapter(mAdapter);
+        searchView.setIconifiedByDefault(true);
+        searchMenuItem = menu.findItem(R.id.search);
+
+        // Getting selected (clicked) item suggestions
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionClick(int position) {
+                Cursor searchCursor = mAdapter.getCursor();
+                String selected = searchCursor.toString();
+                if(searchCursor.moveToPosition(position)) {
+                    selected = searchCursor.getString(1);
+                }
+                RecipeData data = new RecipeData(selected);
+                data.execute("");
+                if (searchView != null) {
+                    searchView.setIconified(true);
+
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                Log.e("SearchView:", "inside onQueryTextSubmit" + s);
+                RecipeData data = new RecipeData(s);
+                data.execute("");
+                if (searchView != null) {
+                    searchView.setIconified(true);
+
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                populateAdapter(s);
+                return false;
+            }
+        });
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if(!queryTextFocused) {
+                    searchMenuItem.collapseActionView();
+                    searchView.setQuery("", false);
+                }
+            }
+        });
+        super.onPrepareOptionsMenu(menu);
         return true;
     }
 
@@ -401,27 +466,43 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public void onShoppingListFragmentInteraction(ShoppingItem item) {
         Log.e(LOG_TAG, "onShoppingListFragmentInteraction: SONO DENTRO ACTIVITYMANIN");
-        RecipeData data = new RecipeData();
-        data.execute(item);
+        RecipeData data = new RecipeData(item.getRecipe());
+        data.execute("");
+    }
+
+    /**
+     * TODO: make the search more general using the single words
+     * @param query
+     */
+    private void populateAdapter(String query) {
+        //TODO: leggi sopra e implementalo qui
+        final MatrixCursor c = new MatrixCursor(new String[]{ BaseColumns._ID, "recipeName" });
+        for (int i=0; i< recipeNameList.size(); i++) {
+            if (recipeNameList.get(i).toLowerCase().startsWith(query.toLowerCase()))
+                c.addRow(new Object[] {i, recipeNameList.get(i)});
+        }
+        mAdapter.changeCursor(c);
     }
 
     /**
      * Private class that performs task of retrieving data in background
      */
-    private class RecipeData extends AsyncTask<ShoppingItem, Void, Recipe> {
+    private class RecipeData extends AsyncTask<String, Void, Recipe> {
 
-        protected RecipeData() {
+        String recipe;
 
+        protected RecipeData(String recipe) {
+            this.recipe = wellFormattedString(recipe);
         }
         /**
          * This method runs in background to retrieve data from database
-         * @param items
+         * @param
          * @return
          */
-        public Recipe doInBackground(ShoppingItem...items) {
+        public Recipe doInBackground(String...strings) {
             Log.e(LOG_TAG, "doInBackground: SONO DENTRO ACTIVITYMAIN BACKGROUND");
             Recipe recipeItem = new Recipe();
-            recipeItem.setName(items[0].getRecipe());
+            recipeItem.setName(recipe);
             DynamoDBQueryExpression<Recipe> queryExpression = new DynamoDBQueryExpression<Recipe>()
                     .withHashKeyValues(recipeItem);
 
@@ -475,17 +556,18 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     }
 
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-
-
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-
-
-        return false;
+    /**
+     * Needed to format correct strings to pass to the search query
+     * @param s
+     * @return
+     */
+    private String wellFormattedString(String s) {
+        String[] temp = s.split(" ");
+        String output = Character.toUpperCase(temp[0].charAt(0)) + temp[0].substring(1) + " ";
+        for(int i = 1; i < temp.length; i++) {
+            output = output.concat(temp[i] + " ");
+        }
+        output = output.trim();
+        return output;
     }
 }
