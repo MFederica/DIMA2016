@@ -35,6 +35,8 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 
 public class ActivityRecipe extends AppCompatActivity {
+    private final static String TAG = ActivityRecipe.class.getSimpleName();
+    static final String RECIPE = "com.appetite.ActivityRecipe.RECIPE";
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -57,6 +59,7 @@ public class ActivityRecipe extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG, "onCreate: " );
         super.onCreate(savedInstanceState);
 
         // Get the message from the intent
@@ -84,8 +87,9 @@ public class ActivityRecipe extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(view.getContext(), ActivityCooking.class);
+                intent.putExtra(ActivityMain.RECIPE_SELECTED, recipeSelected);
+                startActivity(intent);
             }
         });
         fab.hide();
@@ -118,10 +122,17 @@ public class ActivityRecipe extends AppCompatActivity {
         setAppBarImage();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "onPause: ");
+    }
+
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.e(TAG, "onCreateOptionsMenu: " );
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_activity_recipe, menu);
         return true;
@@ -129,6 +140,7 @@ public class ActivityRecipe extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.e(TAG, "onOptionsItemSelected: " );
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
