@@ -53,9 +53,9 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     /**
      * Class name for log messages.
      */
-    private final static String LOG_TAG = ActivityMain.class.getSimpleName();
+    private final static String TAG = ActivityMain.class.getSimpleName();
 
-    public final static String RECIPE_SELECTED = "com.appetite.RECIPE";
+    public final static String RECIPE_SELECTED = "com.appetite.ActivityMain.RECIPE_SELECTED";
     public final static String FRAGMENT = "com.appetite.ActivityMain.FRAGMENT";
     public final static String fileShoppingListName = "shopping_list";
 
@@ -81,6 +81,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private CharSequence mTitle;
     private SearchView searchView;
     private MenuItem searchMenuItem;
+    private boolean isSearchViewOpen;
 
     /**
      * The navigation view for the drawer item for filters.
@@ -101,6 +102,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     private SimpleCursorAdapter mAdapter;
 
+    private String query = "";
+
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
     DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
     //Constants TODO: Create a Class that contains all the constants needed (ci sono pure in FragmentRecipesList)
@@ -109,6 +112,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG, "onCreate: " );
         super.onCreate(savedInstanceState);
         // Obtain a reference to the mobile client. It is created in the Application class,
         // but in case a custom Application class is not used, we initialize it here if necessary.
@@ -140,7 +144,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 // the right fragment
                 if (getIntent().getStringExtra(FRAGMENT) != null) {
                     if (getIntent().getStringExtra(FRAGMENT).equals(FragmentShoppingList.class.getSimpleName())) {
-                        Log.i(LOG_TAG, "onCreate (intent): " + FragmentShoppingList.class.getSimpleName());
+                        Log.i(TAG, "onCreate (intent): " + FragmentShoppingList.class.getSimpleName());
                         fragmentClass = FragmentShoppingList.class;
                         fragment = Fragment.instantiate(this, fragmentClass.getName());
                     }
@@ -236,7 +240,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         // Clear back stack when navigating from the Nav Drawer.
         android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        Log.i(LOG_TAG, "onNavigationItemSelected: CANCELLATO IL BACK STACK");
+        Log.i(TAG, "onNavigationItemSelected: CANCELLATO IL BACK STACK");
 
         android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
         Class fragmentClass;
@@ -279,13 +283,15 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
         final FragmentManager fragmentManager = this.getSupportFragmentManager();
-        Log.e(LOG_TAG, "onBackPressed: BackStackEntryCount = " + fragmentManager.getBackStackEntryCount());
+        Log.e(TAG, "onBackPressed: BackStackEntryCount = " + fragmentManager.getBackStackEntryCount());
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
             return;
         }
         if (fragmentManager.getBackStackEntryCount() == 0) {
+            Log.e(TAG, "onBackPressed: entry count = 0");
             if (fragmentManager.findFragmentByTag(FragmentHome.class.getSimpleName()) == null) {
+                Log.e(TAG, "onBackPressed: inside getsimple name");
                 final Class fragmentClass = FragmentHome.class;
                 // if we aren't on the home fragment, navigate home.
                 final Fragment fragment = Fragment.instantiate(this, fragmentClass.getName());
@@ -308,6 +314,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 return;
             }
         }
+        Log.e(TAG, "onBackPressed: outside everything, at the end");
         super.onBackPressed();
 
     }
@@ -315,6 +322,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        Log.e(TAG, "onCreateOptionsMenu: ");
         getMenuInflater().inflate(R.menu.activity_main, menu);
         super.onCreateOptionsMenu(menu);
         return true;
@@ -324,12 +332,18 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Associate searchable configuration with the SearchView
         // Add SearchWidget.
+        Log.e(TAG, "onPrepareOptionsMenu: ");
         searchView = (SearchView) MenuItemCompat
                 .getActionView(menu.findItem(R.id.search));
         searchView.setQueryHint("Search recipe..");
         searchView.setSuggestionsAdapter(mAdapter);
         searchView.setIconifiedByDefault(true);
+        searchView.setMaxWidth( Integer.MAX_VALUE );
         searchMenuItem = menu.findItem(R.id.search);
+        if(!query.equals("")) {
+            searchMenuItem.expandActionView();
+            searchView.setQuery(query, false);
+        }
 
         // Getting selected (clicked) item suggestions
         searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
@@ -403,19 +417,52 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onResume() {
+        Log.e(TAG, "onResume: ");
         super.onResume();
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+        if(navigationView.getMenu().findItem(R.id.search)!=null) {
+        searchView = (SearchView) MenuItemCompat
+                .getActionView(navigationView.getMenu().findItem(R.id.search));
+        searchMenuItem = navigationView.getMenu().findItem(R.id.search);
+        }
+
+        if(searchMenuItem!= null && searchView!=null) {
+            searchMenuItem.collapseActionView();
+        }
         final AWSMobileClient awsMobileClient = AWSMobileClient.defaultMobileClient();
     }
 
     @Override
     protected void onPause() {
+        Log.e(TAG, "onPause: ");
         super.onPause();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        // state for the first SearchView
+        isSearchViewOpen = searchMenuItem.isActionViewExpanded();
+        Log.e(TAG, "SearchView, onSaveInstanca" + isSearchViewOpen);
+        bundle.putString("search", searchView.getQuery().toString());
+        super.onSaveInstanceState(bundle);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.e(TAG, "searchView onRestoreInstanceState " + isSearchViewOpen);
+        // properly set the state to balance Android's own restore mechanism
+        if(isSearchViewOpen) {
+            searchMenuItem.expandActionView();
+        }
+        query = savedInstanceState.getString("search");
     }
 
     @Override
     public void onCategorySelected(String categorySelectedName) {
         // The user selected a category from FragmentCategoriesList
-        Log.e(LOG_TAG, "onCategorySelected: " + categorySelectedName);
+        Log.e(TAG, "onCategorySelected: " + categorySelectedName);
 
         // Do something here to display that article
 
@@ -456,7 +503,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     public void onRecipeSelected(Recipe recipeSelected) {
         // The user selected a recipe from FragmentRecipesList
-        Log.e(LOG_TAG, "onRecipeSelected: " + recipeSelected.getName());
+        Log.e(TAG, "onRecipeSelected: " + recipeSelected.getName());
 
         Intent intent = new Intent(this, ActivityRecipe.class);
         intent.putExtra(RECIPE_SELECTED, recipeSelected);
@@ -465,7 +512,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onShoppingListFragmentInteraction(ShoppingItem item) {
-        Log.e(LOG_TAG, "onShoppingListFragmentInteraction: SONO DENTRO ACTIVITYMANIN");
+        Log.e(TAG, "onShoppingListFragmentInteraction: SONO DENTRO ACTIVITYMANIN");
         RecipeData data = new RecipeData(item.getRecipe());
         data.execute("");
     }
@@ -500,7 +547,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
          * @return
          */
         public Recipe doInBackground(String...strings) {
-            Log.e(LOG_TAG, "doInBackground: SONO DENTRO ACTIVITYMAIN BACKGROUND");
+            Log.e(TAG, "doInBackground: SONO DENTRO ACTIVITYMAIN BACKGROUND");
             Recipe recipeItem = new Recipe();
             recipeItem.setName(recipe);
             DynamoDBQueryExpression<Recipe> queryExpression = new DynamoDBQueryExpression<Recipe>()
@@ -519,13 +566,13 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         protected void onPostExecute(Recipe result) {
             if(result != null) {
-                Log.e(LOG_TAG, "onShoppingListFragmentInteraction: recipe selected from the shopping list FOUND in DB, called " + result.getName());
+                Log.e(TAG, "onShoppingListFragmentInteraction: recipe selected from the shopping list FOUND in DB, called " + result.getName());
                 //..we start its activity
                 Intent intent = new Intent(getApplication(), ActivityRecipe.class);
                 intent.putExtra(RECIPE_SELECTED, result);
                 startActivity(intent);
             } else {
-                Log.e(LOG_TAG, "onShoppingListFragmentInteraction: recipe selected from the shopping list not found in DB" );
+                Log.e(TAG, "onShoppingListFragmentInteraction: recipe selected from the shopping list not found in DB" );
             }
         }
     }
@@ -554,7 +601,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         });
         thread2.start();
     }
-
 
     /**
      * Needed to format correct strings to pass to the search query
