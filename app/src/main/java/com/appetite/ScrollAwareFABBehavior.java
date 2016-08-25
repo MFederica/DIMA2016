@@ -39,13 +39,13 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
         // TODO Auto-generated method stub
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed,
                 dxUnconsumed, dyUnconsumed);
-        Log.d(TAG, "onNestedScroll called");
-        if (dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
-            Log.d(TAG, "child.hide()");
-            child.hide();
-        } else if (dyConsumed < 0 && child.getVisibility() != View.VISIBLE) {
-            Log.d(TAG, "child.show()");
-            child.show();
-        }
+        //Log.d(TAG, "onNestedScroll called, dyConsumed = " + String.valueOf(dyConsumed) + ", dyUnconsumed = "+ dyUnconsumed);
+            if (dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
+                Log.d(TAG, "child.hide()");
+                child.hide();
+            } else if ((dyConsumed < 0 || dyUnconsumed < 0 ) && child.getVisibility() != View.VISIBLE) {
+                Log.d(TAG, "child.show()");
+                child.show();
+            }
     }
 }

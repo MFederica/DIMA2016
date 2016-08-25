@@ -2,6 +2,7 @@ package com.appetite;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -83,7 +84,7 @@ public class ActivityRecipe extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,13 +103,18 @@ public class ActivityRecipe extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-
+                CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
                 switch (position) {
                     case 2:
+
+                        p.setBehavior(new ScrollAwareFABBehavior(getApplicationContext(), null));
+                        fab.setLayoutParams(p);
                         ((FloatingActionButton) findViewById(R.id.fab)).show();
                         break;
 
                     default:
+                        p.setBehavior(null);
+                        fab.setLayoutParams(p);
                         ((FloatingActionButton) findViewById(R.id.fab)).hide();
                         break;
                 }
