@@ -113,6 +113,9 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         if (initSTT() == false) {
             Log.e(TAG, "onCreate: Error: no authentication credentials/token available, please enter your authentication information");
         }
+
+        mHandler = new Handler();
+        displayStatus("Not connected");
     }
     
     @Override
@@ -124,6 +127,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
             mRecognitionResults = "";
             SpeechToText.sharedInstance().setModel(voiceModel);
             Log.d(TAG, "onCreate: connecting to the STT service...");
+            displayStatus("connecting to the STT service...");
             // start recognition
             new AsyncTask<Void, Void, Void>(){
                 @Override
@@ -137,11 +141,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
 
     @Override
     protected void onPause() {
-        if (mState == ConnectionState.CONNECTED) {
-            mState = ConnectionState.IDLE;
-            Log.d(TAG, "onClickRecord: CONNECTED -> IDLE");
-            SpeechToText.sharedInstance().stopRecognition();
-        }
+        stopRecognition();
         super.onPause(); //TODO sopra o sotto?
     }
 
@@ -250,6 +250,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     public void onOpen() {
         Log.d(TAG, "onOpen");
         Log.d(TAG, "onOpen: successfully connected to the STT service");
+        displayStatus("successfully connected to the STT service");
         mState = ConnectionState.CONNECTED;
     }
 
@@ -262,6 +263,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     public void onClose(int code, String reason, boolean remote) {
         Log.d(TAG, "onClose, code: " + code + " reason: " + reason);
         Log.d(TAG, "onClose: connection closed");
+        displayStatus("connection closed");
         mState = ConnectionState.IDLE;
     }
 
@@ -288,14 +290,16 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                     if (model.startsWith("ja-JP") || model.startsWith("zh-CN")) {
                         str = str.replaceAll("\\s+","");
                     }
-                    String strFormatted = Character.toUpperCase(str.charAt(0)) + str.substring(1);
-                    if (obj.getString("final").equals("true")) {
-                        String stopMarker = (model.startsWith("ja-JP") || model.startsWith("zh-CN")) ? "。" : ". ";
-                        mRecognitionResults += strFormatted.substring(0,strFormatted.length()-1) + stopMarker;
+                    // String strFormatted = Character.toUpperCase(str.charAt(0)) + str.substring(1);
 
-                        Log.d(TAG, "onMessage: mRecognitionResults");
+                    if (obj.getString("final").equals("true")) {
+                        // String stopMarker = (model.startsWith("ja-JP") || model.startsWith("zh-CN")) ? "。" : ". ";
+                        // mRecognitionResults = strFormatted.substring(0,strFormatted.length()-1) + stopMarker; //TODO prima era +=
+                        // Get a handler that can be used to post to the main thread
+                        checkCommand(str);
+                        Log.d(TAG, "onMessage     FINAL: " + str);
                     } else {
-                        Log.d(TAG, "onMessage: "+ mRecognitionResults + strFormatted);
+                        // Log.d(TAG, "onMessage NOT FINAL: "+ mRecognitionResults + strFormatted);
                     }
                     break;
                 }
@@ -309,7 +313,70 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         }
     }
 
+    private void displayStatus(final String status) {
+        final Runnable runnableUi = new Runnable(){
+            @Override
+            public void run() {
+                TextView textResult = (TextView)findViewById(R.id.sttStatus);
+                textResult.setText(status);
+            }
+        };
+        new Thread(){
+            public void run(){
+                mHandler.post(runnableUi);
+            }
+        }.start();
+    }
+
     public void onAmplitude(double amplitude, double volume) {
         //Logger.e(TAG, "amplitude=" + amplitude + ", volume=" + volume);
     }
+
+    public void stopRecognition() {
+        if (mState == ConnectionState.CONNECTED) {
+            mState = ConnectionState.IDLE;
+            Log.d(TAG, "onClickRecord: CONNECTED -> IDLE");
+            SpeechToText.sharedInstance().stopRecognition();
+        }
+    }
+
+    private void checkCommand(final String result) {
+        if (result.contains(getResources().getString(R.string.STT_command_NEXT_1)) || result.contains(getResources().getString(R.string.STT_command_NEXT_2))) {
+            Log.e(TAG, "checkCommands: NEXT" );
+            int currentItem = mViewPager.getCurrentItem();
+            if(currentItem < mSectionsPagerAdapter.getCount())
+                changeStep(currentItem + 1);
+
+        } else if (result.contains(getResources().getString(R.string.STT_command_BACK_1)) || result.contains(getResources().getString(R.string.STT_command_BACK_2))) {
+            Log.e(TAG, "checkCommands: BACK" );
+            int currentItem = mViewPager.getCurrentItem();
+            if(currentItem > 0)
+                changeStep(currentItem - 1);
+
+        } else if (result.contains(getResources().getString(R.string.STT_command_START_TIMER))) {
+            Log.e(TAG, "checkCommands: START TIMER" );
+
+        } else if (result.contains(getResources().getString(R.string.STT_command_END_TIMER))) {
+            Log.e(TAG, "checkCommands: END TIMER" );
+
+        } else if (result.contains(getResources().getString(R.string.STT_command_STOP_LISTENING))) {
+            stopRecognition();
+            Log.e(TAG, "checkCommands: STOP LISTENING" );
+        }
+    }
+
+    private void changeStep(final int position) {
+        final Runnable runnableUi = new Runnable(){
+            @Override
+            public void run() {
+                mViewPager.setCurrentItem(position);
+            }
+        };
+        new Thread(){
+            public void run(){
+                mHandler.post(runnableUi);
+            }
+        }.start();
+    }
+
 }
