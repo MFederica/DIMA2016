@@ -58,7 +58,7 @@ public class FragmentRecipeIngredients extends Fragment {
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static FragmentRecipeIngredients newInstance(Recipe recipe) {
-        Log.i(TAG, "newInstance: ");
+        Log.d(TAG, "newInstance: ");
         FragmentRecipeIngredients fragment = new FragmentRecipeIngredients();
         Bundle args = new Bundle();
         //args.putInt(ARG_COLUMN_COUNT, columnCount);
@@ -70,20 +70,20 @@ public class FragmentRecipeIngredients extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(this.toString(), "onCreate");
+        Log.d(this.toString(), "onCreate");
         if (getArguments() != null) {
             //mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             recipe = getArguments().getParcelable(ARG_RECIPE);
-            Log.i(TAG, "onCreate: received argument: "+String.valueOf(getArguments().getInt(ARG_CURRENT_SERVINGS)));
+            Log.d(TAG, "onCreate: received argument: "+String.valueOf(getArguments().getInt(ARG_CURRENT_SERVINGS)));
 
             if (savedInstanceState != null) {
                 // Restore value of members from saved state
                 currentServings = savedInstanceState.getInt(ARG_CURRENT_SERVINGS);
-                Log.i(TAG, "onCreate: from savedInstanceState: "+String.valueOf(currentServings));
+                Log.d(TAG, "onCreate: from savedInstanceState: "+String.valueOf(currentServings));
             }
             else {
                 currentServings = Integer.valueOf(recipe.getAmount());
-                Log.i(TAG, "onCreate: from RECIPE: "+String.valueOf(currentServings));
+                Log.d(TAG, "onCreate: from RECIPE: "+String.valueOf(currentServings));
             }
 
             for(int i=0; i< recipe.getIngredient_name().size(); i++) {
@@ -96,7 +96,7 @@ public class FragmentRecipeIngredients extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              final Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView");
+        Log.d(TAG, "onCreateView");
         final View view = inflater.inflate(R.layout.fragment_recipe_ingredients_list, container, false);
         Button button = (Button) view.findViewById(R.id.fragment_recipeingredients_servings);
         button.setText(String.valueOf(currentServings));
@@ -134,7 +134,7 @@ public class FragmentRecipeIngredients extends Fragment {
                                 adapter.setAmount(currentServings);
                                 adapter.notifyDataSetChanged();
                                 ((Button) view.findViewById(R.id.fragment_recipeingredients_servings)).setText(String.valueOf(currentServings));
-                                Log.i(TAG, "onClick (numberPicker): currentServings = "+String.valueOf(currentServings));
+                                Log.d(TAG, "onClick (numberPicker): currentServings = "+String.valueOf(currentServings));
                             }
                         });
                 // Create the AlertDialog object and return it
@@ -201,9 +201,9 @@ public class FragmentRecipeIngredients extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        Log.i(TAG, "onSaveInstanceState: i'm going to save: "+ String.valueOf(savedInstanceState.getInt(ARG_CURRENT_SERVINGS)));
+        Log.d(TAG, "onSaveInstanceState: i'm going to save: "+ String.valueOf(savedInstanceState.getInt(ARG_CURRENT_SERVINGS)));
         savedInstanceState.putInt(ARG_CURRENT_SERVINGS, currentServings);
-        Log.i(TAG, "onSaveInstanceState: i've just saved: "+ String.valueOf(savedInstanceState.getInt(ARG_CURRENT_SERVINGS)));
+        Log.d(TAG, "onSaveInstanceState: i've just saved: "+ String.valueOf(savedInstanceState.getInt(ARG_CURRENT_SERVINGS)));
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }

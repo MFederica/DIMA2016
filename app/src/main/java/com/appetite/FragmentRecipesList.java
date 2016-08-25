@@ -214,7 +214,7 @@ public class FragmentRecipesList extends Fragment {
                 for (Recipe item : result) {
                     //Get all attributes from the DB
                     //modify the image uri , save it back and save in list
-                    String imageUri = bucket + categorySelectedName + "/" + item.getImage() + ".jpg";
+                    String imageUri = categorySelectedName + "/" + item.getImage() + ".jpg";
                     item.setImage(imageUri);
                     recipesList.add(item);
                 }

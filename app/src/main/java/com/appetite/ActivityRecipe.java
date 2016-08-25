@@ -92,6 +92,7 @@ public class ActivityRecipe extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         fab.hide();
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -244,12 +245,13 @@ public class ActivityRecipe extends AppCompatActivity {
 
     private void setAppBarImage() {
         final ImageView image = (ImageView) findViewById(R.id.activity_recipe_appbar_image);
-        if (recipeSelected.getImage() != null && !recipeSelected.getImage().equals("")) {
-            final File imageFile = DiskCacheUtils.findInCache(recipeSelected.getImage(), imageLoader.getDiskCache());
+        String stringUri = ActivityMain.PATH_RECIPE + recipeSelected.getImage();
+        if (stringUri != null && !recipeSelected.getImage().equals("")) {
+            final File imageFile = DiskCacheUtils.findInCache(stringUri, imageLoader.getDiskCache());
             if (imageFile!= null && imageFile.exists()) {
                 Picasso.with(getApplicationContext()).load(imageFile).fit().centerCrop().into(image);
             } else {
-                imageLoader.loadImage(recipeSelected.getImage(), new ImageLoadingListener() {
+                imageLoader.loadImage(stringUri, new ImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String s, View view) {
                         image.setImageBitmap(null);

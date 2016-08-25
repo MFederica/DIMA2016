@@ -65,12 +65,13 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
 
         holder.image.setImageBitmap(null);
 
-        if (holder.recipe.getImage() != null && !holder.recipe.getImage().equals("")) {
-            final File image = DiskCacheUtils.findInCache(holder.recipe.getImage(), imageLoader.getDiskCache());
+        String imageUri = ActivityMain.PATH_RECIPE + holder.recipe.getImage();
+        if (imageUri != null && !holder.recipe.getImage().equals("")) {
+            final File image = DiskCacheUtils.findInCache(imageUri, imageLoader.getDiskCache());
             if (image!= null && image.exists()) {
                 Picasso.with(context).load(image).fit().centerCrop().into(holder.image);
             } else {
-                imageLoader.loadImage(holder.recipe.getImage(), new ImageLoadingListener() {
+                imageLoader.loadImage(imageUri, new ImageLoadingListener() {
                     @Override
                     public void onLoadingStarted(String s, View view) {
                         holder.image.setImageBitmap(null);

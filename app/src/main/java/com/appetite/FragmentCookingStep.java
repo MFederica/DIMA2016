@@ -1,15 +1,25 @@
 package com.appetite;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appetite.model.Recipe;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 //import com.dmfm.appetite.R;
 
 /**
@@ -26,9 +36,13 @@ public class FragmentCookingStep extends Fragment {
     private static final String ARG_STEP_NUMBER = "com.appetite.FragmentCookingStep.ARG_STEP_NUMBER";
     private static final String ARG_RECIPE = "com.appetite.FragmentCookingStep.ARG_RECIPE";
 
+    private final String bucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
+
     // TODO: Rename and change types of parameters
     private int stepNumber;
     private Recipe recipe;
+
+    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     private OnFragmentInteractionListener mListener;
 
@@ -68,8 +82,41 @@ public class FragmentCookingStep extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_cooking_step, container, false);
         TextView textView = (TextView) rootView.findViewById(R.id.fragment_cooking_step_text);
+        final ImageView imageView = (ImageView) rootView.findViewById(R.id.fragment_cooking_step_image);
         textView.setText(recipe.getStep().get(stepNumber));
-        // Inflate the layout for this fragment
+
+
+        //loads image
+        String[] parts = recipe.getImage().split("\\.");
+        String imageUri = ActivityMain.PATH_RECIPE_STEP + parts[0] + "_" + (stepNumber+1) + "." +parts[1];
+            final File image = DiskCacheUtils.findInCache(imageUri, imageLoader.getDiskCache());
+            if (image!= null && image.exists()) {
+                Picasso.with(getContext()).load(image).fit().centerCrop().into(imageView);
+            } else {
+                imageLoader.loadImage(imageUri, new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String s, View view) {
+                        imageView.setImageBitmap(null);
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                        Picasso.with(getContext()).load(s).fit().centerCrop().into(imageView);
+
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String s, View view) {
+
+                    }
+                });
+            }
+
         return rootView;
     }
 

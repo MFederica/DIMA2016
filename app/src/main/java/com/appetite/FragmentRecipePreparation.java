@@ -84,7 +84,7 @@ public class FragmentRecipePreparation extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new AdapterRecipePreparation(recipe.getStep(), mListener));
+            recyclerView.setAdapter(new AdapterRecipePreparation(context, recipe, mListener));
         }
         return view;
     }

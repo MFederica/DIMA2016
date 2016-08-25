@@ -59,6 +59,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public final static String FRAGMENT = "com.appetite.ActivityMain.FRAGMENT";
     public final static String fileShoppingListName = "shopping_list";
 
+    public final static String PATH_RECIPE = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
+    public final static String PATH_RECIPE_STEP = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/Steps/";
     /**
      * Bundle key for saving/restoring the toolbar title.
      */
@@ -108,7 +110,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
     //Constants TODO: Create a Class that contains all the constants needed (ci sono pure in FragmentRecipesList)
     private final String recipeTable = "dima-mobilehub-516910810-Recipe";
-    private final String bucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -555,8 +556,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
             List<Recipe> result = mapper.query(Recipe.class, queryExpression);
             if(result.size() != 0) {
-                String categorySelectedName = result.get(0).getCategory();
-                String imageUri = bucket + categorySelectedName + "/" + result.get(0).getImage() + ".jpg";
+                String imageUri = result.get(0).getCategory() + "/" + result.get(0).getImage() + ".jpg";
                 result.get(0).setImage(imageUri);
                 return result.get(0);
             }  else {

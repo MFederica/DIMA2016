@@ -44,6 +44,11 @@
     <string name="search_hint">Search..</string>
     <string name="title_activity_activity_cooking">ActivityCooking</string>
 
+    <!-- STT credentials --> 
+    <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
+     <string name="STTdefaultPassword">8Ifu5wRuEQFz</string>
+     <string name="STTdefaultTokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

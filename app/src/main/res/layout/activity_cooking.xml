@@ -41,4 +41,11 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_dialog_email" />
 
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/activity_cooking_indicator"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_height="48dp"/>
+
 </android.support.design.widget.CoordinatorLayout>

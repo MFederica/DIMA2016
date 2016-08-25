@@ -24,6 +24,7 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentRecipeInformation extends Fragment {
+    private final static String TAG = FragmentRecipeInformation.class.getSimpleName();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
  /*   private static final String ARG_PARAM1 = "param1";
@@ -94,13 +95,10 @@ public class FragmentRecipeInformation extends Fragment {
         ((TextView) rootView.findViewById(R.id.fragment_recipe_information_vegetarian)).setText("VEGETARIAN:  " + recipe.getVegetarian());
         String text = "\n";
         for(int i = 0; i < recipe.getIngredient_name().size(); i++) {
-            Log.e("Ingredients", ingredient_name.get(i));
-            Log.e("Ingredients", ingredient_quantity.get(i));
-            Log.e("Ingredients", ingredient_unit.get(i));
             text = text.concat(ingredient_name.get(i) + " " +   ingredient_quantity.get(i) + ingredient_unit.get(i) + "\n");
         }
         ((TextView) rootView.findViewById(R.id.fragment_recipe_information_ingredient)).setText("INGREDIENTS:  " + text);
-        Log.e("Ingredients", text);
+        Log.d(TAG, text);
 
         return rootView;
     }
