@@ -29,11 +29,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
@@ -113,7 +115,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG, "onCreate: " );
         super.onCreate(savedInstanceState);
         // Obtain a reference to the mobile client. It is created in the Application class,
         // but in case a custom Application class is not used, we initialize it here if necessary.
@@ -201,6 +202,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         mTitle = mDrawerTitle = getTitle();
 
+        //FILTRI SONO QUA
         navigationViewForFilters = (NavigationView) findViewById(R.id.nav_view_filters);
         navigationViewForFilters.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -411,6 +413,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+
+        if(id == R.id.button_filters) {
+            DrawerLayout drawer_filters = (DrawerLayout) this.findViewById(R.id.drawer_layout);
+           drawer_filters.openDrawer(Gravity.RIGHT);
         }
 
         return super.onOptionsItemSelected(item);
