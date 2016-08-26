@@ -44,6 +44,15 @@
     <string name="search_hint">Search..</string>
     <string name="title_activity_activity_cooking">ActivityCooking</string>
 
+    <string name="timer">Timer</string>
+    <string name="activity_cooking_timer_dialog_title">Timer</string>
+    <string name="activity_cooking_timer_dialog_start">Start</string>
+    <string name="activity_cooking_timer_dialog_running_message">Do you want to stop timer?</string>
+    <string name="activity_cooking_timer_dialog_running_ok">Yes</string>
+    <string name="activity_cooking_timer_dialog_running_cancel">No</string>
+    <string name="activity_cooking_timer_dialog_minute">minute</string>
+    <string name="activity_cooking_timer_dialog_minutes">minutes</string>
+
     <!-- STT credentials --> 
     <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
      <string name="STTdefaultPassword">8Ifu5wRuEQFz</string>

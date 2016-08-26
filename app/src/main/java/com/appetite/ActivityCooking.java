@@ -1,7 +1,10 @@
 package com.appetite;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,6 +24,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +44,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.TimeUnit;
 
 import me.relex.circleindicator.CircleIndicator;
 
@@ -75,6 +82,11 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     public JSONObject jsonVoices = null;
     private Handler mHandler = null;
 
+    private CountDownTimer timer;
+    private boolean timerRunning = false;
+    private View timerLayoutView;
+    private TextView timerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,10 +122,20 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
             }
         });
 
+        LinearLayout timerLayout = (LinearLayout) findViewById(R.id.activity_cooking_timer);
+        timerLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showStopTimerDialog();
+            }
+        });
+
         if (initSTT() == false) {
             Log.e(TAG, "onCreate: Error: no authentication credentials/token available, please enter your authentication information");
         }
 
+        timerLayoutView = (View) findViewById(R.id.activity_cooking_timer);
+        timerView = (TextView) findViewById(R.id.activity_cooking_timer_time);
         mHandler = new Handler();
         displayStatus("Not connected");
     }
@@ -132,7 +154,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... none) {
-                    SpeechToText.sharedInstance().recognize();
+  //                  SpeechToText.sharedInstance().recognize();
                     return null;
                 }
             }.execute();
@@ -167,8 +189,13 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
             Toast.makeText(ActivityCooking.this, "invoco onBackPressed()", Toast.LENGTH_SHORT).show();
             onBackPressed();
             return true;
+        } else if (id == R.id.timer) {
+            if(timerRunning) {
+                showStopTimerDialog();
+            } else {
+                showStartTimerDialog();
+            }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -317,7 +344,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         final Runnable runnableUi = new Runnable(){
             @Override
             public void run() {
-                TextView textResult = (TextView)findViewById(R.id.sttStatus);
+                TextView textResult = (TextView)findViewById(R.id.activity_cooking_sttStatus);
                 textResult.setText(status);
             }
         };
@@ -377,6 +404,74 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                 mHandler.post(runnableUi);
             }
         }.start();
+    }
+
+    private void showStopTimerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.activity_cooking_timer_dialog_running_message)
+                .setTitle(R.string.activity_cooking_timer_dialog_title);
+        builder.setPositiveButton(R.string.activity_cooking_timer_dialog_running_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                timer.cancel();
+                timerRunning = false;
+                timerLayoutView.setVisibility(View.GONE);
+            }
+        });
+        builder.setNegativeButton(R.string.activity_cooking_timer_dialog_running_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+
+            }
+        });
+        builder.show();
+    }
+
+    private void showStartTimerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final View viewMinutes = getLayoutInflater().inflate(R.layout.activity_cooking_timer_dialog, null);
+        final NumberPicker numberPicker = (NumberPicker) viewMinutes.findViewById(R.id.timer_dialog_timePicker);
+        final TextView minutesTextView = (TextView) viewMinutes.findViewById(R.id.timer_dialog_text);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(60);
+        numberPicker.setWrapSelectorWheel(false);
+        numberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                if(newVal == 1) {
+                    minutesTextView.setText(R.string.activity_cooking_timer_dialog_minute);
+                } else {
+                    minutesTextView.setText(R.string.activity_cooking_timer_dialog_minutes);
+                }
+            }
+        });
+        builder.setView(viewMinutes);
+        builder.setTitle(R.string.activity_cooking_timer_dialog_title)
+                .setPositiveButton(R.string.activity_cooking_timer_dialog_start, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Log.d(TAG, "onClick: DONE");
+                        timerLayoutView.setVisibility(View.VISIBLE);
+                        //creating timer
+                        timer = new CountDownTimer(numberPicker.getValue() * 60000, 1000) {
+                            public void onTick(long millisUntilFinished) {
+                                timerView.setText(String.format("%02d:%02d",
+                                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                                ));
+                                Log.d(TAG, "onTick: seconds remaining: " + millisUntilFinished / 1000);
+                                timerRunning = true;
+                            }
+
+                            public void onFinish() {
+                                timerLayoutView.setVisibility(View.GONE);
+                                timerRunning = false;
+                            }
+                        };
+                        timer.start();
+                    }
+                });
+        builder.show();
     }
 
 }
