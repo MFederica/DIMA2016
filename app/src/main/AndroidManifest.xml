@@ -29,6 +29,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
+        <service android:name=".BroadcastService" />
+
         <activity
             android:name=".ActivitySplash"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
@@ -67,8 +70,7 @@
         <activity
             android:name=".ActivityCooking"
             android:label="@string/title_activity_activity_cooking"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="landscape">
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.appetite.ActivityRecipe" />

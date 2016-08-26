@@ -64,8 +64,14 @@
     <string name="STT_command_NEXT_1">go on</string>
     <string name="STT_command_NEXT_2">next</string>
     <string name="STT_command_STOP_LISTENING">stop listening</string>
-    <string name="STT_command_START_TIMER">start timer</string>
-    <string name="STT_command_END_TIMER">end timer</string>
+    <string name="STT_command_TIMER">time</string>
+    <string name="STT_command_START_TIMER_MINUTE">minute</string>
+    <string name="STT_command_START_TIMER_SECOND">second</string>
+    <string name="STT_command_START_TIMER_1">start</string>
+    <string name="STT_command_START_TIMER_2">set</string>
+    <string name="STT_command_STOP_TIMER_1">stop</string>
+    <string name="STT_command_STOP_TIMER_2">end</string>
+    <string name="STT_command_STOP_TIMER_3">finish</string>
     <string name="STT_command_READ_STEP">read</string>
 
     <!-- TODO: Remove or change this placeholder text -->

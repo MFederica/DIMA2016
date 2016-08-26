@@ -58,7 +58,7 @@
         android:orientation="horizontal"
         android:layout_gravity="bottom"
         android:layout_margin="80dp"
-
+        android:visibility="gone"
         android:background="@color/colorAccent">
         <ImageView
             android:layout_width="wrap_content"

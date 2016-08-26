@@ -1,8 +1,11 @@
 package com.appetite;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -87,8 +90,16 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     private View timerLayoutView;
     private TextView timerView;
 
+    private BroadcastReceiver br = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateGUI(intent); // or whatever method used to update your GUI fields
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG, "onCreate: " );
         super.onCreate(savedInstanceState);
 
         // Get the message from the intent
@@ -142,6 +153,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     
     @Override
     protected void onResume() {
+        Log.e(TAG, "onResume: " );
         super.onResume(); //TODO sopra o sotto?
         if (mState == ConnectionState.IDLE) {
             mState = ConnectionState.CONNECTING;
@@ -154,17 +166,39 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... none) {
-  //                  SpeechToText.sharedInstance().recognize();
+                    SpeechToText.sharedInstance().recognize();
                     return null;
                 }
             }.execute();
         }
+        registerReceiver(br, new IntentFilter(BroadcastService.COUNTDOWN_BR));
+        Log.i(TAG, "Registered broacast receiver");
     }
 
     @Override
     protected void onPause() {
+        Log.e(TAG, "onPause: " );
         stopRecognition();
+        unregisterReceiver(br);
+        Log.i(TAG, "Unregistered broacast receiver");
         super.onPause(); //TODO sopra o sotto?
+    }
+
+    @Override
+    public void onStop() {
+        Log.e(TAG, "onStop: " );
+        try {
+            unregisterReceiver(br);
+        } catch (Exception e) {
+            // Receiver was probably already stopped in onPause()
+        }
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.e(TAG, "onDestroy: " );
+        super.onDestroy();
     }
 
 
@@ -368,27 +402,74 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     }
 
     private void checkCommand(final String result) {
+            //COMMAND NEXT
         if (result.contains(getResources().getString(R.string.STT_command_NEXT_1)) || result.contains(getResources().getString(R.string.STT_command_NEXT_2))) {
             Log.e(TAG, "checkCommands: NEXT" );
             int currentItem = mViewPager.getCurrentItem();
             if(currentItem < mSectionsPagerAdapter.getCount())
                 changeStep(currentItem + 1);
 
+            //COMMAND BACK
         } else if (result.contains(getResources().getString(R.string.STT_command_BACK_1)) || result.contains(getResources().getString(R.string.STT_command_BACK_2))) {
             Log.e(TAG, "checkCommands: BACK" );
             int currentItem = mViewPager.getCurrentItem();
             if(currentItem > 0)
                 changeStep(currentItem - 1);
 
-        } else if (result.contains(getResources().getString(R.string.STT_command_START_TIMER))) {
-            Log.e(TAG, "checkCommands: START TIMER" );
-
-        } else if (result.contains(getResources().getString(R.string.STT_command_END_TIMER))) {
-            Log.e(TAG, "checkCommands: END TIMER" );
-
+            //COMMAND STOP LISTENING
         } else if (result.contains(getResources().getString(R.string.STT_command_STOP_LISTENING))) {
             stopRecognition();
             Log.e(TAG, "checkCommands: STOP LISTENING" );
+
+            //COMMAND START TIMER
+        } else if (result.contains(getResources().getString(R.string.STT_command_START_TIMER_MINUTE)) || (((result.contains(getResources().getString(R.string.STT_command_START_TIMER_1)) || result.contains(getResources().getString(R.string.STT_command_START_TIMER_2)))) && result.contains(getResources().getString(R.string.STT_command_TIMER)))) {
+            String[] numbers_0 = {"ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"};
+            String[] numbers_1 = {"twenty", "thirty", "forty", "fifty", "sixty"};
+            String[] numbers_2 = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+            int num = 0;
+            for(int i = 0; i < numbers_0.length; i++) {
+                if(result.contains(numbers_0[i])) {
+                    num = 10 + i;
+                    break;
+                }
+            }
+            Log.e(TAG, "checkCommand: after numbers_0 " + num );
+            //if no number in numbers_0 has been found num is still == 0
+            if(num == 0) {
+                for (int i = 0; i < numbers_1.length; i++) {
+                    if (result.contains(numbers_1[i])) {
+                        Log.e(TAG, "checkCommand: found "+ numbers_1[i] + ", i = " + i );
+                        num = i*10 + 20;
+                    }
+                }
+                Log.e(TAG, "checkCommand: after numbers_1 " + num );
+                for (int i = 0; i < numbers_2.length; i++) {
+                    if (result.contains(numbers_2[i])) {
+                        num += i;
+                        break;
+                    }
+                }
+                Log.e(TAG, "checkCommand: after numbers_3 " + num );
+            }
+            Log.e(TAG, "checkCommand: after all " + num );
+            startTimer(num * 60000);
+            Log.e(TAG, "checkCommands: START TIMER" );
+
+            //COMMAND STOP TIMER
+        } else if (result.contains(getResources().getString(R.string.STT_command_STOP_TIMER_1)) || result.contains(getResources().getString(R.string.STT_command_STOP_TIMER_2)) || result.contains(getResources().getString(R.string.STT_command_STOP_TIMER_3))) {
+            stopTimer();
+            final Runnable runnableUi = new Runnable(){
+                @Override
+                public void run() {
+                    timerLayoutView.setVisibility(View.GONE);
+                }
+            };
+            new Thread(){
+                public void run(){
+                    mHandler.post(runnableUi);
+                }
+            }.start();
+            Log.e(TAG, "checkCommands: END TIMER" );
         }
     }
 
@@ -413,8 +494,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         builder.setPositiveButton(R.string.activity_cooking_timer_dialog_running_ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
-                timer.cancel();
-                timerRunning = false;
+                stopTimer();
                 timerLayoutView.setVisibility(View.GONE);
             }
         });
@@ -452,26 +532,46 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                         Log.d(TAG, "onClick: DONE");
                         timerLayoutView.setVisibility(View.VISIBLE);
                         //creating timer
-                        timer = new CountDownTimer(numberPicker.getValue() * 60000, 1000) {
-                            public void onTick(long millisUntilFinished) {
-                                timerView.setText(String.format("%02d:%02d",
-                                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
-                                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
-                                ));
-                                Log.d(TAG, "onTick: seconds remaining: " + millisUntilFinished / 1000);
-                                timerRunning = true;
-                            }
-
-                            public void onFinish() {
-                                timerLayoutView.setVisibility(View.GONE);
-                                timerRunning = false;
-                            }
-                        };
-                        timer.start();
+                        startTimer(numberPicker.getValue()*60000);
                     }
                 });
         builder.show();
+    }
+
+    private void updateGUI(Intent intent) {
+        if (intent.getExtras() != null) {
+            long millisUntilFinished = intent.getLongExtra("countdown", 0);
+            if(millisUntilFinished != 0) {
+                timerLayoutView.setVisibility(View.VISIBLE);
+                timerView.setText(String.format("%02d:%02d",
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))
+                ));
+                Log.d(TAG, "onTick: seconds remaining: " + millisUntilFinished / 1000);
+                timerRunning = true;
+            } else {
+                timerLayoutView.setVisibility(View.GONE);
+                timerRunning = false;
+            }
+        }
+    }
+
+    private void startTimer(int duration) {
+        if(!timerRunning) {
+            Intent intent = new Intent(getApplicationContext(), BroadcastService.class);
+            intent.putExtra(BroadcastService.MILLIS, duration);
+            startService(intent);
+            Log.i(TAG, "Started service");
+        }
+    }
+
+    private void stopTimer() {
+        if(timerRunning) {
+            stopService(new Intent(getApplicationContext(), BroadcastService.class));
+            Log.i(TAG, "Stopped service");
+            timerRunning = false;
+        }
     }
 
 }
