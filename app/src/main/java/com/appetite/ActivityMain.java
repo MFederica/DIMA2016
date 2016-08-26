@@ -11,6 +11,7 @@ package com.appetite;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
@@ -35,7 +36,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.widget.Button;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
@@ -45,9 +47,13 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExp
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingItem;
+import com.appetite.style.filter.CustomExpandableListAdapter;
+import com.appetite.style.filter.ExpandableListDataSource;
+import com.appetite.style.filter.FragmentNavigationManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
@@ -90,7 +96,12 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     /**
      * The navigation view for the drawer item for filters.
      */
-    private NavigationView navigationViewForFilters;
+    private ExpandableListView expandableFilterList;
+    private Map<String, List<String>> expandableListData;
+    private ArrayList expandableListTitle;
+    private ExpandableListAdapter expandableListAdapter;
+    private FragmentNavigationManager navigationManager;
+    private String[] items;
 
     /**
      * All the bundle saved from the fragments
@@ -202,9 +213,30 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         mTitle = mDrawerTitle = getTitle();
 
-        //FILTRI SONO QUA
-        navigationViewForFilters = (NavigationView) findViewById(R.id.nav_view_filters);
-        navigationViewForFilters.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+        /**
+         * FILTRI SONO QUA
+         */
+        expandableFilterList = (ExpandableListView) findViewById(R.id.nav_view_filters);
+        View listHeaderView = getLayoutInflater().inflate(R.layout.nav_header, null, false);
+
+        initItems();
+
+        expandableFilterList.addHeaderView(listHeaderView);
+        expandableListData = ExpandableListDataSource.getData(getApplication().getApplicationContext());
+        expandableListTitle = new ArrayList(expandableListData.keySet());
+
+        addDrawerItems();
+        setupDrawer();
+        if(savedInstanceState == null) {
+            selectFirstItemAsDefault();
+        }
+        /**
+         * E FINISCONO QUI
+         */
+
+
+        /* navigationViewForFilters.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 mDrawerLayout.closeDrawers();
@@ -234,7 +266,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         return false;
                 }
             }
-        });
+        });*/
     }
 
     @Override
@@ -292,9 +324,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             return;
         }
         if (fragmentManager.getBackStackEntryCount() == 0) {
-            Log.e(TAG, "onBackPressed: entry count = 0");
             if (fragmentManager.findFragmentByTag(FragmentHome.class.getSimpleName()) == null) {
-                Log.e(TAG, "onBackPressed: inside getsimple name");
                 final Class fragmentClass = FragmentHome.class;
                 // if we aren't on the home fragment, navigate home.
                 final Fragment fragment = Fragment.instantiate(this, fragmentClass.getName());
@@ -317,7 +347,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 return;
             }
         }
-        Log.e(TAG, "onBackPressed: outside everything, at the end");
         super.onBackPressed();
 
     }
@@ -419,6 +448,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             DrawerLayout drawer_filters = (DrawerLayout) this.findViewById(R.id.drawer_layout);
            drawer_filters.openDrawer(Gravity.RIGHT);
         }
+
+        //if(mDrawerToggle.onOptionsItemSelected(item)) {
+        //    return true;
+        //}
 
         return super.onOptionsItemSelected(item);
     }
@@ -623,4 +656,86 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         output = output.trim();
         return output;
     }
+
+
+    /**
+     * QUI I mETODI PER IL DRAWER DEI FILTRI
+     */
+
+    private void selectFirstItemAsDefault() {
+        if (navigationManager != null) {
+            String firstFilter = getResources().getStringArray(R.array.categoryFilter)[0];
+            navigationManager.showCategoryFilter(firstFilter);
+        }
+    }
+
+    private void initItems() {
+        items = getResources().getStringArray(R.array.filter);
+    }
+
+    private void addDrawerItems() {
+        expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListData);
+        expandableFilterList.setAdapter(expandableListAdapter);
+        expandableFilterList.setOnChildClickListener(new ExpandableListView.OnChildClickListener(){
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                String selectedItem = ((List) (expandableListData.get(expandableListTitle.get(groupPosition))))
+                        .get(childPosition).toString();
+
+                if (items[0].equals(expandableListTitle.get(groupPosition))) {
+                    //Things to do with the selected item
+                } else if (items[1].equals(expandableListTitle.get(groupPosition))) {
+                    //Things to do with the selected item
+                } else if(items[2].equals(expandableListTitle.get(groupPosition))) {
+
+                }  else if(items[2].equals(expandableListTitle.get(groupPosition))) {
+
+                } else {
+                    throw new IllegalArgumentException("Not supported type");
+                }
+
+                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                return false;
+
+            }
+        });
+    }
+
+    private void setupDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open,R.string.drawer_close) {
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle bundle) {
+        super.onPostCreate(bundle);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        mDrawerToggle.onConfigurationChanged(configuration);
+    }
+
+
 }
+
+
+
+
+

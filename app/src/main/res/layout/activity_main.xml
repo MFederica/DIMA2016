@@ -22,13 +22,15 @@
         app:headerLayout="@layout/activity_main_nav_header"
         app:menu="@menu/activity_main_nav_menu" />
 
-    <android.support.design.widget.NavigationView
+
+    <ExpandableListView
         android:id="@+id/nav_view_filters"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/nav_drawer_width"
         android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/activity_main_nav_filters_header"
-        app:menu="@menu/activity_main_nav_filters_menu" />
+        android:layout_gravity="right|end"
+        android:divider="@color/group_divider_color"
+        android:dividerHeight="@dimen/divider_height"
+        android:background="@color/cardview_light_background"
+        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft" />
 
 </android.support.v4.widget.DrawerLayout>

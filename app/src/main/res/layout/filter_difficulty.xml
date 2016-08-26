@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.appetite.style.filter.DifficultyFilter">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/filter_icon_container_height">
+
+        <ImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/difficulty"
+            android:src="@drawable/ic_action_book"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="@dimen/layout_padding_default"
+            android:text="Difficulty"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+            android:textColor="@color/cardview_light_background"/>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/filter_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/layout_padding_default"
+        android:text="filter_title"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"/>
+
+</LinearLayout>

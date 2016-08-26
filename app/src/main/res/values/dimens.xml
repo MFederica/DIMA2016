@@ -9,4 +9,13 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
+
+    <!--Right nav drawer dimensions -->
+    <dimen name="layout_margin_default">10dp</dimen>
+    <dimen name="layout_padding_default">10dp</dimen>
+    <dimen name="header_img_size">70dp</dimen>
+    <dimen name="divider_height">0.5dp</dimen>
+    <dimen name="nav_drawer_width">235dp</dimen>
+    <dimen name="header_font_size">14sp</dimen>
+    <dimen name="filter_icon_container_height">300dp</dimen>
 </resources>

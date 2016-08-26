@@ -12,9 +12,16 @@
     <color name="dark_content_text">#333333</color>
     <color name="instructions_list_border_color">#FFDDDDDD</color>
 
+    <!-- Right drawer colors-->
+    <color name="group_divider_color">#F58535</color>
+    <color name="list_group_title">#808080</color>
+    <color name="list_item_title">#AAAAAA</color>
+
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+
 
     <!-- Added for displaying the recycle view -->
     <color name="year">#999999</color>

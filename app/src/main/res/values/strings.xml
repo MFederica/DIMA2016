@@ -1,10 +1,12 @@
 <resources>
 
-    <!-- CUSTOMIZE THESE FOR YOUR APP -->
-
+    <!-- APP and main sections -->
     <string name="app_name">Appetite</string>
+    <string name="title_activity_recipe">ActivityRecipe</string>
+    <string name="title_activity_activity_cooking">ActivityCooking</string>
+    <string name="title_activity_main">@string/app_name</string>
+    <string name="title_activity_sign_in">Sign-in</string>
 
-    <!-- REQUIRED FOR GENERAL APP FUNCTIONALITY - YOU MAY WANT TO KEEP THESE -->
 
     <!-- Strings for drawer items -->
     <string name="drawer_item_home">Home</string>
@@ -15,14 +17,63 @@
     <string name="drawer_sub_header">Others</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
+    <!-- Strings for FILTERS DRAWER -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_filters">Filters</string>
+    <string name="category">Category</string>
+    <string name="time">Preparation Time</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="country">Country</string>
+    <string-array name="filter">
+        <item>Category</item>
+        <item>Difficulty</item>
+        <item>Preparation Time</item>
+        <item>Country</item>
+    </string-array>
 
+    <string-array name="categoryFilter">
+        <item>Vegetarian</item>
+        <item>First Dishes</item>
+        <item>Second Dishes</item>
+        <item>Appetizer</item>
+        <item>Breakfast</item>
+        <item>Dessert</item>
+        <item>Salad</item>
+        <item>Drinks</item>
+    </string-array>
+
+    <string-array name="difficultyFilter">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
+
+    <string-array name="timeFilter">
+        <item>less than 20 min</item>
+        <item>less than 30 min</item>
+        <item>less than 60 min</item>
+    </string-array>
+
+    <string-array name="countryFilter">
+        <item>Asia</item>
+        <item>Italy</item>
+        <item>France</item>
+        <item>America</item>
+        <item>England</item>
+        <item>Middle-Orient</item>
+    </string-array>
+
+
+    <!--String for RESEARCH-->
     <string name="action_search">Search</string>
+    <string name="search_hint">Search..</string>
 
-    <string name="title_activity_main">@string/app_name</string>
-    <string name="title_activity_sign_in">Sign-in</string>
+    <!-- LOGIN activity-->
     <string name="button_text_sign_in">SIGN IN</string>
     <string name="button_text_sign_out">SIGN OUT</string>
 
+    <!-- Strings for SHOPPING LIST-->
     <string name="servings_picker_done">done</string>
     <string name="fragment_recipeingredients_servings">servings</string>
     <string name="fragment_recipeingredients_dialog_title">Servings</string>
@@ -31,19 +82,18 @@
     <string name="fragment_recipeingredients_snackbar_already_added_message">It has already been added to your shopping list</string>
     <string name="fragment_recipeingredients_snackbar_remove_message">Removed from shopping list</string>
     <string name="fragment_recipeingredients_snackbar_action">view</string>
-
     <string name="fragment_shoppinglist_remove">Remove from shopping list</string>
 
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
+    <!-- strings for TOOLBAR -->
     <string name="action_settings">Settings</string>
-    <string name="title_activity_recipe">ActivityRecipe</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="search_hint">Search..</string>
-    <string name="title_activity_activity_cooking">ActivityCooking</string>
 
+
+    <!-- STT credentials --> 
+    <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
+     <string name="STTdefaultPassword">8Ifu5wRuEQFz</string>
+     <string name="STTdefaultTokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
+
+    <!--Strings for TIMER-->
     <string name="timer">Timer</string>
     <string name="activity_cooking_timer_dialog_title">Timer</string>
     <string name="activity_cooking_timer_dialog_start">Start</string>
@@ -52,11 +102,6 @@
     <string name="activity_cooking_timer_dialog_running_cancel">No</string>
     <string name="activity_cooking_timer_dialog_minute">minute</string>
     <string name="activity_cooking_timer_dialog_minutes">minutes</string>
-
-    <!-- STT credentials --> 
-    <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
-     <string name="STTdefaultPassword">8Ifu5wRuEQFz</string>
-     <string name="STTdefaultTokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
 
     <!-- STT commands implemented -->
     <string name="STT_command_BACK_1">back</string>
@@ -74,7 +119,9 @@
     <string name="STT_command_STOP_TIMER_3">finish</string>
     <string name="STT_command_READ_STEP">read</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+    <!-- Random Strings -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>
+
