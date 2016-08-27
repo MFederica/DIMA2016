@@ -8,6 +8,7 @@
         android:id="@+id/fragment_category_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        />
 
 </RelativeLayout>

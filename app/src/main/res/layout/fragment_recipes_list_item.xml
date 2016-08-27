@@ -4,10 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
+    android:padding="4dp"
     android:clickable="true"
     android:background="?android:attr/selectableItemBackground"
     android:orientation="vertical">
@@ -19,16 +16,36 @@
         android:scaleType="centerCrop"
         />
 
-    <TextView
-        android:id="@+id/fragment_recipes_list_title"
-        android:textColor="@color/title"
-        android:textSize="16dp"
-        android:textStyle="normal"
-        android:gravity="center"
-        android:layout_below="@+id/fragment_recipes_list_image"
-        android:layout_alignParentBottom="true"
-        android:background="@color/splash_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:id="@+id/fragment_recipes_list_title"
+
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:gravity="center"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_height="48dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+
+            android:background="@android:color/white"
+            android:layout_below="@+id/fragment_recipes_list_image"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent" />
+
+    <ImageView
+        android:id="@+id/fragment_recipes_list_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:background="@android:color/white"
+        android:src="@drawable/ic_favorite_border"
+        android:tint="@color/colorAccent"
+        android:padding="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:clickable="true"
+        android:focusable="true"/>
 
 </RelativeLayout>

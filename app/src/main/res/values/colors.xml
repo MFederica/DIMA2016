@@ -17,9 +17,19 @@
     <color name="list_group_title">#808080</color>
     <color name="list_item_title">#AAAAAA</color>
 
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <!-- new palette -->
+    <color name="colorPrimary">#FFC107</color>
+    <color name="colorPrimaryDark">#FFA000</color>
+    <color name="colorPrimaryLight">#FFECB3</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorTextPrimary">#212121</color>
+    <color name="colorTextSecondary">#757575</color>
+    <color name="colorDivider">#BDBDBD</color>
+    <color name="colorTextAndIcons">#212121</color>
+
+    <color name="colorBackground">#f2f2f2</color>
+    <color name="colorImageBackground">#FFA000</color>
+    <color name="colorPrimaryDarkSemiTransparent">#B3FFA000</color>
 
 
 
