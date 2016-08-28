@@ -37,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -217,7 +218,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         navigationView.getMenu().findItem(R.id.drawer_item_home).setChecked(true);
 
         mTitle = mDrawerTitle = getTitle();
-
 
         /**
          * FILTRI SONO QUA
@@ -652,6 +652,9 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         filterDictionary = Filter.getInstance(this.getApplicationContext());
         expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListData);
         expandableFilterList.setAdapter(expandableListAdapter);
+        //Here to refresh... but doesn't work still
+        checkFilterStatus();
+
         expandableFilterList.setOnChildClickListener(new ExpandableListView.OnChildClickListener(){
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -665,6 +668,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 } else if (items[1].equals(expandableListTitle.get(groupPosition))) {
 
                     changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
+
                 } else if(items[2].equals(expandableListTitle.get(groupPosition))) {
 
                     changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
@@ -689,11 +693,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
             }
         });
-        //Here to refresh... but doesn't work still
-        /*
-        DrawerLayout view1 = (DrawerLayout) findViewById(R.layout.activity_main);
-        ExpandableListView parent = (ExpandableListView) view1.findViewById(R.layout.nav_view_filters);
-        checkFilterStatus(parent);*/
 
     }
 
@@ -738,12 +737,15 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
      */
     private void changeActivationStatus(ExpandableListView parent, View v, int groupPosition, String selectedItem, int childPosition) {
         //get child view
+        Log.e("changeActivationSt: ", "parameters");
+        Log.e("ParentPassed: ", parent.toString());
+        Log.e("View passed: ", v.toString() );
         List group = expandableListData.get(expandableListTitle.get(groupPosition));
         boolean isLast = false;
-        View childView = new View(getApplicationContext());
         int lastIndex = group.size()-1;
         if(group.get(lastIndex).equals(selectedItem)) {
             isLast = true;
+            Log.e("isLast ", "yes" );
         }
         View view = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, v , parent);
         TextView text = (TextView) view.findViewById(R.id.expandedListItem);
@@ -761,20 +763,23 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     /**
      * Color as active a filter when is called)
      * @param parent
-     * @param v
      * @param groupPosition
      * @param selectedItem
      * @param childPosition
      */
-    private void activateSingleFilter(ExpandableListView parent, View v, int groupPosition, String selectedItem, int childPosition) {
+    private void activateSingleFilter(ViewGroup parent, int groupPosition, String selectedItem, int childPosition) {
+        Log.e("activateSingleFilter: ","parent: " + parent.toString());
         List group = expandableListData.get(expandableListTitle.get(groupPosition));
         boolean isLast = false;
-        View childView = new View(getApplicationContext());
+        View childView = parent.findViewById(R.id.listTitle);
+        //Log.e("ChildView: ", childView.toString() );
         int lastIndex = group.size()-1;
         if(group.get(lastIndex).equals(selectedItem)) {
             isLast = true;
+            Log.e("isLast", "yes");
         }
-        View view = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, v , parent);
+        View view = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, childView , parent);
+        Log.e("ChildView: ", view.toString());
         TextView text = (TextView) view.findViewById(R.id.expandedListItem);
         text.setTextColor(Color.parseColor("#FF4081"));
 
@@ -782,29 +787,30 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     /**
      * Called to properly display the active filters even at screen rotation
-     * @param parent
-     * @param
      */
-    private void checkFilterStatus(ExpandableListView parent) {
+    private void checkFilterStatus() {
         filterDictionary = Filter.getInstance(this.getApplicationContext());
         ArrayList<String> activated = filterDictionary.getActivatedFilters();
+        ExpandableListView parent = (ExpandableListView) getWindow().getDecorView().getRootView().findViewById(R.id.nav_view_filters);
+        Log.e("expandableListView: ", parent.toString() );
         String selectedItem;
-        int indexOfGroups = 3;
-
-        //for all titles
-        for(int i = 0; i < indexOfGroups; i++) {
-            int numberOfFilters = ((List)expandableListData.get(expandableListTitle.get(i))).size();
-            //For alla filters inside the menu
-            for(int j = 0; j < numberOfFilters-1; j++) {
-                selectedItem = ((List) (expandableListData.get(expandableListTitle.get(i))))
-                        .get(j).toString();
-                //Check if the filter is active, in that case we change its color
-                if(activated.contains(selectedItem)) {
-                    //WRONG!! we must select VIew beforehand
-                    //activateSingleFilter(parent, v, i, selectedItem, j);
+        int indexOfGroups = 4;
+        if(activated != null) {
+            //for all titles
+            for (int i = 0; i < indexOfGroups; i++) {
+                //View parent = expandableListAdapter.getGroupView(i, true, null, null);
+                int numberOfFilters = ((List) expandableListData.get(expandableListTitle.get(i))).size();
+                //For alla filters inside the menu
+                for (int j = 0; j < numberOfFilters; j++) {
+                    selectedItem = ((List) (expandableListData.get(expandableListTitle.get(i))))
+                            .get(j).toString();
+                    //Check if the filter is active, in that case we change its color
+                    if (activated.contains(selectedItem)) {
+                        activateSingleFilter( parent, i, selectedItem, j);
+                    }
                 }
-            }
 
+            }
         }
 
     }
