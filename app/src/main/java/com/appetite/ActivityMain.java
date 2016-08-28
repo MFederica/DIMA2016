@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -61,7 +62,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
-        FragmentShoppingList.OnShoppingListFragmentInteractionListener{
+        FragmentShoppingList.OnShoppingListFragmentInteractionListener, FragmentShoppingListIngredients.OnShoppingListIngredientFragmentInteractionListener {
     /**
      * Class name for log messages.
      */
@@ -526,10 +527,82 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onShoppingListFragmentInteraction(ShoppingItem item) {
-        Log.e(TAG, "onShoppingListFragmentInteraction: SONO DENTRO ACTIVITYMANIN");
-        RecipeData data = new RecipeData(item.getRecipe());
+    public void onShoppingListFragmentInteraction(ShoppingItem item, int position) {
+        //TODO checkare 2 pane layout or not
+                /*
+            FragmentRecipesList articleFrag = (FragmentRecipesList)
+                    getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+
+            if (articleFrag != null) {
+                // If article frag is available, we're in two-pane layout...
+
+                // Call a method in the ArticleFragment to update its content
+                articleFrag.updateArticleView(position);
+
+            } else
+        { */
+        // Otherwise, we're in the one-pane layout and must swap frags...
+
+        // Create fragment and give it an argument for the selected category
+        FragmentShoppingListIngredients newFragment = FragmentShoppingListIngredients.newInstance(item, position);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the main_fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.main_fragment_container, newFragment);
+        transaction.addToBackStack(FragmentRecipesList.class.getName());
+
+        // Commit the transaction
+        transaction.commit();
+
+
+    }
+
+    @Override
+    public void OnShoppingListIngredientFragmentInteraction(ShoppingItem shoppingItem) {
+        Log.e(TAG, "OnShoppingListIngredientFragmentInteraction: SONO DENTRO ACTIVITYMAIN");
+        RecipeData data = new RecipeData(shoppingItem.getRecipe());
         data.execute("");
+    }
+
+    @Override
+    public void OnShoppingListIngredientFragmentDeletion(final ShoppingItem shoppingItem, final int position) {
+        //TODO checkare 2 pane layout or not
+                /*
+            FragmentRecipesList articleFrag = (FragmentRecipesList)
+                    getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+
+            if (articleFrag != null) {
+                // If article frag is available, we're in two-pane layout...
+
+                // Call a method in the ArticleFragment to update its content
+                articleFrag.updateArticleView(position);
+
+            } else
+        { */
+        // Otherwise, we're in the one-pane layout and must swap frags...
+        // Create fragment and give it an argument for the selected category
+
+        android.support.v4.app.FragmentManager supportFragmentManager = getSupportFragmentManager();
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        FragmentTransaction transaction = supportFragmentManager.beginTransaction();
+        Class fragmentClass = FragmentShoppingList.class;
+        final Fragment newFragment = Fragment.instantiate(this, fragmentClass.getName());
+        // Replace whatever is in the main_fragment_container view with this fragment
+        transaction.replace(R.id.main_fragment_container, newFragment, fragmentClass.getSimpleName());
+
+
+        // Commit the transaction
+        transaction.commit();
+
+        Snackbar.make(findViewById(R.id.drawer_layout), R.string.fragment_shoppinglist_snackbar_removed, Snackbar.LENGTH_LONG)
+                .setAction(R.string.fragment_shoppinglist_snackbar_undo, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ((FragmentShoppingList)newFragment).addElement(shoppingItem, position);
+                    }
+                }).show();
     }
 
     /**

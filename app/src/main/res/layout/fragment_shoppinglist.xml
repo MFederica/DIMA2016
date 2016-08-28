@@ -10,4 +10,4 @@
     app:layoutManager="LinearLayoutManager"
     tools:context=".FragmentShoppingList"
     tools:listitem="@layout/fragment_shoppinglist_item"
-    android:background="@color/nav_drawer_no_user_background"/>
+    android:background="@color/colorBackground"/>

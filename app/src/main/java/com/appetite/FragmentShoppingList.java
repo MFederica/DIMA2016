@@ -32,6 +32,7 @@ public class FragmentShoppingList extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnShoppingListFragmentInteractionListener mListener;
+    private AdapterShoppingList adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -73,7 +74,8 @@ public class FragmentShoppingList extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new AdapterShoppingList(context, ShoppingListHelper.getInstance(context).shoppingList, mListener));
+            adapter = new AdapterShoppingList(context, ShoppingListHelper.getInstance(context).shoppingList, mListener);
+            recyclerView.setAdapter(adapter);
         }
         return view;
     }
@@ -108,6 +110,13 @@ public class FragmentShoppingList extends Fragment {
      */
     public interface OnShoppingListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onShoppingListFragmentInteraction(ShoppingItem item);
+        void onShoppingListFragmentInteraction(ShoppingItem item, int position);
+    }
+
+    public void addElement(ShoppingItem shoppingItem, int position) {
+        ShoppingListHelper.getInstance(getContext()).shoppingList.add(position, shoppingItem);
+        ShoppingListHelper.saveShoppingList(getContext());
+        adapter.notifyItemInserted(position);
+        adapter.notifyItemRangeChanged(position, adapter.getItemCount());
     }
 }

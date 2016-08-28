@@ -80,9 +80,10 @@
     <string name="fragment_recipeingredients_add_to_shopping_list">Add to shopping list</string>
     <string name="fragment_recipeingredients_snackbar_add_message">Added to shopping list!</string>
     <string name="fragment_recipeingredients_snackbar_already_added_message">It has already been added to your shopping list</string>
-    <string name="fragment_recipeingredients_snackbar_remove_message">Removed from shopping list</string>
     <string name="fragment_recipeingredients_snackbar_action">view</string>
     <string name="fragment_shoppinglist_remove">Remove from shopping list</string>
+    <string name="fragment_shoppinglist_snackbar_removed">Removed from shopping list</string>
+    <string name="fragment_shoppinglist_snackbar_undo">Undo</string>
 
     <!-- strings for TOOLBAR -->
     <string name="action_settings">Settings</string>
