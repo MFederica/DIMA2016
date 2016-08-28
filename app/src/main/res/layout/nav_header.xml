@@ -28,7 +28,7 @@
             android:layout_weight="1"
             android:gravity="right|end"
             android:paddingTop="@dimen/layout_padding_default"
-            android:text="ciao"
+            android:text="Filters"
             android:textColor="@color/main_background"
             android:textSize="@dimen/header_font_size"/>
 
@@ -42,7 +42,7 @@
         android:layout_marginBottom="@dimen/layout_margin_default"
         android:gravity="left|start"
         android:paddingLeft="@dimen/layout_padding_default"
-        android:text="belli"
+        android:text="Select here..."
         android:textColor="@color/cardview_light_background"
         android:textSize="@dimen/header_font_size"/>
 

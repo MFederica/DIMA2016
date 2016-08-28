@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -38,18 +39,20 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.ArgumentMarshaller;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.appetite.model.Filter;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingItem;
 import com.appetite.style.filter.CustomExpandableListAdapter;
 import com.appetite.style.filter.ExpandableListDataSource;
-import com.appetite.style.filter.FragmentNavigationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,8 +103,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private Map<String, List<String>> expandableListData;
     private ArrayList expandableListTitle;
     private ExpandableListAdapter expandableListAdapter;
-    private FragmentNavigationManager navigationManager;
+    private Filter filterDictionary;
     private String[] items;
+    private final String ACTIVATE = "true";
+    private boolean isDrawerCreatedFirstTime = false;
 
     /**
      * All the bundle saved from the fragments
@@ -229,44 +234,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         addDrawerItems();
         setupDrawer();
         if(savedInstanceState == null) {
-            selectFirstItemAsDefault();
+           // selectFirstItemAsDefault();
         }
         /**
          * E FINISCONO QUI
          */
-
-
-        /* navigationViewForFilters.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                mDrawerLayout.closeDrawers();
-                //TODO IMPLEMENTARE FILTRI PER QUERY AL DATABASE QUA
-                //Check to see which item was being clicked and perform appropriate action
-                switch (menuItem.getItemId()) {
-
-                    case R.id.drawer_filters_item_home:
-                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
-                        return true;
-                    //Replacing the main content with ContentFragment Which is our Inbox View;
-                    case R.id.drawer_filters_item_categories:
-                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
-                        return true;
-                    // For rest of the options we just show a toast on click
-                    case R.id.drawer_filters_item_how_to:
-                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.drawer_filters_item_shopping_list:
-                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
-                        return true;
-                    case R.id.drawer_filters_item_favourite:
-                        Toast.makeText(getApplicationContext(), menuItem.getTitle(), Toast.LENGTH_SHORT).show();
-                        return true;
-                    default:
-                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
-                        return false;
-                }
-            }
-        });*/
     }
 
     @Override
@@ -428,6 +400,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
+
+
         super.onPrepareOptionsMenu(menu);
         return true;
     }
@@ -662,18 +636,20 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
      * QUI I mETODI PER IL DRAWER DEI FILTRI
      */
 
-    private void selectFirstItemAsDefault() {
+   /* private void selectFirstItemAsDefault() {
         if (navigationManager != null) {
-            String firstFilter = getResources().getStringArray(R.array.categoryFilter)[0];
+            String firstFilter = getResources().getStringArray(R.array.Category)[0];
             navigationManager.showCategoryFilter(firstFilter);
         }
-    }
+    }*/
 
     private void initItems() {
         items = getResources().getStringArray(R.array.filter);
     }
 
     private void addDrawerItems() {
+        isDrawerCreatedFirstTime = true;
+        filterDictionary = Filter.getInstance(this.getApplicationContext());
         expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListData);
         expandableFilterList.setAdapter(expandableListAdapter);
         expandableFilterList.setOnChildClickListener(new ExpandableListView.OnChildClickListener(){
@@ -683,22 +659,42 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         .get(childPosition).toString();
 
                 if (items[0].equals(expandableListTitle.get(groupPosition))) {
-                    //Things to do with the selected item
+
+                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
+
                 } else if (items[1].equals(expandableListTitle.get(groupPosition))) {
-                    //Things to do with the selected item
+
+                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
                 } else if(items[2].equals(expandableListTitle.get(groupPosition))) {
 
-                }  else if(items[2].equals(expandableListTitle.get(groupPosition))) {
+                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
+
+                }  else if(items[3].equals(expandableListTitle.get(groupPosition))) {
+
+                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
 
                 } else {
+
                     throw new IllegalArgumentException("Not supported type");
                 }
 
-                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                ArrayList<String> activated = filterDictionary.getActivatedFilters();
+                if(activated != null) {
+                    for (int i = 0; i < activated.size(); i++){
+                        Log.e("ActivatedFilter", activated.get(i));
+                    }
+
+                }
                 return false;
 
             }
         });
+        //Here to refresh... but doesn't work still
+        /*
+        DrawerLayout view1 = (DrawerLayout) findViewById(R.layout.activity_main);
+        ExpandableListView parent = (ExpandableListView) view1.findViewById(R.layout.nav_view_filters);
+        checkFilterStatus(parent);*/
+
     }
 
     private void setupDrawer() {
@@ -730,6 +726,87 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
         mDrawerToggle.onConfigurationChanged(configuration);
+    }
+
+    /**
+     * method used to change the color of the text of the filters
+     * @param parent
+     * @param v
+     * @param groupPosition
+     * @param selectedItem
+     * @param childPosition
+     */
+    private void changeActivationStatus(ExpandableListView parent, View v, int groupPosition, String selectedItem, int childPosition) {
+        //get child view
+        List group = expandableListData.get(expandableListTitle.get(groupPosition));
+        boolean isLast = false;
+        View childView = new View(getApplicationContext());
+        int lastIndex = group.size()-1;
+        if(group.get(lastIndex).equals(selectedItem)) {
+            isLast = true;
+        }
+        View view = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, v , parent);
+        TextView text = (TextView) view.findViewById(R.id.expandedListItem);
+        if(filterDictionary.getFilterStatus(selectedItem).equals(ACTIVATE)) {
+            filterDictionary.deactivateFilter(selectedItem);
+            text.setTextColor(Color.parseColor("#FFA000"));
+            //Do something to change text
+        } else {
+            filterDictionary.activateFilter(selectedItem);
+            text.setTextColor(Color.parseColor("#FF4081"));
+        }
+        //Things to do with the selected item
+    }
+
+    /**
+     * Color as active a filter when is called)
+     * @param parent
+     * @param v
+     * @param groupPosition
+     * @param selectedItem
+     * @param childPosition
+     */
+    private void activateSingleFilter(ExpandableListView parent, View v, int groupPosition, String selectedItem, int childPosition) {
+        List group = expandableListData.get(expandableListTitle.get(groupPosition));
+        boolean isLast = false;
+        View childView = new View(getApplicationContext());
+        int lastIndex = group.size()-1;
+        if(group.get(lastIndex).equals(selectedItem)) {
+            isLast = true;
+        }
+        View view = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, v , parent);
+        TextView text = (TextView) view.findViewById(R.id.expandedListItem);
+        text.setTextColor(Color.parseColor("#FF4081"));
+
+    }
+
+    /**
+     * Called to properly display the active filters even at screen rotation
+     * @param parent
+     * @param
+     */
+    private void checkFilterStatus(ExpandableListView parent) {
+        filterDictionary = Filter.getInstance(this.getApplicationContext());
+        ArrayList<String> activated = filterDictionary.getActivatedFilters();
+        String selectedItem;
+        int indexOfGroups = 3;
+
+        //for all titles
+        for(int i = 0; i < indexOfGroups; i++) {
+            int numberOfFilters = ((List)expandableListData.get(expandableListTitle.get(i))).size();
+            //For alla filters inside the menu
+            for(int j = 0; j < numberOfFilters-1; j++) {
+                selectedItem = ((List) (expandableListData.get(expandableListTitle.get(i))))
+                        .get(j).toString();
+                //Check if the filter is active, in that case we change its color
+                if(activated.contains(selectedItem)) {
+                    //WRONG!! we must select VIew beforehand
+                    //activateSingleFilter(parent, v, i, selectedItem, j);
+                }
+            }
+
+        }
+
     }
 
 

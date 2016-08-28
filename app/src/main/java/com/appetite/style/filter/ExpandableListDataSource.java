@@ -23,17 +23,17 @@ public class ExpandableListDataSource {
     public static Map<String, List<String>> getData(Context context) {
         Map<String, List<String>> expandableListData = new TreeMap<>();
 
-        List<String> filmGenres = Arrays.asList(context.getResources().getStringArray(R.array.filter));
+        List<String> filters = Arrays.asList(context.getResources().getStringArray(R.array.filter));
 
-        List<String> difficultyFilter = Arrays.asList(context.getResources().getStringArray(R.array.difficultyFilter));
-        List<String> timeFilter = Arrays.asList(context.getResources().getStringArray(R.array.timeFilter));
-        List<String> categoryFilter = Arrays.asList(context.getResources().getStringArray(R.array.categoryFilter));
-        List<String> countryFilter = Arrays.asList(context.getResources().getStringArray(R.array.countryFilter));
+        List<String> difficultyFilter = Arrays.asList(context.getResources().getStringArray(R.array.Difficulty));
+        List<String> timeFilter = Arrays.asList(context.getResources().getStringArray(R.array.Preparation_Time));
+        List<String> categoryFilter = Arrays.asList(context.getResources().getStringArray(R.array.Category));
+        List<String> countryFilter = Arrays.asList(context.getResources().getStringArray(R.array.Country));
 
-        expandableListData.put(filmGenres.get(0), categoryFilter);
-        expandableListData.put(filmGenres.get(1), difficultyFilter);
-        expandableListData.put(filmGenres.get(2), timeFilter);
-        expandableListData.put(filmGenres.get(3), countryFilter);
+        expandableListData.put(filters.get(0), categoryFilter);
+        expandableListData.put(filters.get(1), difficultyFilter);
+        expandableListData.put(filters.get(2), timeFilter);
+        expandableListData.put(filters.get(3), countryFilter);
 
         return expandableListData;
     }

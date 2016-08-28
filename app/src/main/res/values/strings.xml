@@ -28,11 +28,11 @@
     <string-array name="filter">
         <item>Category</item>
         <item>Difficulty</item>
-        <item>Preparation Time</item>
+        <item>Preparation_Time</item>
         <item>Country</item>
     </string-array>
 
-    <string-array name="categoryFilter">
+    <string-array name="Category">
         <item>Vegetarian</item>
         <item>First Dishes</item>
         <item>Second Dishes</item>
@@ -43,19 +43,19 @@
         <item>Drinks</item>
     </string-array>
 
-    <string-array name="difficultyFilter">
+    <string-array name="Difficulty">
         <item>Easy</item>
         <item>Medium</item>
         <item>Hard</item>
     </string-array>
 
-    <string-array name="timeFilter">
+    <string-array name="Preparation_Time">
         <item>less than 20 min</item>
         <item>less than 30 min</item>
         <item>less than 60 min</item>
     </string-array>
 
-    <string-array name="countryFilter">
+    <string-array name="Country">
         <item>Asia</item>
         <item>Italy</item>
         <item>France</item>
@@ -86,7 +86,6 @@
 
     <!-- strings for TOOLBAR -->
     <string name="action_settings">Settings</string>
-
 
     <!-- STT credentials --> 
     <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
