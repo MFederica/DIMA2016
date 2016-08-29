@@ -62,7 +62,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
-        FragmentShoppingList.OnShoppingListFragmentInteractionListener, FragmentShoppingListIngredients.OnShoppingListIngredientFragmentInteractionListener {
+        FragmentShoppingList.OnShoppingListFragmentInteractionListener, FragmentShoppingListIngredients.OnShoppingListIngredientFragmentInteractionListener, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener {
     /**
      * Class name for log messages.
      */
@@ -71,6 +71,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public final static String RECIPE_SELECTED = "com.appetite.ActivityMain.RECIPE_SELECTED";
     public final static String FRAGMENT = "com.appetite.ActivityMain.FRAGMENT";
     public final static String fileShoppingListName = "shopping_list";
+    public final static String fileFavoritesName = "favorites";
 
     public final static String PATH_RECIPE = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
     public final static String PATH_RECIPE_STEP = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/Steps/";
@@ -276,7 +277,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.drawer_item_favourite:
                 Toast.makeText(getApplicationContext(), "Favourites Selected", Toast.LENGTH_SHORT).show();
-                return true;
+                fragmentClass = FragmentFavoritesList.class;
+                break;
             default:
                 Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
                 return true;
@@ -603,6 +605,13 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         ((FragmentShoppingList)newFragment).addElement(shoppingItem, position);
                     }
                 }).show();
+    }
+
+    @Override
+    public void onFavoritesListFragmentInteraction(String item) {
+        Log.e(TAG, "OnFavoritesListIngredientFragmentInteraction: SONO DENTRO ACTIVITYMAIN");
+        RecipeData data = new RecipeData(item);
+        data.execute("");
     }
 
     /**

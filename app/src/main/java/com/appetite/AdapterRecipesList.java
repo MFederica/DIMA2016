@@ -3,13 +3,16 @@ package com.appetite;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appetite.model.FavoritesHelper;
 import com.appetite.model.Recipe;
+import com.appetite.model.ShoppingListHelper;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -25,6 +28,7 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
     private Context context;
     private OnItemClickListener listener;
     private ImageLoader imageLoader = ImageLoader.getInstance();
+    private FavoritesHelper favoritesHelper;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -34,18 +38,21 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
         public TextView title;
         public ImageView image;
         public Recipe recipe;
+        public ImageView favorite;
 
         public MyViewHolder(View view) {
             super(view);
             myView = view;
             title = (TextView) view.findViewById(R.id.fragment_recipes_list_title);
             image = (ImageView) view.findViewById(R.id.fragment_recipes_list_image);
+            favorite = (ImageView) view.findViewById(R.id.fragment_recipes_list_favorite);
         }
     }
 
     public AdapterRecipesList(Context context, List<Recipe> recipesList) {
         this.recipesList = recipesList;
         this.context = context;
+        favoritesHelper = FavoritesHelper.getInstance(context);
     }
 
     // Create new views (invoked by the layout manager)
@@ -64,6 +71,26 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
         holder.title.setText(holder.recipe.getName());
 
         holder.image.setImageBitmap(null);
+
+        if(favoritesHelper.isInFavorites(holder.recipe)) {
+            holder.favorite.setImageResource(R.drawable.ic_favorite);
+        } else {
+            holder.favorite.setImageResource(R.drawable.ic_favorite_border);
+        }
+
+        holder.favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favoritesHelper.favoriteChecked(holder.recipe);
+                favoritesHelper.saveFavorites(context);
+                //update view
+                if(favoritesHelper.isInFavorites(holder.recipe)) {
+                    holder.favorite.setImageResource(R.drawable.ic_favorite);
+                } else {
+                    holder.favorite.setImageResource(R.drawable.ic_favorite_border);
+                }
+            }
+        });
 
         String imageUri = ActivityMain.PATH_RECIPE + holder.recipe.getImage();
         if (imageUri != null && !holder.recipe.getImage().equals("")) {

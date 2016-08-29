@@ -36,7 +36,7 @@
             android:layout_width="match_parent" />
 
     <ImageView
-        android:id="@+id/fragment_recipes_list_icon"
+        android:id="@+id/fragment_recipes_list_favorite"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:background="@android:color/white"

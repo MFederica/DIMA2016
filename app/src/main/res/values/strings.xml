@@ -85,13 +85,21 @@
     <string name="fragment_shoppinglist_snackbar_removed">Removed from shopping list</string>
     <string name="fragment_shoppinglist_snackbar_undo">Undo</string>
 
+    <!-- strings for FAVORITES LIST -->
+    <string name="fragment_favoriteslist_remove">Remove from favorites list</string>
+    <string name="fragment_favoriteslist_snackbar_removed">Removed from favorites list</string>
+    <string name="fragment_favoriteslist_snackbar_undo">Undo</string>
+
     <!-- strings for TOOLBAR -->
     <string name="action_settings">Settings</string>
 
     <!-- STT credentials --> 
     <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
-     <string name="STTdefaultPassword">8Ifu5wRuEQFz</string>
-     <string name="STTdefaultTokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string> 
+     
+    <string name="STTdefaultPassword">8Ifu5wRuEQFz</string>
+     
+    <string name="STTdefaultTokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string>
+     
 
     <!--Strings for TIMER-->
     <string name="timer">Timer</string>

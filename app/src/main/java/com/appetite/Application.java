@@ -12,6 +12,7 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.amazonaws.mobile.AWSMobileClient;
+import com.appetite.model.FavoritesHelper;
 import com.appetite.model.ShoppingListHelper;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -53,6 +54,10 @@ public class Application extends MultiDexApplication {
         ShoppingListHelper.getInstance(getApplicationContext());
         // END - SHOPPING LIST HELPER SETUP
 
+        // FAVORITES HELPER SETUP
+        FavoritesHelper.getInstance(getApplicationContext());
+        // END - FAVORITES HELPER SETUP
+
         // TODO rimuovere: da qua (logger)
         ShoppingListHelper slh = ShoppingListHelper.getInstance(getApplicationContext());
         Log.d(LOG_TAG, "Instance of ShoppingListHelper contains "+ String.valueOf(slh.shoppingList.size()) + " items");
@@ -61,6 +66,14 @@ public class Application extends MultiDexApplication {
             string.concat(" "+slh.shoppingList.get(i).getRecipe());
         }
         Log.d(LOG_TAG, "Instance of ShoppingListHelper contains recipes: "+ string);
+
+        FavoritesHelper flh = FavoritesHelper.getInstance(getApplicationContext());
+        Log.d(LOG_TAG, "Instance of FavoritesHelper contains "+ String.valueOf(flh.favoritesList.size()) + " items");
+        String stringa = "";
+        for (int i =0; i < flh.favoritesList.size(); i++) {
+            stringa.concat(" "+flh.favoritesList.get(i));
+        }
+        Log.d(LOG_TAG, "Instance of FavoritesHelper contains recipes: "+ stringa);
         //TODO rimuovere: fino a qua (logger)
     }
 
