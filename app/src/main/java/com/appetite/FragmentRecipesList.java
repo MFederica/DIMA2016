@@ -225,12 +225,13 @@ public class FragmentRecipesList extends Fragment {
                     item.setImage(imageUri);
                     recipesList.add(item);
                     recipeDisplayer.put(item, DISPLAY);
+
                 }
                 Log.e("recipeDisplayer: ", recipeDisplayer.toString());
                 return recipesList;
         }
 
-        protected void onPostExecute(ArrayList<Recipe> result) {adapter.notifyDataSetChanged();}
+        protected void onPostExecute(ArrayList<Recipe> result) {onFilterChange();}
     }
 
     @Override
