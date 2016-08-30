@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentRecipesList"
+    android:id="@+id/fragment_recipe_list_container"
     android:padding="4dp">
 
     <android.support.v7.widget.RecyclerView

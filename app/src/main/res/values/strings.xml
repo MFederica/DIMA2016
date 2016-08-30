@@ -26,21 +26,9 @@
     <string name="difficulty">Difficulty</string>
     <string name="country">Country</string>
     <string-array name="filter">
-        <item>Category</item>
         <item>Difficulty</item>
         <item>Preparation_Time</item>
         <item>Country</item>
-    </string-array>
-
-    <string-array name="Category">
-        <item>Vegetarian</item>
-        <item>First Dishes</item>
-        <item>Second Dishes</item>
-        <item>Appetizer</item>
-        <item>Breakfast</item>
-        <item>Dessert</item>
-        <item>Salad</item>
-        <item>Drinks</item>
     </string-array>
 
     <string-array name="Difficulty">

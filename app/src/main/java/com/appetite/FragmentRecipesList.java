@@ -25,6 +25,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.appetite.model.Category;
+import com.appetite.model.Filter;
 import com.appetite.model.Recipe;
 
 import java.lang.reflect.Array;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 //import com.dmfm.appetite.R;
 
@@ -54,9 +56,12 @@ public class FragmentRecipesList extends Fragment {
     private ArrayList<Recipe> recipesList = new ArrayList<Recipe>();
     private RecyclerView recyclerView;
     private AdapterRecipesList adapter;
+    private Map<Recipe, String> recipeDisplayer = new HashMap<>();
+
 
     //Variable to communicate to the activity
     OnRecipeSelectedListener mCallBack;
+
 
     //Variables for the db
     AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
@@ -64,6 +69,8 @@ public class FragmentRecipesList extends Fragment {
     //Constans TODO: Create a Class that contans all the constants needed
     private final String recipeTable = "dima-mobilehub-516910810-Recipe";
     private final String bucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
+    private final String DISPLAY = "true";
+    private final String NOT_DISPLAY = "false";
 
     public FragmentRecipesList() {
 
@@ -217,7 +224,9 @@ public class FragmentRecipesList extends Fragment {
                     String imageUri = categorySelectedName + "/" + item.getImage() + ".jpg";
                     item.setImage(imageUri);
                     recipesList.add(item);
+                    recipeDisplayer.put(item, DISPLAY);
                 }
+                Log.e("recipeDisplayer: ", recipeDisplayer.toString());
                 return recipesList;
         }
 
@@ -234,4 +243,68 @@ public class FragmentRecipesList extends Fragment {
         public void onRecipeSelected(Recipe recipeSelected);
     }
 
+
+    /**
+     * Method called to display the filter at single click when we are in the fragment were is possible to
+     * perform this operation
+     */
+    public void onFilterChange() {
+        Filter filter = Filter.getInstance(getActivity().getApplicationContext());
+        ArrayList<String> active = filter.getActivatedFilters();
+
+            //For every recipe we go to change the adapter accordingly
+            for (Recipe r : recipeDisplayer.keySet()) {
+                ArrayList<String> activeDifficulty = filter.getActivePerGroup().get("Difficulty");
+                ArrayList<String> activeTime = filter.getActivePerGroup().get("Preparation_Time");
+                ArrayList<String> activeCountry = filter.getActivePerGroup().get("Country");
+                boolean firstCheck = true;
+                boolean secondCheck = true;
+                boolean thirdCheck = true;
+                if(activeDifficulty != null) {
+                    Log.e("CheckDifficulty: ", Integer.toString(r.getDifficulty()));
+                    String difficulty = "";
+                    if (r.getDifficulty() == 1)
+                        difficulty = "Easy";
+                    if (r.getDifficulty() == 2)
+                        difficulty = "Medium";
+                    if (r.getDifficulty() == 3)
+                        difficulty = "Hard";
+                    //Vede se ha quel valore
+                    if (!active.contains(difficulty))
+                        firstCheck = false;
+                }
+
+                if(activeTime != null) {
+                    Log.e("CheckTime: ", r.getPreparationTime());
+                    String[] temp = activeTime.get(0).split(" ");
+                    int min = Integer.parseInt(temp[2]);
+                    if (!(Integer.parseInt(r.getPreparationTime()) < min))
+                        secondCheck = false;
+                }
+
+
+                if(activeCountry != null) {
+                    Log.e("CheckCountry: ", r.getCountry() );
+                    if(!(active.contains(r.getCountry())))
+                        thirdCheck = false;
+                }
+
+                //We set finally if the recipe is going to be seen or not
+                if(firstCheck && secondCheck && thirdCheck) {
+                    Log.e("displayRecipe: ", r.getName());
+                    recipeDisplayer.put(r, DISPLAY);
+                    if(!recipesList.contains(r))
+                        recipesList.add(r);
+                } else {
+                    Log.e("deactivateRecipe: ", r.getName());
+                    recipeDisplayer.put(r, NOT_DISPLAY);
+                    if(recipesList.contains(r))
+                        recipesList.remove(r);
+                }
+            }
+
+        recipeDisplayer.toString();
+        recipesList.toString();
+        adapter.notifyDataSetChanged();
+    }
 }

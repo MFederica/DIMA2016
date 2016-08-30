@@ -460,9 +460,11 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onSaveInstanceState(Bundle bundle) {
         // state for the first SearchView
-        isSearchViewOpen = searchMenuItem.isActionViewExpanded();
-        Log.e(TAG, "SearchView, onSaveInstanca" + isSearchViewOpen);
-        bundle.putString("search", searchView.getQuery().toString());
+        if(searchMenuItem != null ) {
+            isSearchViewOpen = searchMenuItem.isActionViewExpanded();
+            Log.e(TAG, "SearchView, onSaveInstanca" + isSearchViewOpen);
+            bundle.putString("search", searchView.getQuery().toString());
+        }
         super.onSaveInstanceState(bundle);
     }
 
@@ -622,7 +624,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         //TODO: leggi sopra e implementalo qui
         final MatrixCursor c = new MatrixCursor(new String[]{ BaseColumns._ID, "recipeName" });
         for (int i=0; i< recipeNameList.size(); i++) {
-            if (recipeNameList.get(i).toLowerCase().startsWith(query.toLowerCase()))
+            if (recipeNameList.get(i).toLowerCase().contains(query.toLowerCase()))
                 c.addRow(new Object[] {i, recipeNameList.get(i)});
         }
         mAdapter.changeCursor(c);
@@ -644,7 +646,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
          * @return
          */
         public Recipe doInBackground(String...strings) {
-            Log.e(TAG, "doInBackground: SONO DENTRO ACTIVITYMAIN BACKGROUND");
             Recipe recipeItem = new Recipe();
             recipeItem.setName(recipe);
             DynamoDBQueryExpression<Recipe> queryExpression = new DynamoDBQueryExpression<Recipe>()
@@ -743,23 +744,32 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 String selectedItem = ((List) (expandableListData.get(expandableListTitle.get(groupPosition))))
                         .get(childPosition).toString();
 
+
                 if (items[0].equals(expandableListTitle.get(groupPosition))) {
 
+                    //Difficulty
                     changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
+                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
+                    if(f instanceof FragmentRecipesList)
+                        ((FragmentRecipesList) f).onFilterChange();
 
                 } else if (items[1].equals(expandableListTitle.get(groupPosition))) {
 
+                    //Preparation Time
                     changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
+                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
+                    if(f instanceof FragmentRecipesList)
+                        ((FragmentRecipesList) f).onFilterChange();
 
                 } else if(items[2].equals(expandableListTitle.get(groupPosition))) {
 
+                    //Country
                     changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
+                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
+                    if(f instanceof FragmentRecipesList)
+                        ((FragmentRecipesList) f).onFilterChange();
 
-                }  else if(items[3].equals(expandableListTitle.get(groupPosition))) {
-
-                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
-
-                } else {
+                }  else {
 
                     throw new IllegalArgumentException("Not supported type");
                 }
@@ -829,17 +839,69 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             isLast = true;
             Log.e("isLast ", "yes" );
         }
-        View view = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, v , parent);
-        TextView text = (TextView) view.findViewById(R.id.expandedListItem);
-        if(filterDictionary.getFilterStatus(selectedItem).equals(ACTIVATE)) {
-            filterDictionary.deactivateFilter(selectedItem);
-            text.setTextColor(Color.parseColor("#FFA000"));
-            //Do something to change text
+        View viewNew = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, v , parent);
+        TextView textNew = (TextView) viewNew.findViewById(R.id.expandedListItem);
+        if(selectedItem.equals("less than 20 min") || selectedItem.equals("less than 30 min") || selectedItem.equals("less than 60 min")) {
+            Log.e("ActivePerGroup: ", filterDictionary.getActivePerGroup().toString() );
+            ArrayList<String> timeActive = filterDictionary.getActivePerGroup().get("Preparation_Time");
+            int oldChildPosition = -1;
+            boolean isLastOld = false;
+            switch(selectedItem) {
+                case "less than 20 min":
+                    oldChildPosition = 0;
+                    break;
+                case "less than 30 min":
+                    oldChildPosition = 1;
+                    break;
+                case "less than 60 min":
+                    oldChildPosition = 2;
+                    isLastOld = true;
+                    break;
+            }
+            View viewOld = expandableListAdapter.getChildView(groupPosition, oldChildPosition, isLastOld, v , parent);
+            TextView textOld = (TextView) viewOld.findViewById(R.id.expandedListItem);
+            if(timeActive != null) {
+                Log.e("timeActive: ", timeActive.toString());
+                if (timeActive.get(0).equals(selectedItem)) {
+                    Log.e("changeActivation: ", "deactivate the one clicked");
+                    //Deactivate the filter just clicked
+                    filterDictionary.deactivateFilter(selectedItem);
+                    filterDictionary.setGroupFilterDeactivation(selectedItem);
+                    textNew.setTextColor(Color.parseColor("#FFA000"));
+                } else {
+                    //TODO: IL vECCHIO non lo Recupera COME AL SOLITO
+                    Log.e("changeActivation: ","Deactivate the old one and activate the one clicked" );
+                    //Deactivate the old one
+                    filterDictionary.deactivateFilter(timeActive.get(0));
+                    filterDictionary.setGroupFilterDeactivation(timeActive.get(0));
+                    textOld.setTextColor(Color.parseColor("#FFA000"));
+                    //Activate the new filter
+                    filterDictionary.setGroupFilterActivation(selectedItem);
+                    filterDictionary.activateFilter(selectedItem);
+                    textNew.setTextColor(Color.parseColor("#FF4081"));
+
+                }
+            } else {
+                Log.e("changeActivation: ", "Activate the filter just clicked");
+                //Activate filter just clicked
+                filterDictionary.setGroupFilterActivation(selectedItem);
+                filterDictionary.activateFilter(selectedItem);
+                textNew.setTextColor(Color.parseColor("#FF4081"));
+            }
+            //For all other filters
         } else {
-            filterDictionary.activateFilter(selectedItem);
-            text.setTextColor(Color.parseColor("#FF4081"));
+            if (filterDictionary.getFilterStatus(selectedItem).equals(ACTIVATE)) {
+                filterDictionary.deactivateFilter(selectedItem);
+                filterDictionary.setGroupFilterDeactivation(selectedItem);
+                textNew.setTextColor(Color.parseColor("#FFA000"));
+
+            } else {
+                filterDictionary.activateFilter(selectedItem);
+                filterDictionary.setGroupFilterActivation(selectedItem);
+                textNew.setTextColor(Color.parseColor("#FF4081"));
+            }
         }
-        //Things to do with the selected item
+
     }
 
     /**
@@ -849,7 +911,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
      * @param selectedItem
      * @param childPosition
      */
-    private void activateSingleFilter(ViewGroup parent, int groupPosition, String selectedItem, int childPosition) {
+    private void activateFilterAtRotation(ViewGroup parent, int groupPosition, String selectedItem, int childPosition) {
+        //TODO: E QUINDI nEMMENo QUEsTO VA :[
         Log.e("activateSingleFilter: ","parent: " + parent.toString());
         List group = expandableListData.get(expandableListTitle.get(groupPosition));
         boolean isLast = false;
@@ -871,12 +934,13 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
      * Called to properly display the active filters even at screen rotation
      */
     private void checkFilterStatus() {
+        //TODO: ANCORA nON VA STO BASTARDO
         filterDictionary = Filter.getInstance(this.getApplicationContext());
         ArrayList<String> activated = filterDictionary.getActivatedFilters();
         ExpandableListView parent = (ExpandableListView) getWindow().getDecorView().getRootView().findViewById(R.id.nav_view_filters);
         Log.e("expandableListView: ", parent.toString() );
         String selectedItem;
-        int indexOfGroups = 4;
+        int indexOfGroups = 3;
         if(activated != null) {
             //for all titles
             for (int i = 0; i < indexOfGroups; i++) {
@@ -888,7 +952,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                             .get(j).toString();
                     //Check if the filter is active, in that case we change its color
                     if (activated.contains(selectedItem)) {
-                        activateSingleFilter( parent, i, selectedItem, j);
+                        activateFilterAtRotation( parent, i, selectedItem, j);
                     }
                 }
 
@@ -896,7 +960,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         }
 
     }
-
 
 }
 

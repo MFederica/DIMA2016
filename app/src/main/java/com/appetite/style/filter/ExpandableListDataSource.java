@@ -27,13 +27,11 @@ public class ExpandableListDataSource {
 
         List<String> difficultyFilter = Arrays.asList(context.getResources().getStringArray(R.array.Difficulty));
         List<String> timeFilter = Arrays.asList(context.getResources().getStringArray(R.array.Preparation_Time));
-        List<String> categoryFilter = Arrays.asList(context.getResources().getStringArray(R.array.Category));
         List<String> countryFilter = Arrays.asList(context.getResources().getStringArray(R.array.Country));
 
-        expandableListData.put(filters.get(0), categoryFilter);
-        expandableListData.put(filters.get(1), difficultyFilter);
-        expandableListData.put(filters.get(2), timeFilter);
-        expandableListData.put(filters.get(3), countryFilter);
+        expandableListData.put(filters.get(0), difficultyFilter);
+        expandableListData.put(filters.get(1), timeFilter);
+        expandableListData.put(filters.get(2), countryFilter);
 
         return expandableListData;
     }

@@ -206,7 +206,7 @@ public class FragmentCategoriesList extends Fragment {
                 for (Map<String, AttributeValue> item : result.getItems()) {
 
                     String name = item.get("name").getS();
-                    String imageUri = categoryBucket + item.get("image").getS() + ".png";
+                    String imageUri = categoryBucket + item.get("image").getS() + ".jpg";
                     Log.e("ImageURI:", imageUri);
                     //int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
                     Category category = new Category(name, imageUri);
