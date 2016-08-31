@@ -150,6 +150,9 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         }
         setContentView(R.layout.activity_main);
 
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.main_fragment_container) != null) {
@@ -165,11 +168,13 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 // the right fragment
                 if (getIntent().getStringExtra(FRAGMENT) != null) {
                     if (getIntent().getStringExtra(FRAGMENT).equals(FragmentShoppingList.class.getSimpleName())) {
+                        navigationView.getMenu().findItem(R.id.drawer_item_shopping_list).setChecked(true);
                         Log.i(TAG, "onCreate (intent): " + FragmentShoppingList.class.getSimpleName());
                         fragmentClass = FragmentShoppingList.class;
                         fragment = Fragment.instantiate(this, fragmentClass.getName());
                     }
                 } else {
+                    navigationView.getMenu().findItem(R.id.drawer_item_home).setChecked(true);
                     fragmentClass = FragmentHome.class;
                     fragment = Fragment.instantiate(this, fragmentClass.getName());
                     fragment.setArguments(getIntent().getExtras());
@@ -214,10 +219,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         // Show the hamburger icon
         mDrawerToggle.syncState();
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().findItem(R.id.drawer_item_home).setChecked(true);
 
         mTitle = mDrawerTitle = getTitle();
 

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -77,6 +79,12 @@ public class FragmentShoppingListIngredients extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Change the action bar title
+        final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(getString(R.string.drawer_item_shopping_list));
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_shoppinglist_item_recipe, container, false);
         mIngredientsListView = (RecyclerView) rootView.findViewById(R.id.fragment_shoppinglist_ingredientslist);
         mRecipeNameView = (TextView) rootView.findViewById(R.id.fragment_shoppinglist_recipe);
