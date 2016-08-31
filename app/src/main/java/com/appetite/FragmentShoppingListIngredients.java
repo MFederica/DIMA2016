@@ -1,6 +1,8 @@
 package com.appetite;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,11 +17,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
+import com.appetite.style.SimpleDividerItemDecoration;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
 //import com.dmfm.appetite.R;
 
 /**
@@ -42,9 +53,13 @@ public class FragmentShoppingListIngredients extends Fragment {
 
     private OnShoppingListIngredientFragmentInteractionListener mListener;
 
+    private ImageView mRecipeImageView;
     private TextView mRecipeNameView;
+    private TextView mRecipeServingsView;
     private RecyclerView mIngredientsListView;
     private Button mRemoveButton;
+
+    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     public FragmentShoppingListIngredients() {
         // Required empty public constructor
@@ -87,12 +102,28 @@ public class FragmentShoppingListIngredients extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_shoppinglist_item_recipe, container, false);
         mIngredientsListView = (RecyclerView) rootView.findViewById(R.id.fragment_shoppinglist_ingredientslist);
-        mRecipeNameView = (TextView) rootView.findViewById(R.id.fragment_shoppinglist_recipe);
+        mIngredientsListView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
+        mRecipeNameView = (TextView) rootView.findViewById(R.id.fragment_shoppinglist_recipe_name);
+        mRecipeServingsView = (TextView) rootView.findViewById(R.id.fragment_shoppinglist_recipe_servings);
         mRemoveButton = (Button) rootView.findViewById(R.id.fragment_shoppinglist_remove);
+        mRecipeImageView = (ImageView) rootView.findViewById(R.id.fragment_shoppinglist_item_recipe_image);
+
         mRecipeNameView.setText(shoppingItem.getRecipe());
+        String servings = String.valueOf(shoppingItem.getServings()) + " " + getResources().getString(R.string.fragment_recipeingredients_servings);
+        Log.e("TAG", "onCreateView: " + servings );
+        mRecipeServingsView.setText(servings);
         mIngredientsListView.setLayoutManager(new LinearLayoutManager(getContext()));
         mIngredientsListView.setAdapter(new AdapterShoppingListIngredient(getContext(), shoppingItem));
-        mRecipeNameView.setOnClickListener(new View.OnClickListener() {
+        rootView.findViewById(R.id.fragment_shoppinglist_item_recipe_image).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null) {
+                    mListener.OnShoppingListIngredientFragmentInteraction(shoppingItem);
+                }
+            }
+        });
+
+        rootView.findViewById(R.id.fragment_shoppinglist_item_recipeAndServings).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
@@ -110,6 +141,41 @@ public class FragmentShoppingListIngredients extends Fragment {
                 }
             }
         });
+
+        String imageUri = ActivityMain.PATH_RECIPE + shoppingItem.getImage();
+        mRecipeImageView.setImageBitmap(null);
+
+        if (imageUri != null && !shoppingItem.getImage().equals("")) {
+            final File image = DiskCacheUtils.findInCache(imageUri, imageLoader.getDiskCache());
+            if (image!= null && image.exists()) {
+                Picasso.with(getContext()).load(image).fit().centerCrop().into(mRecipeImageView);
+            } else {
+                imageLoader.loadImage(imageUri, new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String s, View view) {
+                        mRecipeImageView.setImageBitmap(null);
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                        Picasso.with(getContext()).load(s).fit().centerCrop().into(mRecipeImageView);
+
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String s, View view) {
+
+                    }
+                });
+            }
+        }else {
+            mRecipeImageView.setImageBitmap(null);
+        }
         // Inflate the layout for this fragment
         return rootView;
 

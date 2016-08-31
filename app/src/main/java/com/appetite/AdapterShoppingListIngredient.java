@@ -88,6 +88,18 @@ public class AdapterShoppingListIngredient extends RecyclerView.Adapter<AdapterS
                 }
             }
         });
+
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Check or uncheck the checkbox
+                holder.mCheckBox.setChecked(!(holder.mCheckBox.isChecked()));
+                boolean checked = holder.mCheckBox.isChecked();
+                        Log.d(TAG, "onClick: ITEM");
+                        ShoppingListHelper.getInstance(context).ingredientChecked(mShoppingItem, holder.mItem, checked);
+                        ShoppingListHelper.saveShoppingList(context);
+                }
+        });
     }
 
     @Override
