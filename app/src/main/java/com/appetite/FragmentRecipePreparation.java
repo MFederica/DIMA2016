@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 //import com.dmfm.appetite.R;
 import com.appetite.model.Recipe;
+import com.appetite.style.SimpleDividerItemDecoration;
 
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class FragmentRecipePreparation extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
             recyclerView.setAdapter(new AdapterRecipePreparation(context, recipe, mListener));
         }
         return view;

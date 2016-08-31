@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.appetite.FragmentRecipePreparation.OnListFragmentInteractionListener;
 import com.appetite.model.Recipe;
+import com.appetite.style.GridImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -105,7 +106,7 @@ public class AdapterRecipePreparation extends RecyclerView.Adapter<AdapterRecipe
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mStepNumberView;
-        public final ImageView mStepImageView;
+        public final GridImageView mStepImageView;
         public final TextView mStepTextView;
         public String mItem;
 
@@ -113,7 +114,7 @@ public class AdapterRecipePreparation extends RecyclerView.Adapter<AdapterRecipe
             super(view);
             mView = view;
             mStepNumberView = (TextView) view.findViewById(R.id.fragment_recipe_preparation_step_number);
-            mStepImageView = (ImageView) view.findViewById(R.id.fragment_recipe_preparation_step_image);
+            mStepImageView = (GridImageView) view.findViewById(R.id.fragment_recipe_preparation_step_image);
             mStepTextView = (TextView) view.findViewById(R.id.fragment_recipe_preparation_step_text);
         }
 
