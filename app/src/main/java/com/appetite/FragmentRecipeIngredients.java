@@ -20,6 +20,7 @@ import android.widget.NumberPicker;
 import com.appetite.model.Recipe;
 import com.appetite.model.RecipeIngredient;
 import com.appetite.model.ShoppingListHelper;
+import com.appetite.style.SimpleDividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +108,7 @@ public class FragmentRecipeIngredients extends Fragment {
             Context context = rcView.getContext();
             RecyclerView recyclerView = (RecyclerView) rcView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
             //TODO INTERFACCIA: decommenta 2/5 e cambia costruttore
             //recyclerView.setAdapter(new AdapterRecipeIngredients(DummyContent.ITEMS, mListener));
             adapter = new AdapterRecipeIngredients(getContext(), recipe, recipeIngredients, Integer.valueOf(currentServings));
