@@ -9,5 +9,4 @@
 
     app:layoutManager="LinearLayoutManager"
     tools:context=".FragmentFavoritesList"
-    tools:listitem="@layout/fragment_favoriteslist_item"
-    android:background="@color/colorBackground"/>
+    tools:listitem="@layout/fragment_favoriteslist_item" />

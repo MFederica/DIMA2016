@@ -13,12 +13,14 @@ public class ShoppingItem implements Serializable {
     //private Recipe recipe;
     //private List<RecipeIngredient> ingredientsList;
     private String recipe;
+    private String recipeImage;
     private int servings;
     private Map<RecipeIngredient, Boolean> ingredientsMapping;
     private List<RecipeIngredient> ingredientsList;
 
     public ShoppingItem(Recipe recipe, int servings) {
         this.recipe = recipe.getName();
+        this.recipeImage = recipe.getImage();
         this.servings = servings;
         ingredientsMapping = new HashMap<>();
         ingredientsList = new ArrayList<>();
@@ -39,6 +41,10 @@ public class ShoppingItem implements Serializable {
 
     public String getRecipe() {
         return recipe;
+    }
+
+    public String getImage() {
+        return recipeImage;
     }
 
     /**

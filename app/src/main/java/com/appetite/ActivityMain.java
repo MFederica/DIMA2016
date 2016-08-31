@@ -50,6 +50,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.ArgumentMarshall
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.appetite.model.FavoriteItem;
 import com.appetite.model.Filter;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingItem;
@@ -611,9 +612,9 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onFavoritesListFragmentInteraction(String item) {
+    public void onFavoritesListFragmentInteraction(FavoriteItem item) {
         Log.e(TAG, "OnFavoritesListIngredientFragmentInteraction: SONO DENTRO ACTIVITYMAIN");
-        RecipeData data = new RecipeData(item);
+        RecipeData data = new RecipeData(item.getRecipe());
         data.execute("");
     }
 

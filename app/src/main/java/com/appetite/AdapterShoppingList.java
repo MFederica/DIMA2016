@@ -1,6 +1,7 @@
 package com.appetite;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,12 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.appetite.FragmentShoppingList.OnShoppingListFragmentInteractionListener;
 import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
+import com.appetite.style.GridImageView;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -27,6 +36,7 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
 
     private final List<ShoppingItem> mValues;
     private final OnShoppingListFragmentInteractionListener mListener;
+    private ImageLoader imageLoader = ImageLoader.getInstance();
 
     private Context context;
 
@@ -86,6 +96,41 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
 
             }
         });
+
+        String imageUri = ActivityMain.PATH_RECIPE + holder.mItem.getImage();
+        holder.image.setImageBitmap(null);
+
+        if (imageUri != null && !holder.mItem.getImage().equals("")) {
+            final File image = DiskCacheUtils.findInCache(imageUri, imageLoader.getDiskCache());
+            if (image!= null && image.exists()) {
+                Picasso.with(context).load(image).fit().centerCrop().into(holder.image);
+            } else {
+                imageLoader.loadImage(imageUri, new ImageLoadingListener() {
+                    @Override
+                    public void onLoadingStarted(String s, View view) {
+                        holder.image.setImageBitmap(null);
+                    }
+
+                    @Override
+                    public void onLoadingFailed(String s, View view, FailReason failReason) {
+
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
+                        Picasso.with(context).load(s).fit().centerCrop().into(holder.image);
+
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String s, View view) {
+
+                    }
+                });
+            }
+        }else {
+            holder.image.setImageBitmap(null);
+        }
     }
 
     @Override
@@ -95,15 +140,17 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
+        public final GridImageView image;
         public final TextView mRecipeNameView;
-        public final Button mRemoveButton;
+        public final ImageButton mRemoveButton;
         public ShoppingItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
+            image = (GridImageView) view.findViewById(R.id.fragment_shoppinglist_image);
             mRecipeNameView = (TextView) view.findViewById(R.id.fragment_shoppinglist_recipe);
-            mRemoveButton = (Button) view.findViewById(R.id.fragment_shoppinglist_remove);
+            mRemoveButton = (ImageButton) view.findViewById(R.id.fragment_shoppinglist_remove);
         }
 
         @Override

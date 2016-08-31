@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 //import com.dmfm.appetite.R;
 import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
+import com.appetite.style.SimpleDividerItemDecoration;
 
 /**
  * A fragment representing a list of Items.
@@ -81,6 +82,7 @@ public class FragmentShoppingList extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
             adapter = new AdapterShoppingList(context, ShoppingListHelper.getInstance(context).shoppingList, mListener);
             recyclerView.setAdapter(adapter);
         }

@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 //import com.dmfm.appetite.R;
+import com.appetite.model.FavoriteItem;
 import com.appetite.model.FavoritesHelper;
 import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
+import com.appetite.style.SimpleDividerItemDecoration;
 
 /**
  * A fragment representing a list of Items.
@@ -78,6 +80,7 @@ public class FragmentFavoritesList extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -119,10 +122,10 @@ public class FragmentFavoritesList extends Fragment {
      */
     public interface OnFavoritesListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFavoritesListFragmentInteraction(String item);
+        void onFavoritesListFragmentInteraction(FavoriteItem item);
     }
 
-    public void addElement(String favorite, int position) {
+    public void addElement(FavoriteItem favorite, int position) {
         FavoritesHelper.getInstance(getContext()).favoritesList.add(position, favorite);
         FavoritesHelper.saveFavorites(getContext());
         adapter.notifyItemInserted(position);

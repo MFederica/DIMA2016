@@ -16,11 +16,11 @@ import java.util.List;
 
 public class FavoritesHelper implements Serializable {
 
-    public List<String> favoritesList;
+    public List<FavoriteItem> favoritesList;
 
     private volatile static FavoritesHelper instance;
 
-    public FavoritesHelper(List<String> recipesList, Context context) {
+    public FavoritesHelper(List<FavoriteItem> recipesList, Context context) {
         this.favoritesList = recipesList;
     }
 
@@ -42,7 +42,7 @@ public class FavoritesHelper implements Serializable {
                         is.close();
                         fis.close();
                     } catch (IOException e) {
-                        instance = new FavoritesHelper(new ArrayList<String>(), context);
+                        instance = new FavoritesHelper(new ArrayList<FavoriteItem>(), context);
                         e.printStackTrace();
                     } catch (ClassNotFoundException e) {
                         e.printStackTrace();
@@ -78,8 +78,8 @@ public class FavoritesHelper implements Serializable {
      * @return true, if the recipe is in the shopping list; false, otherwise
      */
     public boolean isInFavorites(Recipe recipe) {
-        for(String si : favoritesList) {
-            if(si.equals(recipe.getName()))
+        for(FavoriteItem fi : favoritesList) {
+            if(fi.getRecipe().equals(recipe.getName()))
                 return true;
         }
         return false;
@@ -91,21 +91,21 @@ public class FavoritesHelper implements Serializable {
      * @return name of the recipe, if found; null, otherwise
      */
     public String getFavorite(Recipe recipe) {
-        for(String f : favoritesList) {
-            if(f.equals(recipe.getName()))
-                return f;
+        for(FavoriteItem fi : favoritesList) {
+            if(fi.getRecipe().equals(recipe.getName()))
+                return fi.getRecipe();
         }
         return null;
     }
 
     public boolean addRecipe(Recipe recipe) {
-        return favoritesList.add(recipe.getName());
+        return favoritesList.add(new FavoriteItem(recipe));
     }
 
     public boolean removeRecipe(String recipeName) {
-        for(String f : favoritesList) {
-            if(f.equals(recipeName)) {
-                favoritesList.remove(f);
+        for(FavoriteItem fi : favoritesList) {
+            if(fi.getRecipe().equals(recipeName)) {
+                favoritesList.remove(fi);
                 return true;
             }
         }
@@ -119,14 +119,14 @@ public class FavoritesHelper implements Serializable {
      * @return true, if the recipe is now in favoritesList; false, if the recipe is no longer in favoritesList
      */
     public boolean favoriteChecked(Recipe recipe) {
-        for(String f : favoritesList) {
-            if(f.equals(recipe.getName())) {
-                favoritesList.remove(f);
+        for(FavoriteItem fi : favoritesList) {
+            if(fi.getRecipe().equals(recipe.getName())) {
+                favoritesList.remove(fi);
                 return false;
             }
         }
         //if i'm here it's because I haven't found the recipe in the list
-        favoritesList.add(recipe.getName());
+        favoritesList.add(new FavoriteItem(recipe));
         return true;
     }
 }
