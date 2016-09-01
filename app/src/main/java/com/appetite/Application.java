@@ -82,4 +82,41 @@ public class Application extends MultiDexApplication {
 
         // ...Put any application-specific initialization logic here...
     }
+
+    /**
+     * Converts a number to its fractional representation
+     * @param d number
+     * @param factor maxmimum denominator we allow
+     * @return fractional representation of number d
+     */
+    public static String toFraction(double d, int factor) {
+        StringBuilder sb = new StringBuilder();
+        // check negative number
+        if (d < 0) {
+            sb.append('-');
+            d = -d;
+        }
+        // first digit to string
+        long l = (long) d;
+        if (l != 0) sb.append(l);
+        d -= l;
+        // compute fractional part
+        double error = Math.abs(d);
+        int bestDenominator = 1;
+        for(int i=2;i<=factor;i++) {
+            double error2 = Math.abs(d - (double) Math.round(d * i) / i);
+            if (error2 < error) {
+                error = error2;
+                bestDenominator = i;
+            }
+        }
+        // fraction to string
+        if (bestDenominator > 1) {
+            if (l != 0) {
+                sb.append(' ');
+            }
+            sb.append(Math.round(d * bestDenominator)).append('/').append(bestDenominator);
+        }
+        return sb.toString();
+    }
 }

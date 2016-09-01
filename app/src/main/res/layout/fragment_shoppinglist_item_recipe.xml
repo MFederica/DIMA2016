@@ -12,7 +12,7 @@
         android:scaleType="centerCrop"
         app:layout_collapseMode="parallax"
         android:background="@color/colorImageBackground"/>
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="200dp"
@@ -25,45 +25,48 @@
             android:elevation="8dp"
             >
 
-        <LinearLayout
-            android:id="@+id/fragment_shoppinglist_item_recipeAndServings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="?android:attr/selectableItemBackground">
-            <TextView
-                android:id="@+id/fragment_shoppinglist_recipe_name"
+            <LinearLayout
+                android:id="@+id/fragment_shoppinglist_item_recipeAndServings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:layout_marginBottom="2dp"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="20sp"/>
-            <TextView
-                android:id="@+id/fragment_shoppinglist_recipe_servings"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground">
+                <TextView
+                    android:id="@+id/fragment_shoppinglist_recipe_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="2dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    android:textSize="20sp"/>
+                <TextView
+                    android:id="@+id/fragment_shoppinglist_recipe_servings"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:textAppearance="?attr/textAppearanceListItemSmall"
+                    android:textColor="@color/colorTextSecondary"/>
+            </LinearLayout>
+
+
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textAppearance="?attr/textAppearanceListItemSmall"
-                android:textColor="@color/colorTextSecondary"/>
-        </LinearLayout>
+                android:layout_height="wrap_content">
+                <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/fragment_shoppinglist_ingredientslist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
 
+                    app:layoutManager="LinearLayoutManager"
 
-
-
-            <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/fragment_shoppinglist_ingredientslist"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                app:layoutManager="LinearLayoutManager"
-
-                tools:listitem="@layout/fragment_shoppinglist_item_ingredient" />
+                    tools:listitem="@layout/fragment_shoppinglist_item_ingredient" />
+            </RelativeLayout>
 
             <Button
                 android:layout_width="wrap_content"
@@ -74,6 +77,6 @@
                 android:id="@+id/fragment_shoppinglist_remove" />
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 </FrameLayout>

@@ -61,7 +61,7 @@ public class AdapterRecipeIngredients extends RecyclerView.Adapter<AdapterRecipe
             holder.mQuantityView.setText("");
         } else {
             tempQuantity = tempQuantity * amount;
-            holder.mQuantityView.setText(tempQuantity.toString());
+            holder.mQuantityView.setText(Application.toFraction(tempQuantity, 20));
         }
         String tempUnit = mValues.get(position).getUnit();
         if(tempUnit.compareTo("null") == 0) {

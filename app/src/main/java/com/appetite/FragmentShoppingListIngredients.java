@@ -109,11 +109,16 @@ public class FragmentShoppingListIngredients extends Fragment {
         mRecipeImageView = (ImageView) rootView.findViewById(R.id.fragment_shoppinglist_item_recipe_image);
 
         mRecipeNameView.setText(shoppingItem.getRecipe());
-        String servings = String.valueOf(shoppingItem.getServings()) + " " + getResources().getString(R.string.fragment_recipeingredients_servings);
+        String servings = String.valueOf(shoppingItem.getServings()) + " ";
+        if(shoppingItem.getServings() > 1)
+            servings += getResources().getString(R.string.fragment_recipeingredients_servings);
+        else
+            servings += getResources().getString(R.string.fragment_recipeingredients_serving);
         Log.e("TAG", "onCreateView: " + servings );
         mRecipeServingsView.setText(servings);
         mIngredientsListView.setLayoutManager(new LinearLayoutManager(getContext()));
         mIngredientsListView.setAdapter(new AdapterShoppingListIngredient(getContext(), shoppingItem));
+        mIngredientsListView.setNestedScrollingEnabled(false);
         rootView.findViewById(R.id.fragment_shoppinglist_item_recipe_image).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

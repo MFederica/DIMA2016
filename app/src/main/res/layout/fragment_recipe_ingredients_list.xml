@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/fragment_recipeingredients_servings" />
         <TextView
+            android:id="@+id/fragment_recipeingredients_servingstext"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

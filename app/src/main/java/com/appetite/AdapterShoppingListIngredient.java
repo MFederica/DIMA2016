@@ -62,7 +62,7 @@ public class AdapterShoppingListIngredient extends RecyclerView.Adapter<AdapterS
             holder.mQuantityView.setText("");
         } else {
             tempQuantity = tempQuantity * mShoppingItem.getServings();
-            holder.mQuantityView.setText(tempQuantity.toString());
+            holder.mQuantityView.setText(Application.toFraction(tempQuantity, 20));
         }
         String tempUnit = mValues.get(position).getUnit();
         if(tempUnit.compareTo("null") == 0) {

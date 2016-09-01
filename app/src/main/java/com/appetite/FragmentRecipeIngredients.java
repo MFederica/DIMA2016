@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 //import com.dmfm.appetite.R;
 import com.appetite.model.Recipe;
@@ -45,6 +46,7 @@ public class FragmentRecipeIngredients extends Fragment {
     private List<RecipeIngredient> recipeIngredients = new ArrayList<RecipeIngredient>();
     private int currentServings;
     private AdapterRecipeIngredients adapter;
+    private TextView servingsTextView;
 
     //TODO INTERFACCIA: decommenta 1/4
     //private OnListFragmentInteractionListener mListener;
@@ -101,6 +103,11 @@ public class FragmentRecipeIngredients extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_recipe_ingredients_list, container, false);
         Button button = (Button) view.findViewById(R.id.fragment_recipeingredients_servings);
         button.setText(String.valueOf(currentServings));
+        servingsTextView = (TextView) view.findViewById(R.id.fragment_recipeingredients_servingstext);
+        if(currentServings > 1)
+            servingsTextView.setText(getResources().getString(R.string.fragment_recipeingredients_servings));
+        else
+            servingsTextView.setText(getResources().getString(R.string.fragment_recipeingredients_serving));
 
         // Set the adapter
         final View rcView = view.findViewById(R.id.fragment_recipeingredients_list);
@@ -133,6 +140,11 @@ public class FragmentRecipeIngredients extends Fragment {
                         .setPositiveButton(R.string.servings_picker_done, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 currentServings = numberPicker.getValue();
+                                if(currentServings > 1)
+                                    servingsTextView.setText(getResources().getString(R.string.fragment_recipeingredients_servings));
+                                else
+                                    servingsTextView.setText(getResources().getString(R.string.fragment_recipeingredients_serving));
+
                                 adapter.setAmount(currentServings);
                                 adapter.notifyDataSetChanged();
                                 ((Button) view.findViewById(R.id.fragment_recipeingredients_servings)).setText(String.valueOf(currentServings));
