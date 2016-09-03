@@ -27,6 +27,7 @@ import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 public class Application extends MultiDexApplication {
 
     private final static String LOG_TAG = Application.class.getSimpleName();
+    public final static int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
     @Override
     public void onCreate() {

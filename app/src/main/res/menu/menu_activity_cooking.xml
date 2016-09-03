@@ -3,10 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.appetite.ActivityCooking">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_free_hands"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:actionViewClass="android.widget.CheckBox"
+        android:checkable="true"
+        android:title="@string/action_free_hands"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/timer"
         android:title="@string/timer"

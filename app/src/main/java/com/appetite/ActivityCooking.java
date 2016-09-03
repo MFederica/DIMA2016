@@ -1,16 +1,21 @@
 package com.appetite;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -28,6 +33,7 @@ import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
@@ -55,6 +61,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class ActivityCooking extends AppCompatActivity implements ISpeechDelegate {
     private final static String TAG = ActivityCooking.class.getSimpleName();
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -102,37 +109,26 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         Log.e(TAG, "onCreate: " );
         super.onCreate(savedInstanceState);
 
-        // Get the message from the intent
+        // Get the recipe from the intent
         Intent intent = getIntent();
         recipeSelected = intent.getParcelableExtra(ActivityMain.RECIPE_SELECTED);
 
-
+        // Initialize view
         setContentView(R.layout.activity_cooking);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
+        // Create the adapter that will return a fragment for each step, the ViewPager and the CircleIndicator
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
         CircleIndicator indicator = (CircleIndicator) findViewById(R.id.activity_cooking_indicator);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         indicator.setViewPager(mViewPager);
         mSectionsPagerAdapter.registerDataSetObserver(indicator.getDataSetObserver());
 
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        // Initialize timer view
         LinearLayout timerLayout = (LinearLayout) findViewById(R.id.activity_cooking_timer);
         timerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +145,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         timerView = (TextView) findViewById(R.id.activity_cooking_timer_time);
         mHandler = new Handler();
         displayStatus("Not connected");
+
     }
     
     @Override
@@ -156,21 +153,24 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         Log.e(TAG, "onResume: " );
         super.onResume(); //TODO sopra o sotto?
         if (mState == ConnectionState.IDLE) {
-            mState = ConnectionState.CONNECTING;
-            Log.d(TAG, "onClickRecord: IDLE -> CONNECTING");
-            mRecognitionResults = "";
-            SpeechToText.sharedInstance().setModel(voiceModel);
-            Log.d(TAG, "onCreate: connecting to the STT service...");
-            displayStatus("connecting to the STT service...");
-            // start recognition
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... none) {
-                    SpeechToText.sharedInstance().recognize();
-                    return null;
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
+            boolean allowFreeHands = sharedPref.getBoolean(getString(R.string.saved_free_hands),false);
+            if(allowFreeHands) {
+                // Ask for permission..
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    //..if we haven't it, ask it
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.RECORD_AUDIO},
+                            Application.MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
+                } else {
+                    //..if we have it, let's connect!
+                    startFreeHandsMode();
                 }
-            }.execute();
+            }
         }
+        // for the timer..
         registerReceiver(br, new IntentFilter(BroadcastService.COUNTDOWN_BR));
         Log.i(TAG, "Registered broacast receiver");
     }
@@ -206,30 +206,66 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_activity_cooking, menu);
+
+        // Initialize hands-free checkbox
+        SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
+        boolean allowFreeHands = sharedPref.getBoolean(getString(R.string.saved_free_hands),false);
+        menu.findItem(R.id.action_free_hands).setChecked(allowFreeHands);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handle action bar item clicks here.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }  else if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
             Toast.makeText(ActivityCooking.this, "invoco onBackPressed()", Toast.LENGTH_SHORT).show();
             onBackPressed();
             return true;
+
         } else if (id == R.id.timer) {
             if(timerRunning) {
                 showStopTimerDialog();
             } else {
                 showStartTimerDialog();
             }
+
+        } else if (id == R.id.action_free_hands) {
+
+            // Write to sharedPreferences if we'll allow free_hands or not in the future
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
+            boolean newCheckedStatus = !(sharedPref.getBoolean(getString(R.string.saved_free_hands), true));
+
+            if(newCheckedStatus) {
+                // Ask for permission..
+                if (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    //..if we haven't it, ask it
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.RECORD_AUDIO},
+                            Application.MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
+                } else {
+                    item.setChecked(true);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean(getString(R.string.saved_free_hands), true);
+                    editor.commit();
+                    //..if we have it, let's connect!
+
+                    startFreeHandsMode();
+                }
+            } else {
+                item.setChecked(false);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putBoolean(getString(R.string.saved_free_hands), false);
+                editor.commit();
+
+                // Disconnect if already running
+                stopRecognition();
+            }
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -418,6 +454,12 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
 
             //COMMAND STOP LISTENING
         } else if (result.contains(getResources().getString(R.string.STT_command_STOP_LISTENING))) {
+            // Write to sharedPreferences if we'll allow free_hands or not in the future
+            SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean(getString(R.string.saved_free_hands), false);
+            editor.commit();
+            invalidateOptionsMenu();
             stopRecognition();
             Log.e(TAG, "checkCommands: STOP LISTENING" );
 
@@ -574,4 +616,73 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         }
     }
 
-}
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case Application.MY_PERMISSIONS_REQUEST_RECORD_AUDIO: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay!
+                    ((MenuItem)findViewById(R.id.action_free_hands)).setChecked(true);
+                    // Write to sharedPreferences if we'll allow free_hands or not in the future
+                    SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean(getString(R.string.saved_free_hands), true);
+                    editor.commit();
+
+                    mState = ConnectionState.CONNECTING;
+                    Log.d(TAG, "onClickRecord: IDLE -> CONNECTING");
+                    mRecognitionResults = "";
+                    SpeechToText.sharedInstance().setModel(voiceModel);
+                    Log.d(TAG, "onCreate: connecting to the STT service...");
+                    displayStatus("connecting to the STT service...");
+                    // start recognition //TODO spostare in un retainedFragment?!
+                    new AsyncTask<Void, Void, Void>(){
+                        @Override
+                        protected Void doInBackground(Void... none) {
+                            SpeechToText.sharedInstance().recognize();
+                            return null;
+                        }
+                    }.execute();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    // Write to sharedPreferences if we'll allow free_hands or not in the future
+                    SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putBoolean(getString(R.string.saved_free_hands), false);
+                    editor.commit();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    /**
+     * Connect to SpeechToText service
+     */
+    private void startFreeHandsMode() {
+            mState = ConnectionState.CONNECTING;
+            Log.d(TAG, "onClickRecord: IDLE -> CONNECTING");
+            mRecognitionResults = "";
+            SpeechToText.sharedInstance().setModel(voiceModel);
+            Log.d(TAG, "onCreate: connecting to the STT service...");
+            displayStatus("connecting to the STT service...");
+            // start recognition //TODO spostare in un retainedFragment?!
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... none) {
+                    SpeechToText.sharedInstance().recognize();
+                    return null;
+                }
+            }.execute();
+        }
+    }
