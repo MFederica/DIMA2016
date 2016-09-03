@@ -47,6 +47,7 @@ public class FragmentRecipePreparation extends Fragment {
         Bundle args = new Bundle();
         args.putParcelable(ARG_RECIPE, recipe);
         fragment.setArguments(args);
+        Log.d(TAG, "newInstance: recipe is: " + recipe.getName());
         Log.d(TAG, "newInstance: recipe steps are " + recipe.getStep().size());
         for(int i = 0; i< recipe.getStep().size(); i++) {
             Log.d(TAG, "newInstance: step " + i + ": " + recipe.getStep().get(i));

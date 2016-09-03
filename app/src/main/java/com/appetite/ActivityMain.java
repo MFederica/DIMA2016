@@ -70,6 +70,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private final static String TAG = ActivityMain.class.getSimpleName();
 
     public final static String RECIPE_SELECTED = "com.appetite.ActivityMain.RECIPE_SELECTED";
+    public final static String RECIPE_NAME_SELECTED = "com.appetite.ActivityMain.RECIPE_NAME_SELECTED";
     public final static String FRAGMENT = "com.appetite.ActivityMain.FRAGMENT";
     public final static String fileShoppingListName = "shopping_list";
     public final static String fileFavoritesName = "favorites";
@@ -381,7 +382,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onQueryTextSubmit(String s) {
                 Log.e("SearchView:", "inside onQueryTextSubmit" + s);
-                RecipeData data = new RecipeData(s);
+                RecipeData data = new RecipeData(s); //TODO implementare qui fragment con lista di ricette se premi invio?
                 data.execute("");
                 if (searchView != null) {
                     searchView.setIconified(true);
@@ -566,10 +567,13 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void OnShoppingListIngredientFragmentInteraction(ShoppingItem shoppingItem) {
-        Log.e(TAG, "OnShoppingListIngredientFragmentInteraction: SONO DENTRO ACTIVITYMAIN");
-        RecipeData data = new RecipeData(shoppingItem.getRecipe());
-        data.execute("");
+    public void OnShoppingListIngredientFragmentInteraction(ShoppingItem item) {
+        Log.e(TAG, "OnShoppingListIngredientFragmentInteraction: switching to ActivityRecipe by recipeName");
+        Intent intent = new Intent(getApplication(), ActivityRecipe.class);
+        intent.putExtra(RECIPE_NAME_SELECTED, item.getRecipe());
+        startActivity(intent);
+    /*    RecipeData data = new RecipeData(item.getRecipe());
+        data.execute(""); */
     }
 
     @Override
@@ -613,9 +617,12 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onFavoritesListFragmentInteraction(FavoriteItem item) {
-        Log.e(TAG, "OnFavoritesListIngredientFragmentInteraction: SONO DENTRO ACTIVITYMAIN");
-        RecipeData data = new RecipeData(item.getRecipe());
-        data.execute("");
+        Log.e(TAG, "OnFavoritesListIngredientFragmentInteraction: switching to ActivityRecipe by recipeName");
+        Intent intent = new Intent(getApplication(), ActivityRecipe.class);
+        intent.putExtra(RECIPE_NAME_SELECTED, item.getRecipe());
+        startActivity(intent);
+        /* RecipeData data = new RecipeData(item.getRecipe());
+        data.execute(""); */
     }
 
     /**
