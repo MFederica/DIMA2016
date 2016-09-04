@@ -3,18 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.appetite.FragmentCookingStep"
-    android:background="@color/colorPrimary"
-    android:orientation="horizontal">
+    android:background="@color/colorPrimaryLight"
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="155dp"
         android:layout_height="155dp"
+        android:layout_gravity="center_horizontal"
+        android:padding="16dp"
         android:id="@+id/fragment_cooking_step_image" />
 
     <TextView
         android:id="@+id/fragment_cooking_step_text"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+         />
 
 </LinearLayout>

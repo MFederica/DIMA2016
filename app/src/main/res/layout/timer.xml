@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_cooking_timer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_margin="80dp"
+    android:visibility="gone"
+    >
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:orientation="horizontal"
+        android:background="@android:color/white">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_timer"
+            android:tint="@color/colorAccent"
+            android:paddingRight="6dp"
+            />
+        <TextView
+            android:id="@+id/activity_cooking_timer_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/colorTextPrimary" />
+    </LinearLayout>
+</android.support.v7.widget.CardView>

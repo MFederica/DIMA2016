@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -17,6 +20,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
@@ -96,6 +100,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     private boolean timerRunning = false;
     private View timerLayoutView;
     private TextView timerView;
+    private Ringtone r;
 
     private BroadcastReceiver br = new BroadcastReceiver() {
         @Override
@@ -129,7 +134,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         mSectionsPagerAdapter.registerDataSetObserver(indicator.getDataSetObserver());
 
         // Initialize timer view
-        LinearLayout timerLayout = (LinearLayout) findViewById(R.id.activity_cooking_timer);
+        CardView timerLayout = (CardView) findViewById(R.id.activity_cooking_timer);
         timerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -574,12 +579,28 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                         Log.d(TAG, "onClick: DONE");
                         timerLayoutView.setVisibility(View.VISIBLE);
                         //creating timer
-                        startTimer(numberPicker.getValue()*60000);
+                        startTimer(numberPicker.getValue()*1000); //TODO cambiare in 60000
                     }
                 });
         builder.show();
     }
 
+    private void showCountdownReachedDialog() {
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        r.play();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        builder.setMessage(R.string.activity_cooking_timer_dialog_running_message)
+                .setTitle(R.string.activity_cooking_timer_dialog_title);
+        builder.setPositiveButton(R.string.activity_cooking_timer_dialog_running_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                r.stop();
+            }
+        });
+        builder.show();
+    }
     private void updateGUI(Intent intent) {
         if (intent.getExtras() != null) {
             long millisUntilFinished = intent.getLongExtra("countdown", 0);
@@ -593,8 +614,10 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                 Log.d(TAG, "onTick: seconds remaining: " + millisUntilFinished / 1000);
                 timerRunning = true;
             } else {
+                // Countdown reached
                 timerLayoutView.setVisibility(View.GONE);
                 timerRunning = false;
+                showCountdownReachedDialog();
             }
         }
     }
