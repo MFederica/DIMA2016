@@ -32,7 +32,9 @@
     <color name="colorPrimaryDarkSemiTransparent">#B3FFA000</color>
     <color name="colorAccentSemiTransparent">#4DFF4081</color>
 
-
+    <color name="difficulty_1">#388E3C</color>
+    <color name="difficulty_2">#FFA000</color>
+    <color name="difficulty_3">#D32F2F</color>
 
     <!-- Added for displaying the recycle view -->
     <color name="year">#999999</color>

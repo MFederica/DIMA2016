@@ -1,13 +1,18 @@
 package com.appetite;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.appetite.model.Recipe;
@@ -84,21 +89,42 @@ public class FragmentRecipeInformation extends Fragment {
 
         View rootView = inflater.inflate(
                 R.layout.fragment_recipe_information, container, false);
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_name)).setText("NAME:  " + recipe.getName());
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_category)).setText("CATEGORY:  " + recipe.getCategory());
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_country)).setText("COUNTRY:  " + recipe.getCountry());
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_advice)).setText("ADVICE:  " + recipe.getAdvice());
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_introduction)).setText("INTRODUCTION:  " + recipe.getIntroduction());
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_preparation_time)).setText("PREPARATION TIME:  " + recipe.getPreparationTime());
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_cooking_time)).setText("COOKING TIME:  " + recipe.getCookingTime());
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_difficulty)).setText("DIFFICULTY:  " + Integer.toString(recipe.getDifficulty()));
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_vegetarian)).setText("VEGETARIAN:  " + recipe.getVegetarian());
-        String text = "\n";
-        for(int i = 0; i < recipe.getIngredient_name().size(); i++) {
-            text = text.concat(ingredient_name.get(i) + " " +   ingredient_quantity.get(i) + ingredient_unit.get(i) + "\n");
+
+
+        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_country)).setText(recipe.getCountry());
+        String countryImageName = "drawable/flag_" + recipe.getCountry().toLowerCase().replace(" ", "_");
+        int countryImageId = getResources().getIdentifier(countryImageName, null, getContext().getPackageName());
+        Log.e(TAG, "onCreateView: "+ countryImageName );
+        ((ImageView) rootView.findViewById(R.id.fragment_recipe_information_country_image)).setImageDrawable(getResources().getDrawable(countryImageId));
+        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_advice)).setText(recipe.getAdvice());
+        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_introduction)).setText(recipe.getIntroduction());
+        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_preparation_time)).setText(recipe.getPreparationTime());
+        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_cooking_time)).setText(recipe.getCookingTime());
+
+
+        //TextView difficultyView = ((TextView) rootView.findViewById(R.id.fragment_recipe_information_difficulty));
+        //String difficulty = "";
+        switch(recipe.getDifficulty()) {
+            case 1:
+                //difficulty = getString(R.string.fragment_recipe_information_difficulty_1);
+                ((ImageView) rootView.findViewById(R.id.fragment_recipe_information_difficulty_image)).setImageDrawable(getResources().getDrawable(R.drawable.difficulty_1));
+                break;
+            case 2:
+                //difficulty = getString(R.string.fragment_recipe_information_difficulty_2);
+                ((ImageView) rootView.findViewById(R.id.fragment_recipe_information_difficulty_image)).setImageDrawable(getResources().getDrawable(R.drawable.difficulty_2));
+                break;
+            case 3:
+                //difficulty = getString(R.string.fragment_recipe_information_difficulty_3);
+                ((ImageView) rootView.findViewById(R.id.fragment_recipe_information_difficulty_image)).setImageDrawable(getResources().getDrawable(R.drawable.difficulty_3));
+                break;
         }
-        ((TextView) rootView.findViewById(R.id.fragment_recipe_information_ingredient)).setText("INGREDIENTS:  " + text);
-        Log.d(TAG, text);
+        //difficultyView.setText(difficulty);
+
+        if(recipe.getVegetarian().compareTo("1") == 0) {
+            rootView.findViewById(R.id.fragment_recipe_information_vegetarian).setVisibility(View.VISIBLE);
+        } else {
+            rootView.findViewById(R.id.fragment_recipe_information_vegetarian).setVisibility(View.GONE);
+        }
 
         return rootView;
     }

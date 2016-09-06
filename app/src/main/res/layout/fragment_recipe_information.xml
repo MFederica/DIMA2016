@@ -4,62 +4,222 @@
     android:layout_height="match_parent"
     tools:context="com.appetite.FragmentRecipeInformation">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/fragment_recipe_information_name"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <!-- INFOS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            android:showDividers="middle"
+            android:divider="@drawable/line_divider_vertical" >
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_country"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <!-- DIFFICULTY -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/fragment_recipe_information_difficulty_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_gravity="center_horizontal"/>
+                <TextView
+                    android:id="@+id/fragment_recipe_information_difficulty"
+                    android:text="@string/fragment_recipe_information_difficulty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_gravity="bottom|center_horizontal"/>
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_advice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <!-- PREP TIME -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:padding="8dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|bottom"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:id="@+id/fragment_recipe_information_preparation_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fragment_recipe_information_minutes"/>
+                </LinearLayout>
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_introduction"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fragment_recipe_information_preparation_time"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    />
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_preparation_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <!-- COOK TIME -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:padding="8dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|bottom"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:id="@+id/fragment_recipe_information_cooking_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/fragment_recipe_information_minutes" />
+                </LinearLayout>
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_cooking_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fragment_recipe_information_cooking_time"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_difficulty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <!-- COUNTRY -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:padding="8dp">
+                <ImageView
+                    android:id="@+id/fragment_recipe_information_country_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@color/colorImageBackground"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:id="@+id/fragment_recipe_information_country"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"/>
+            </LinearLayout>
+            <!-- VEGETARIAN -->
+            <LinearLayout
+                android:id="@+id/fragment_recipe_information_vegetarian"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="bottom"
+                android:padding="8dp"
+                >
+                <ImageView
+                    android:id="@+id/fragment_recipe_information_vegetarian_image"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/vegetarian"
+                    android:background="@color/colorImageBackground"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="8dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fragment_recipe_information_vegetarian"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    />
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/fragment_recipe_information_vegetarian"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/fragment_recipe_information_ingredient"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        </LinearLayout>
 
 
-</LinearLayout>
+        <!-- INTRODUCTION -->
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fragment_recipe_information_introduction"
+                    android:textSize="24sp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+                <TextView
+                    android:id="@+id/fragment_recipe_information_introduction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <!-- ADVICE -->
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fragment_recipe_information_advice"
+                    android:textSize="24sp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
+                <TextView
+                    android:id="@+id/fragment_recipe_information_advice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

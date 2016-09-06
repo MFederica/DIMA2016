@@ -1010,7 +1010,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             case "Less than 30 minutes":
                 filterId = navigationViewFilters.getMenu().findItem(R.id.time_30);
                 break;
-            case "Less than 40 minutes":
+            case "Less than 60 minutes":
                 filterId = navigationViewFilters.getMenu().findItem(R.id.time_60);
                 break;
             default:

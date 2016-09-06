@@ -2,6 +2,8 @@ package com.appetite;
 
 import android.app.Service;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
@@ -48,6 +50,12 @@ public class BroadcastService extends Service {
             public void onFinish() {
                 Log.i(TAG, "Timer finished");
                 bi.putExtra("countdown", 0);
+                //TODO suoneria
+    /*            MediaPlayer mMediaPlayer = new MediaPlayer();
+                mMediaPlayer = MediaPlayer.create(this, R.raw.sound1);
+                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mMediaPlayer.setLooping(true);
+                mMediaPlayer.start(); */
                 sendBroadcast(bi);
             }
         };

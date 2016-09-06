@@ -77,6 +77,18 @@
     <string name="button_text_sign_in">SIGN IN</string>
     <string name="button_text_sign_out">SIGN OUT</string>
 
+    <!-- Strings for RECIPE INFORMATION -->
+    <string name="fragment_recipe_information_difficulty">Difficulty</string>
+    <string name="fragment_recipe_information_difficulty_1">Easy</string>
+    <string name="fragment_recipe_information_difficulty_2">Medium</string>
+    <string name="fragment_recipe_information_difficulty_3">Hard</string>
+    <string name="fragment_recipe_information_preparation_time">Prep.</string>
+    <string name="fragment_recipe_information_cooking_time">Cook.</string>
+    <string name="fragment_recipe_information_vegetarian">Vegetarian</string>
+    <string name="fragment_recipe_information_minutes">min</string>
+    <string name="fragment_recipe_information_introduction">Introduction</string>
+    <string name="fragment_recipe_information_advice">Advice</string>
+
     <!-- Strings for SHOPPING LIST-->
     <string name="servings_picker_done">done</string>
     <string name="fragment_recipeingredients_servings">servings</string>
