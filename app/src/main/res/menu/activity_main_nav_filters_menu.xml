@@ -1,27 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/drawer_filters_item_home"
-            android:icon="@drawable/ic_home"
-            android:title="@string/drawer_item_home" />
-        <item
-            android:id="@+id/drawer_filters_item_categories"
-            android:icon="@drawable/ic_action_restaurant"
-            android:title="@string/drawer_item_categories" />
-        <item
-            android:id="@+id/drawer_filters_item_how_to"
-            android:icon="@drawable/ic_help"
-            android:title="@string/drawer_item_how_to"/>
-        <item
-            android:id="@+id/drawer_filters_item_shopping_list"
-            android:icon="@drawable/ic_shopping_cart"
-            android:title="@string/drawer_item_shopping_list"/>
-        <item
-            android:id="@+id/drawer_filters_item_favourite"
-            android:icon="@drawable/ic_favorite"
-            android:title="@string/drawer_item_favourite"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:title="@string/filter_difficulty">
+    <group>
+        <menu>
+            <item
+                android:id="@+id/difficulty_easy"
+                android:title="@string/difficulty_easy" />
+            <item
+                android:id="@+id/difficulty_medium"
+                android:title="@string/difficulty_medium" />
+            <item
+                android:id="@+id/difficulty_hard"
+                android:title="@string/difficulty_hard" />
+        </menu>
     </group>
+    </item>
 
-</menu>
+
+    <item android:title="@string/filter_time">
+    <group>
+        <menu >
+            <item
+                android:id="@+id/time_20"
+                android:title="@string/time_20" />
+            <item
+                android:id="@+id/time_30"
+                android:title="@string/time_30" />
+            <item
+                android:id="@+id/time_60"
+                android:title="@string/time_60" />
+        </menu>
+    </group>
+    </item>
+
+    <item android:title="@string/filter_country">
+        <group>
+            <menu>
+            <item
+                android:id="@+id/country_asia"
+                android:title="@string/country_asia" />
+            <item
+                android:id="@+id/country_italy"
+                android:title="@string/country_italy" />
+            <item
+                android:id="@+id/country_france"
+                android:title="@string/country_france" />
+            <item
+                android:id="@+id/country_america"
+                android:title="@string/country_america" />
+            <item
+                android:id="@+id/country_england"
+                android:title="@string/country_england" />
+            <item
+                android:id="@+id/country_middle_orient"
+                android:title="@string/country_middle_orient" />
+            </menu>
+        </group>
+    </item>
+
+    </menu>

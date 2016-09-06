@@ -38,9 +38,9 @@
     </string-array>
 
     <string-array name="Preparation_Time">
-        <item>less than 20 min</item>
-        <item>less than 30 min</item>
-        <item>less than 60 min</item>
+        <item>Less than 20 minutes</item>
+        <item>Less than 30 minutes</item>
+        <item>Less than 60 minutes</item>
     </string-array>
 
     <string-array name="Country">
@@ -51,6 +51,22 @@
         <item>England</item>
         <item>Middle-Orient</item>
     </string-array>
+
+    <string name="filter_difficulty">Difficulty</string>
+    <string name="filter_time">Preparation Time</string>
+    <string name="filter_country">Country</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_medium">Medium</string>
+    <string name="difficulty_hard">Hard</string>
+    <string name="time_20">Less than 20 minutes</string>
+    <string name="time_30">Less than 30 minutes</string>
+    <string name="time_60">Less than 60 minutes</string>
+    <string name="country_asia">Asia</string>
+    <string name="country_italy">Italy</string>
+    <string name="country_france">France</string>
+    <string name="country_america">America</string>
+    <string name="country_england">England</string>
+    <string name="country_middle_orient">Middle-Orient</string>
 
 
     <!--String for RESEARCH-->

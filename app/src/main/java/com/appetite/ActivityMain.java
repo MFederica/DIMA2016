@@ -54,9 +54,6 @@ import com.appetite.model.FavoriteItem;
 import com.appetite.model.Filter;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingItem;
-import com.appetite.style.filter.CustomExpandableListAdapter;
-import com.appetite.style.filter.ExpandableListDataSource;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +74,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     public final static String PATH_RECIPE = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
     public final static String PATH_RECIPE_STEP = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/Steps/";
+    public final static String ACTIVE_FILTER = "true";
     /**
      * Bundle key for saving/restoring the toolbar title.
      */
@@ -104,14 +102,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     /**
      * The navigation view for the drawer item for filters.
      */
-    private ExpandableListView expandableFilterList;
-    private Map<String, List<String>> expandableListData;
-    private ArrayList expandableListTitle;
-    private ExpandableListAdapter expandableListAdapter;
-    private Filter filterDictionary;
-    private String[] items;
-    private final String ACTIVATE = "true";
-    private boolean isDrawerCreatedFirstTime = false;
+    private NavigationView navigationViewFilters;
 
     /**
      * All the bundle saved from the fragments
@@ -155,6 +146,233 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        navigationViewFilters = (NavigationView) findViewById(R.id.nav_filters);
+        navigationViewFilters.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                Filter filter = Filter.getInstance(getApplicationContext());
+                String filterKey;
+                String previousTimeFilter;
+                MenuItem previousMenuItem;
+                Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
+
+                switch (menuItem.getItemId()) {
+                    case R.id.difficulty_easy:
+                        filterKey = getResources().getString(R.string.difficulty_easy);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.difficulty_medium:
+                        filterKey = getResources().getString(R.string.difficulty_medium);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.difficulty_hard:
+                        filterKey = getResources().getString(R.string.difficulty_hard);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+
+                    //these have different exclusive behaviour that must be dealt
+                    case R.id.time_20:
+                        previousTimeFilter = getLastTimeFilterActive();
+                        Log.e("previousTimeFilter: ",previousTimeFilter);
+                        filterKey = getResources().getString(R.string.time_20);
+                        if(previousTimeFilter.equals(filterKey)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else if(previousTimeFilter.equals("null")) {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        } else {
+                                filter.activateFilter(filterKey);
+                                filter.setGroupFilterActivation(filterKey);
+                                menuItem.setChecked(true);
+                                filter.deactivateFilter(previousTimeFilter);
+                                filter.setGroupFilterDeactivation(previousTimeFilter);
+                                previousMenuItem = getPreviousMenuItem(previousTimeFilter);
+                                previousMenuItem.setChecked(false);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.time_30:
+                        previousTimeFilter = getLastTimeFilterActive();
+                        Log.e("previousTimeFilter: ",previousTimeFilter);
+                        filterKey = getResources().getString(R.string.time_30);
+                        if(previousTimeFilter.equals(filterKey)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else if(previousTimeFilter.equals("null")) {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                            filter.deactivateFilter(previousTimeFilter);
+                            filter.setGroupFilterDeactivation(previousTimeFilter);
+                            previousMenuItem = getPreviousMenuItem(previousTimeFilter);
+                            previousMenuItem.setChecked(false);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.time_60:
+                        previousTimeFilter = getLastTimeFilterActive();
+                        Log.e("previousTimeFilter: ",previousTimeFilter);
+                        filterKey = getResources().getString(R.string.time_60);
+                        if(previousTimeFilter.equals(filterKey)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else if(previousTimeFilter.equals("null")) {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                            filter.deactivateFilter(previousTimeFilter);
+                            filter.setGroupFilterDeactivation(previousTimeFilter);
+                            previousMenuItem = getPreviousMenuItem(previousTimeFilter);
+                            previousMenuItem.setChecked(false);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+
+                    case R.id.country_asia:
+                        filterKey = getResources().getString(R.string.country_asia);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.country_america:
+                        filterKey = getResources().getString(R.string.country_america);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.country_england:
+                        filterKey = getResources().getString(R.string.country_england);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.country_france:
+                        filterKey = getResources().getString(R.string.country_france);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.country_italy:
+                        filterKey = getResources().getString(R.string.country_italy);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    case R.id.country_middle_orient:
+                        filterKey = getResources().getString(R.string.country_middle_orient);
+                        if(filter.getFilterStatus(filterKey).equals(ACTIVE_FILTER)) {
+                            filter.deactivateFilter(filterKey);
+                            filter.setGroupFilterDeactivation(filterKey);
+                            menuItem.setChecked(false);
+                        } else {
+                            filter.activateFilter(filterKey);
+                            filter.setGroupFilterActivation(filterKey);
+                            menuItem.setChecked(true);
+                        }
+                        if(f instanceof FragmentRecipesList)
+                            ((FragmentRecipesList) f).onFilterChange();
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+
+                ArrayList<String> activated = filter.getActivatedFilters();
+                if(activated != null) {
+                    for (int i = 0; i < activated.size(); i++){
+                        Log.e("ActivatedFilter", activated.get(i));
+                    }
+                }
+            return true;
+            }
+        });
+
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.main_fragment_container) != null) {
@@ -193,7 +411,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         //Set things for the research
         final String[] from = new String[] {"recipeName"};
         final int[] to = new int[] {android.R.id.text1};
-        mAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,null, from, to,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        mAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_2,null, from, to,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -223,27 +441,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         mDrawerToggle.syncState();
 
         mTitle = mDrawerTitle = getTitle();
-
-        /**
-         * FILTRI SONO QUA
-         */
-        expandableFilterList = (ExpandableListView) findViewById(R.id.nav_view_filters);
-        View listHeaderView = getLayoutInflater().inflate(R.layout.nav_header, null, false);
-
-        initItems();
-
-        expandableFilterList.addHeaderView(listHeaderView);
-        expandableListData = ExpandableListDataSource.getData(getApplication().getApplicationContext());
-        expandableListTitle = new ArrayList(expandableListData.keySet());
-
-        addDrawerItems();
-        setupDrawer();
-        if(savedInstanceState == null) {
-           // selectFirstItemAsDefault();
-        }
-        /**
-         * E FINISCONO QUI
-         */
     }
 
     @Override
@@ -429,10 +626,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
            drawer_filters.openDrawer(Gravity.RIGHT);
         }
 
-        //if(mDrawerToggle.onOptionsItemSelected(item)) {
-        //    return true;
-        //}
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -441,7 +634,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         Log.e(TAG, "onResume: ");
         super.onResume();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-
+        resumeFilterView();
         if(navigationView.getMenu().findItem(R.id.search)!=null) {
         searchView = (SearchView) MenuItemCompat
                 .getActionView(navigationView.getMenu().findItem(R.id.search));
@@ -626,11 +819,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     * TODO: make the search more general using the single words
+     * Populate the adapter with the suggestion form the DB about recipe
      * @param query
      */
     private void populateAdapter(String query) {
-        //TODO: leggi sopra e implementalo qui
         final MatrixCursor c = new MatrixCursor(new String[]{ BaseColumns._ID, "recipeName" });
         for (int i=0; i< recipeNameList.size(); i++) {
             if (recipeNameList.get(i).toLowerCase().contains(query.toLowerCase()))
@@ -723,99 +915,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         return output;
     }
 
-
-    /**
-     * QUI I mETODI PER IL DRAWER DEI FILTRI
-     */
-
-   /* private void selectFirstItemAsDefault() {
-        if (navigationManager != null) {
-            String firstFilter = getResources().getStringArray(R.array.Category)[0];
-            navigationManager.showCategoryFilter(firstFilter);
-        }
-    }*/
-
-    private void initItems() {
-        items = getResources().getStringArray(R.array.filter);
-    }
-
-    private void addDrawerItems() {
-        isDrawerCreatedFirstTime = true;
-        filterDictionary = Filter.getInstance(this.getApplicationContext());
-        expandableListAdapter = new CustomExpandableListAdapter(this, expandableListTitle, expandableListData);
-        expandableFilterList.setAdapter(expandableListAdapter);
-        //Here to refresh... but doesn't work still
-        checkFilterStatus();
-
-        expandableFilterList.setOnChildClickListener(new ExpandableListView.OnChildClickListener(){
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                String selectedItem = ((List) (expandableListData.get(expandableListTitle.get(groupPosition))))
-                        .get(childPosition).toString();
-
-
-                if (items[0].equals(expandableListTitle.get(groupPosition))) {
-
-                    //Difficulty
-                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
-                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
-                    if(f instanceof FragmentRecipesList)
-                        ((FragmentRecipesList) f).onFilterChange();
-
-                } else if (items[1].equals(expandableListTitle.get(groupPosition))) {
-
-                    //Preparation Time
-                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
-                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
-                    if(f instanceof FragmentRecipesList)
-                        ((FragmentRecipesList) f).onFilterChange();
-
-                } else if(items[2].equals(expandableListTitle.get(groupPosition))) {
-
-                    //Country
-                    changeActivationStatus(parent, v, groupPosition, selectedItem, childPosition);
-                    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
-                    if(f instanceof FragmentRecipesList)
-                        ((FragmentRecipesList) f).onFilterChange();
-
-                }  else {
-
-                    throw new IllegalArgumentException("Not supported type");
-                }
-
-                ArrayList<String> activated = filterDictionary.getActivatedFilters();
-                if(activated != null) {
-                    for (int i = 0; i < activated.size(); i++){
-                        Log.e("ActivatedFilter", activated.get(i));
-                    }
-
-                }
-                return false;
-
-            }
-        });
-
-    }
-
-    private void setupDrawer() {
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open,R.string.drawer_close) {
-            /** Called when a drawer has settled in a completely open state. */
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-
-            /** Called when a drawer has settled in a completely closed state. */
-            public void onDrawerClosed(View view) {
-                super.onDrawerClosed(view);
-                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
-            }
-        };
-
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-    }
-
     @Override
     protected void onPostCreate(Bundle bundle) {
         super.onPostCreate(bundle);
@@ -823,151 +922,101 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onConfigurationChanged(Configuration configuration) {
+    public void onConfigurationChanged(Configuration configuration){
         super.onConfigurationChanged(configuration);
         mDrawerToggle.onConfigurationChanged(configuration);
     }
 
-    /**
-     * method used to change the color of the text of the filters
-     * @param parent
-     * @param v
-     * @param groupPosition
-     * @param selectedItem
-     * @param childPosition
-     */
-    private void changeActivationStatus(ExpandableListView parent, View v, int groupPosition, String selectedItem, int childPosition) {
-        //get child view
-        Log.e("changeActivationSt: ", "parameters");
-        Log.e("ParentPassed: ", parent.toString());
-        Log.e("View passed: ", v.toString() );
-        List group = expandableListData.get(expandableListTitle.get(groupPosition));
-        boolean isLast = false;
-        int lastIndex = group.size()-1;
-        if(group.get(lastIndex).equals(selectedItem)) {
-            isLast = true;
-            Log.e("isLast ", "yes" );
+    private String getLastTimeFilterActive() {
+        String[] timeFilters = getResources().getStringArray(R.array.Preparation_Time);
+        Filter filter = Filter.getInstance(getApplicationContext());
+        String activeFilterTime = "null";
+        for(int i = 0; i < timeFilters.length; i++) {
+           if((filter.getFilterStatus(timeFilters[i])).equals(ACTIVE_FILTER)) {
+               activeFilterTime = timeFilters[i];
+               break;
+           }
         }
-        View viewNew = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, v , parent);
-        TextView textNew = (TextView) viewNew.findViewById(R.id.expandedListItem);
-        if(selectedItem.equals("less than 20 min") || selectedItem.equals("less than 30 min") || selectedItem.equals("less than 60 min")) {
-            Log.e("ActivePerGroup: ", filterDictionary.getActivePerGroup().toString() );
-            ArrayList<String> timeActive = filterDictionary.getActivePerGroup().get("Preparation_Time");
-            int oldChildPosition = -1;
-            boolean isLastOld = false;
-            switch(selectedItem) {
-                case "less than 20 min":
-                    oldChildPosition = 0;
-                    break;
-                case "less than 30 min":
-                    oldChildPosition = 1;
-                    break;
-                case "less than 60 min":
-                    oldChildPosition = 2;
-                    isLastOld = true;
-                    break;
-            }
-            View viewOld = expandableListAdapter.getChildView(groupPosition, oldChildPosition, isLastOld, v , parent);
-            TextView textOld = (TextView) viewOld.findViewById(R.id.expandedListItem);
-            if(timeActive != null) {
-                Log.e("timeActive: ", timeActive.toString());
-                if (timeActive.get(0).equals(selectedItem)) {
-                    Log.e("changeActivation: ", "deactivate the one clicked");
-                    //Deactivate the filter just clicked
-                    filterDictionary.deactivateFilter(selectedItem);
-                    filterDictionary.setGroupFilterDeactivation(selectedItem);
-                    textNew.setTextColor(Color.parseColor("#FFA000"));
-                } else {
-                    //TODO: IL vECCHIO non lo Recupera COME AL SOLITO
-                    Log.e("changeActivation: ","Deactivate the old one and activate the one clicked" );
-                    //Deactivate the old one
-                    filterDictionary.deactivateFilter(timeActive.get(0));
-                    filterDictionary.setGroupFilterDeactivation(timeActive.get(0));
-                    textOld.setTextColor(Color.parseColor("#FFA000"));
-                    //Activate the new filter
-                    filterDictionary.setGroupFilterActivation(selectedItem);
-                    filterDictionary.activateFilter(selectedItem);
-                    textNew.setTextColor(Color.parseColor("#FF4081"));
-
-                }
-            } else {
-                Log.e("changeActivation: ", "Activate the filter just clicked");
-                //Activate filter just clicked
-                filterDictionary.setGroupFilterActivation(selectedItem);
-                filterDictionary.activateFilter(selectedItem);
-                textNew.setTextColor(Color.parseColor("#FF4081"));
-            }
-            //For all other filters
-        } else {
-            if (filterDictionary.getFilterStatus(selectedItem).equals(ACTIVATE)) {
-                filterDictionary.deactivateFilter(selectedItem);
-                filterDictionary.setGroupFilterDeactivation(selectedItem);
-                textNew.setTextColor(Color.parseColor("#FFA000"));
-
-            } else {
-                filterDictionary.activateFilter(selectedItem);
-                filterDictionary.setGroupFilterActivation(selectedItem);
-                textNew.setTextColor(Color.parseColor("#FF4081"));
-            }
-        }
-
+        return activeFilterTime;
     }
 
     /**
-     * Color as active a filter when is called)
-     * @param parent
-     * @param groupPosition
-     * @param selectedItem
-     * @param childPosition
+     * Method called to resume the view of filters when the application get Resumed
      */
-    private void activateFilterAtRotation(ViewGroup parent, int groupPosition, String selectedItem, int childPosition) {
-        //TODO: E QUINDI nEMMENo QUEsTO VA :[
-        Log.e("activateSingleFilter: ","parent: " + parent.toString());
-        List group = expandableListData.get(expandableListTitle.get(groupPosition));
-        boolean isLast = false;
-        View childView = parent.findViewById(R.id.listTitle);
-        //Log.e("ChildView: ", childView.toString() );
-        int lastIndex = group.size()-1;
-        if(group.get(lastIndex).equals(selectedItem)) {
-            isLast = true;
-            Log.e("isLast", "yes");
-        }
-        View view = expandableListAdapter.getChildView(groupPosition, childPosition, isLast, childView , parent);
-        Log.e("ChildView: ", view.toString());
-        TextView text = (TextView) view.findViewById(R.id.expandedListItem);
-        text.setTextColor(Color.parseColor("#FF4081"));
+    private void resumeFilterView() {
+        Filter filter = Filter.getInstance(getApplicationContext());
+        ArrayList<String> active = filter.getActivatedFilters();
+        navigationViewFilters = (NavigationView) findViewById(R.id.nav_filters);
+        MenuItem menuItem;
+        if(active != null) {
+            for(String f: active) {
+                switch (f) {
+                    case "Easy":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_easy);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Medium":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_medium);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Hard":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_hard);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Asia":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_asia);
+                        menuItem.setChecked(true);
+                        break;
+                    case "England":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_england);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Italy":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_italy);
+                        menuItem.setChecked(true);
+                        break;
+                    case "France":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_france);
+                        menuItem.setChecked(true);
+                        break;
+                    case "America":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_america);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Middle-Orient":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_middle_orient);
+                        menuItem.setChecked(true);
+                        break;
+                    default:
+                        break;
 
+                }
+            }
+
+        }
     }
 
     /**
-     * Called to properly display the active filters even at screen rotation
+     * Retrieve drawer item by its name
+     * @param name
+     * @return
      */
-    private void checkFilterStatus() {
-        //TODO: ANCORA nON VA STO BASTARDO
-        filterDictionary = Filter.getInstance(this.getApplicationContext());
-        ArrayList<String> activated = filterDictionary.getActivatedFilters();
-        ExpandableListView parent = (ExpandableListView) getWindow().getDecorView().getRootView().findViewById(R.id.nav_view_filters);
-        Log.e("expandableListView: ", parent.toString() );
-        String selectedItem;
-        int indexOfGroups = 3;
-        if(activated != null) {
-            //for all titles
-            for (int i = 0; i < indexOfGroups; i++) {
-                //View parent = expandableListAdapter.getGroupView(i, true, null, null);
-                int numberOfFilters = ((List) expandableListData.get(expandableListTitle.get(i))).size();
-                //For alla filters inside the menu
-                for (int j = 0; j < numberOfFilters; j++) {
-                    selectedItem = ((List) (expandableListData.get(expandableListTitle.get(i))))
-                            .get(j).toString();
-                    //Check if the filter is active, in that case we change its color
-                    if (activated.contains(selectedItem)) {
-                        activateFilterAtRotation( parent, i, selectedItem, j);
-                    }
-                }
-
-            }
+    private MenuItem getPreviousMenuItem(String name) {
+        MenuItem filterId = null;
+        switch(name) {
+            case "Less than 20 minutes":
+                filterId = navigationViewFilters.getMenu().findItem(R.id.time_20);
+                break;
+            case "Less than 30 minutes":
+                filterId = navigationViewFilters.getMenu().findItem(R.id.time_30);
+                break;
+            case "Less than 40 minutes":
+                filterId = navigationViewFilters.getMenu().findItem(R.id.time_60);
+                break;
+            default:
+                break;
         }
-
+        return filterId;
     }
 
 }
