@@ -173,6 +173,9 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
             iconIntArray[0] = R.drawable.ic_favorite_border;
         }
 
+        CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+        p.setBehavior(new ScrollAwareFABBehavior(getApplicationContext(), null));
+        fab.setLayoutParams(p);
 
         fab.setOnClickListener(new View.OnClickListener() {  //TODO questo codice è duplicato anche sotto..
             @Override
@@ -199,10 +202,8 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
 
             @Override
             public void onPageSelected(int position) {
-                CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+
                 animateFab(position);
-                p.setBehavior(new ScrollAwareFABBehavior(getApplicationContext(), null));
-                fab.setLayoutParams(p);
                 ((FloatingActionButton) findViewById(R.id.fab)).show();
                 switch (position) {
                     case 0:
