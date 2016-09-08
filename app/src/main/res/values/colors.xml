@@ -25,6 +25,7 @@
     <color name="colorTextPrimary">#212121</color>
     <color name="colorTextSecondary">#757575</color>
     <color name="colorDivider">#DDDDDD</color>
+    <color name="colorSelectedItem">#F5F5F5</color>
     <color name="colorTextAndIcons">#212121</color>
 
     <color name="colorBackground">#fafafa</color>
