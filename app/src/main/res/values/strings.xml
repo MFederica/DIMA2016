@@ -2,10 +2,14 @@
 
     <!-- APP and main sections -->
     <string name="app_name">Appetite</string>
+    <string name="app_enjoy">Enjoy cooking!</string>
     <string name="title_activity_recipe">ActivityRecipe</string>
     <string name="title_activity_activity_cooking">ActivityCooking</string>
     <string name="title_activity_main">@string/app_name</string>
     <string name="title_activity_sign_in">Sign-in</string>
+
+    <string name="filters">Filters</string>
+    <string name="filters_subtitle">Choose your recipes!</string>
 
 
     <!-- Strings for drawer items -->
