@@ -1,9 +1,13 @@
 package com.appetite;
 
+import android.app.AlertDialog;
 import android.app.Service;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.util.Log;
@@ -50,13 +54,30 @@ public class BroadcastService extends Service {
             public void onFinish() {
                 Log.i(TAG, "Timer finished");
                 bi.putExtra("countdown", 0);
-                //TODO suoneria
-    /*            MediaPlayer mMediaPlayer = new MediaPlayer();
-                mMediaPlayer = MediaPlayer.create(this, R.raw.sound1);
+                //TODO suoneria corta (usa volume media xò)
+
+                MediaPlayer mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.alarm);
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mMediaPlayer.setLooping(true);
-                mMediaPlayer.start(); */
+                mMediaPlayer.start();
                 sendBroadcast(bi);
+
+                /*
+                //TODO cancellare (x usare default ringtone)
+                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                    r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                    r.play();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setCancelable(false);
+                    builder.setMessage(R.string.activity_cooking_timer_dialog_running_message)
+                            .setTitle(R.string.activity_cooking_timer_dialog_title);
+                    builder.setPositiveButton(R.string.activity_cooking_timer_dialog_running_ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            r.stop();
+                        }
+                    });
+                    builder.show();
+                } */
             }
         };
         cdt.start();

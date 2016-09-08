@@ -585,22 +585,6 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         builder.show();
     }
 
-    private void showCountdownReachedDialog() {
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        r.play();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false);
-        builder.setMessage(R.string.activity_cooking_timer_dialog_running_message)
-                .setTitle(R.string.activity_cooking_timer_dialog_title);
-        builder.setPositiveButton(R.string.activity_cooking_timer_dialog_running_ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-                r.stop();
-            }
-        });
-        builder.show();
-    }
     private void updateGUI(Intent intent) {
         if (intent.getExtras() != null) {
             long millisUntilFinished = intent.getLongExtra("countdown", 0);
@@ -617,7 +601,6 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                 // Countdown reached
                 timerLayoutView.setVisibility(View.GONE);
                 timerRunning = false;
-                showCountdownReachedDialog();
             }
         }
     }
