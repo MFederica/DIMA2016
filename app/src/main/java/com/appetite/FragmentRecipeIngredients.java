@@ -156,41 +156,6 @@ public class FragmentRecipeIngredients extends Fragment {
 
             }
         });
-        Button addToSLButton = (Button) view.findViewById(R.id.fragment_recipeingredients_add_to_shopping_list);
-        addToSLButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!(ShoppingListHelper.getInstance(getContext()).isInShoppingList(recipe))) {
-                    Snackbar snackbar = Snackbar.make(view, R.string.fragment_recipeingredients_snackbar_add_message, Snackbar.LENGTH_LONG);
-                    snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //Redirects the user to the FragmentShoppingList
-                            Intent intent = new Intent(view.getContext(), ActivityMain.class);
-                            intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
-                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                            view.getContext().startActivity(intent);
-                        }
-                    });
-                    snackbar.show();
-                    if (ShoppingListHelper.getInstance(getContext()).addRecipe(recipe, currentServings))
-                        ShoppingListHelper.saveShoppingList(getContext());
-                } else {
-                    Snackbar snackbar = Snackbar.make(view, R.string.fragment_recipeingredients_snackbar_already_added_message, Snackbar.LENGTH_LONG);
-                    snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //Redirects the user to the FragmentShoppingList
-                            Intent intent = new Intent(view.getContext(), ActivityMain.class);
-                            intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
-                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                            view.getContext().startActivity(intent);
-                        }
-                    });
-                    snackbar.show();
-                }
-            }
-        });
         return view;
     }
 
@@ -238,4 +203,8 @@ public class FragmentRecipeIngredients extends Fragment {
         // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
     } */
+
+    public int getCurrentServings() {
+        return currentServings;
+    }
 }

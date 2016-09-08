@@ -109,7 +109,7 @@
 
     <!-- strings for TOOLBAR -->
     <string name="action_settings">Settings</string>
-    <string name="action_free_hands">Free hands mode</string>
+    <string name="action_free_hands">Hands-free mode</string>
 
     <!-- STT credentials --> 
     <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
@@ -152,6 +152,8 @@
     <!-- Random Strings -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="error_connection">Connection error  :(</string>
 
 </resources>
 

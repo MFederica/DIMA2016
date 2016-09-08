@@ -7,6 +7,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -23,6 +24,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.view.ViewStub;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +39,9 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.appetite.R;
+import com.appetite.model.FavoritesHelper;
 import com.appetite.model.Recipe;
+import com.appetite.model.ShoppingListHelper;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -47,6 +56,8 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
     static final String RECIPE = "com.appetite.ActivityRecipe.RECIPE"; //used to save the recipe in the instance state
     static final String RECIPE_NAME = "com.appetite.ActivityRecipe.RECIPE_NAME"; //used to save the recipe in the instance state
     static final String DOWNLOADING_STATE = "com.appetite.ActivityRecipe.DOWNLOADING_STATE";
+    int[] colorIntArray = {R.color.difficulty_3,R.color.difficulty_1,R.color.colorAccent};
+    int[] iconIntArray = {R.drawable.ic_favorite_border,R.drawable.ic_add_shopping_cart,R.drawable.ic_action_restaurant};
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -63,6 +74,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
     private String recipeNameSelected;
     private Recipe recipeSelected;
     private FloatingActionButton fab;
+    private FavoritesHelper favoritesHelper;
 
     private ImageLoader imageLoader = ImageLoader.getInstance();
     NetworkRecipeRequestFragment networkRecipeRequestFragment;
@@ -78,6 +90,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
         super.onCreate(savedInstanceState);
 
         android.app.FragmentManager fm = getFragmentManager();
+        favoritesHelper = FavoritesHelper.getInstance(this);
 
         // initialize part of the layout (independent from the recipe selected)
         setContentView(R.layout.activity_recipe);
@@ -86,7 +99,6 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.hide();
 
         // Check to see if we have retained the worker fragment.
         networkRecipeRequestFragment = (NetworkRecipeRequestFragment)fm.findFragmentByTag("recipeDownloader");
@@ -136,7 +148,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
     }
 
     /**
-     * initialize the view that depends on the recipe selected
+     * initialize the view that depends on the recipe selected (now we have it)
      */
     private void initializeView() {
 
@@ -154,13 +166,28 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        // Initialize the FAB
-        fab.setOnClickListener(new View.OnClickListener() {
+        if(favoritesHelper.isInFavorites(recipeSelected)) {
+            iconIntArray[0] = R.drawable.ic_favorite;
+            animateFab(0);
+        } else {
+            iconIntArray[0] = R.drawable.ic_favorite_border;
+        }
+
+
+        fab.setOnClickListener(new View.OnClickListener() {  //TODO questo codice è duplicato anche sotto..
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), ActivityCooking.class);
-                intent.putExtra(ActivityMain.RECIPE_SELECTED, recipeSelected);
-                startActivity(intent);
+                Log.e(TAG, "onClick: pressed 0" );
+                favoritesHelper.favoriteChecked(recipeSelected);
+                favoritesHelper.saveFavorites(getApplicationContext());
+                //update view
+                if(favoritesHelper.isInFavorites(recipeSelected)) {
+                    iconIntArray[0] = R.drawable.ic_favorite;
+                    animateFab(0);
+                } else {
+                    iconIntArray[0] = R.drawable.ic_favorite_border;
+                    animateFab(0);
+                }
             }
         });
 
@@ -173,19 +200,83 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
             @Override
             public void onPageSelected(int position) {
                 CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+                animateFab(position);
+                p.setBehavior(new ScrollAwareFABBehavior(getApplicationContext(), null));
+                fab.setLayoutParams(p);
+                ((FloatingActionButton) findViewById(R.id.fab)).show();
                 switch (position) {
-                    // show the FAB if we are in page n.2 ("recipe preparation")
-                    case 2:
-                        p.setBehavior(new ScrollAwareFABBehavior(getApplicationContext(), null));
-                        fab.setLayoutParams(p);
-                        ((FloatingActionButton) findViewById(R.id.fab)).show();
+                    case 0:
+                        fab.setOnClickListener(new View.OnClickListener() { //TODO questo codice è duplicato anche sopra..
+                            @Override
+                            public void onClick(View view) {
+                                Log.e(TAG, "onClick: pressed 0" );
+                                favoritesHelper.favoriteChecked(recipeSelected);
+                                favoritesHelper.saveFavorites(getApplicationContext());
+                                //update view
+                                if(favoritesHelper.isInFavorites(recipeSelected)) {
+                                    iconIntArray[0] = R.drawable.ic_favorite;
+                                    animateFab(0);
+                                } else {
+                                    iconIntArray[0] = R.drawable.ic_favorite_border;
+                                    animateFab(0);
+                                }
+                            }
+                        });
                         break;
 
-                    // hide the FAB otherwise
+                    case 1:
+                        fab.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Log.e(TAG, "onPageSelected: pressed 1" );
+                                if (!(ShoppingListHelper.getInstance(getApplicationContext()).isInShoppingList(recipeSelected))) {
+                                    Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_recipe_coordinator_layout), R.string.fragment_recipeingredients_snackbar_add_message, Snackbar.LENGTH_LONG);
+                                    snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            //Redirects the user to the FragmentShoppingList
+                                            Intent intent = new Intent(view.getContext(), ActivityMain.class);
+                                            intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
+                                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                                            view.getContext().startActivity(intent);
+                                        }
+                                    });
+                                    snackbar.show();
+                                    int currentServings = ((FragmentRecipeIngredients) getSupportFragmentManager().findFragmentByTag("android:switcher:" + mViewPager.getId() + ":1")).getCurrentServings();
+                                    Log.e(TAG, "FAB1 onClick: currentServings = " + currentServings );
+                                    if (ShoppingListHelper.getInstance(getApplicationContext()).addRecipe(recipeSelected, currentServings));
+                                        ShoppingListHelper.saveShoppingList(getApplicationContext());
+                                } else {
+                                    Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_recipe_coordinator_layout), R.string.fragment_recipeingredients_snackbar_already_added_message, Snackbar.LENGTH_LONG);
+                                    snackbar.setAction(R.string.fragment_recipeingredients_snackbar_action, new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            //Redirects the user to the FragmentShoppingList
+                                            Intent intent = new Intent(view.getContext(), ActivityMain.class);
+                                            intent.putExtra(ActivityMain.FRAGMENT, FragmentShoppingList.class.getSimpleName());
+                                            intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                                            view.getContext().startActivity(intent);
+                                        }
+                                    });
+                                    snackbar.show();
+                                }
+                            }
+                        });
+                        break;
+
+                    case 2:
+                     fab.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Log.e(TAG, "onPageSelected: pressed 2" );
+                                Intent intent = new Intent(view.getContext(), ActivityCooking.class);
+                                intent.putExtra(ActivityMain.RECIPE_SELECTED, recipeSelected);
+                                startActivity(intent);
+                            }
+                        });
+                        break;
+
                     default:
-                        p.setBehavior(null);
-                        fab.setLayoutParams(p);
-                        ((FloatingActionButton) findViewById(R.id.fab)).hide();
                         break;
                 }
             }
@@ -195,6 +286,56 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
 
             }
         });
+    }
+
+    /**
+     * Animates the fab when you change pages in ViewPager
+     * @param position position of the page currently displayed inside the ViewPager
+     */
+    protected void animateFab(final int position) {
+        fab.clearAnimation();
+
+        // Scale down animation
+        ScaleAnimation shrink = new ScaleAnimation(1f, 0.1f, 1f, 0.1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        shrink.setDuration(100);     // animation duration in milliseconds
+        shrink.setInterpolator(new AccelerateInterpolator());
+        shrink.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                // Change FAB color and icon
+                fab.setBackgroundTintList(ContextCompat.getColorStateList(getApplicationContext(), colorIntArray[position]));
+                fab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), iconIntArray[position]));
+
+                // Rotate Animation
+                Animation rotate = new RotateAnimation(60.0f, 0.0f,
+                        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+                        0.5f);
+                rotate.setDuration(150);
+                rotate.setInterpolator(new DecelerateInterpolator());
+
+                // Scale up animation
+                ScaleAnimation expand = new ScaleAnimation(0.1f, 1f, 0.1f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                expand.setDuration(150);     // animation duration in milliseconds
+                expand.setInterpolator(new DecelerateInterpolator());
+
+                // Add both animations to animation state
+                AnimationSet s = new AnimationSet(false); //false means don't share interpolators
+                s.addAnimation(rotate);
+                s.addAnimation(expand);
+                fab.startAnimation(s);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        fab.startAnimation(shrink);
     }
 
     @Override

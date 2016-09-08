@@ -221,7 +221,7 @@ public class FragmentRecipesList extends Fragment {
                         .withFilterExpression("Category = :category")
                         .withExpressionAttributeValues(eav);
 
-                List<Recipe> result = mapper.scan(Recipe.class, scanExpression);
+                List<Recipe> result = mapper.scan(Recipe.class, scanExpression); //TODO handle timeout (manda eccezione a volte)
 
                 Log.e("RecipeList", "The results are:" + result.toString());
 

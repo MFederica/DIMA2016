@@ -8,5 +8,12 @@
     android:layout_height="match_parent"
     android:background="@android:color/holo_red_dark"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/error_connection"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp"/>
 
 </FrameLayout>
