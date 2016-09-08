@@ -3,14 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentRecipesList"
-    android:id="@+id/fragment_recipe_list_container"
-    android:padding="4dp">
+    android:id="@+id/fragment_recipe_list_container">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_recipes_list_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:background="@color/colorBackground"/>
+        android:background="@color/colorBackground"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp"/>
 
 </RelativeLayout>

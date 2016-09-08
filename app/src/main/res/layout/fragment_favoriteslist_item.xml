@@ -32,5 +32,6 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_remove_favorite"
         android:tint="@color/colorAccent"
-        android:backgroundTint="@color/colorBackground"/>
+        android:backgroundTint="@color/colorBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"/>
 </LinearLayout>

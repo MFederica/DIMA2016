@@ -33,5 +33,6 @@
         android:src="@drawable/ic_remove_shopping_cart"
         android:tint="@color/colorAccent"
         android:backgroundTint="@color/colorBackground"
+        android:background="?attr/selectableItemBackgroundBorderless"
         />
 </LinearLayout>

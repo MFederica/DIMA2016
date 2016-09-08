@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:focusable="true"
     android:clickable="true"
-    android:background="?android:attr/selectableItemBackground">
+    style="@style/SelectableItemForeground">
 
     <com.appetite.style.GridImageView
         android:id="@+id/fragment_category_image"
