@@ -411,7 +411,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         //Set things for the research
         final String[] from = new String[] {"recipeName"};
         final int[] to = new int[] {android.R.id.text1};
-        mAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_2,null, from, to,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        mAdapter = new SimpleCursorAdapter(this, R.layout.search_list_item, null, from, to,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -496,6 +496,10 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         Log.e(TAG, "onBackPressed: BackStackEntryCount = " + fragmentManager.getBackStackEntryCount());
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START);
+            return;
+        }
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.END)) {
+            mDrawerLayout.closeDrawer(GravityCompat.END);
             return;
         }
         if (fragmentManager.getBackStackEntryCount() == 0) {
