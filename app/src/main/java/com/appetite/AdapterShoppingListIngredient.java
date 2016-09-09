@@ -59,7 +59,7 @@ public class AdapterShoppingListIngredient extends RecyclerView.Adapter<AdapterS
         holder.mNameView.setText(mValues.get(position).getName());
         Float tempQuantity = Float.valueOf(mValues.get(position).getQuantity());
         if(tempQuantity == 0) {
-            holder.mQuantityView.setText("");
+            holder.mQuantityView.setText(context.getResources().getString(R.string.quantum_satis));
         } else {
             tempQuantity = tempQuantity * mShoppingItem.getServings();
             holder.mQuantityView.setText(Application.toFraction(tempQuantity, 20));

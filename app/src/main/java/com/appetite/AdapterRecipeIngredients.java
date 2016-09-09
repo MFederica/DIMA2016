@@ -65,7 +65,7 @@ public class AdapterRecipeIngredients extends RecyclerView.Adapter<AdapterRecipe
         }
         String tempUnit = mValues.get(position).getUnit();
         if(tempUnit.compareTo("null") == 0) {
-            holder.mUnitView.setText("");
+            holder.mUnitView.setText(context.getResources().getString(R.string.quantum_satis));
         } else {
             holder.mUnitView.setText(tempUnit);
         }

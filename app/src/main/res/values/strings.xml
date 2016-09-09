@@ -10,6 +10,7 @@
 
     <string name="filters">Filters</string>
     <string name="filters_subtitle">Choose your recipes!</string>
+    <string name="quantum_satis">q.s.</string>
 
 
     <!-- Strings for drawer items -->
