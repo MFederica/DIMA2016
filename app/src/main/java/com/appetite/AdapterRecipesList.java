@@ -39,6 +39,10 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
         public ImageView image;
         public Recipe recipe;
         public ImageView favorite;
+        public ImageView difficulty;
+        public TextView totalTime;
+        public ImageView vegetarian;
+
 
         public MyViewHolder(View view) {
             super(view);
@@ -46,6 +50,9 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
             title = (TextView) view.findViewById(R.id.fragment_recipes_list_title);
             image = (ImageView) view.findViewById(R.id.fragment_recipes_list_image);
             favorite = (ImageView) view.findViewById(R.id.fragment_recipes_list_favorite);
+            difficulty = (ImageView) view.findViewById(R.id.fragment_recipes_list_difficulty_image);
+            totalTime = (TextView) view.findViewById(R.id.fragment_recipes_list_total_time);
+            vegetarian = (ImageView) view.findViewById(R.id.fragment_recipes_list_vegetarian_image);
         }
     }
 
@@ -124,6 +131,38 @@ public class AdapterRecipesList extends RecyclerView.Adapter<AdapterRecipesList.
         }else {
             holder.image.setImageBitmap(null);
         }
+        // difficulty?
+        //TextView difficultyView = ((TextView) rootView.findViewById(R.id.fragment_recipe_information_difficulty));
+        //String difficulty = "";
+        switch(holder.recipe.getDifficulty()) {
+            case 1:
+                //difficulty = getString(R.string.fragment_recipe_information_difficulty_1);
+                holder.difficulty.setImageDrawable(context.getResources().getDrawable(R.drawable.difficulty_1));
+                break;
+            case 2:
+                //difficulty = getString(R.string.fragment_recipe_information_difficulty_2);
+                holder.difficulty.setImageDrawable(context.getResources().getDrawable(R.drawable.difficulty_2));
+                break;
+            case 3:
+                //difficulty = getString(R.string.fragment_recipe_information_difficulty_3);
+                holder.difficulty.setImageDrawable(context.getResources().getDrawable(R.drawable.difficulty_3));
+                break;
+        }
+        //difficultyView.setText(difficulty);
+
+        // total time?
+        int totalTime = Integer.valueOf(holder.recipe.getPreparationTime()) + Integer.valueOf(holder.recipe.getCookingTime());
+        holder.totalTime.setText(String.valueOf(totalTime));
+
+        // vegetarian?
+        if(holder.recipe.getVegetarian().compareTo("1") == 0) {
+            holder.vegetarian.setVisibility(View.VISIBLE);
+        } else {
+            holder.vegetarian.setVisibility(View.GONE);
+        }
+
+
+
 
         holder.myView.setOnClickListener(new View.OnClickListener() {
             @Override
