@@ -18,4 +18,8 @@
     <dimen name="nav_drawer_width">235dp</dimen>
     <dimen name="header_font_size">14sp</dimen>
     <dimen name="filter_icon_container_height">300dp</dimen>
+
+    <!-- Recipe scrim -->
+    <dimen name="sheet_text_scrim_height_top">88dp</dimen>
+    <dimen name="sheet_text_scrim_height_bottom">88dp</dimen>
 </resources>

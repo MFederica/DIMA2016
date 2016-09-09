@@ -424,6 +424,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
             final File imageFile = DiskCacheUtils.findInCache(stringUri, imageLoader.getDiskCache());
             if (imageFile!= null && imageFile.exists()) {
                 Picasso.with(getApplicationContext()).load(imageFile).fit().centerCrop().into(image);
+                findViewById(R.id.activity_recipe_scrim_bottom).setVisibility(View.VISIBLE); //TODO aggiungere scrim top?
             } else {
                 imageLoader.loadImage(stringUri, new ImageLoadingListener() {
                     @Override
@@ -439,6 +440,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
                     @Override
                     public void onLoadingComplete(String s, View view, final Bitmap bitmap) {
                         Picasso.with(getApplicationContext()).load(s).fit().centerCrop().into(image);
+                        findViewById(R.id.activity_recipe_scrim_bottom).setVisibility(View.VISIBLE);
                     }
 
                     @Override
