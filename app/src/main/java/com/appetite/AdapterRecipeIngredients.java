@@ -58,14 +58,14 @@ public class AdapterRecipeIngredients extends RecyclerView.Adapter<AdapterRecipe
         holder.mNameView.setText(ingredientName);
         Float tempQuantity = Float.valueOf(mValues.get(position).getQuantity());
         if(tempQuantity == 0) {
-            holder.mQuantityView.setText("");
+            holder.mQuantityView.setText(context.getResources().getString(R.string.quantum_satis));
         } else {
             tempQuantity = tempQuantity * amount;
-            holder.mQuantityView.setText(Application.toFraction(tempQuantity, 20));
+            holder.mQuantityView.setText(Application.toFraction(tempQuantity, 10));
         }
         String tempUnit = mValues.get(position).getUnit();
         if(tempUnit.compareTo("null") == 0) {
-            holder.mUnitView.setText(context.getResources().getString(R.string.quantum_satis));
+            holder.mUnitView.setText("");
         } else {
             holder.mUnitView.setText(tempUnit);
         }
