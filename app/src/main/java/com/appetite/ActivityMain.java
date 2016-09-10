@@ -470,7 +470,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             // For rest of the options we just show a toast on click
             case R.id.drawer_item_how_to:
                 Toast.makeText(getApplicationContext(), "How to Selected", Toast.LENGTH_SHORT).show();
-                return true;
+                fragmentClass = FragmentHowTo.class;
+                break;
             case R.id.drawer_item_shopping_list:
                 Toast.makeText(getApplicationContext(), "Shopping list Selected", Toast.LENGTH_SHORT).show();
                 fragmentClass = FragmentShoppingList.class;

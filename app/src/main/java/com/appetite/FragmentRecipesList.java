@@ -287,7 +287,9 @@ public class FragmentRecipesList extends Fragment {
                     Log.e("CheckTime: ", r.getPreparationTime());
                     String[] temp = activeTime.get(0).split(" ");
                     int min = Integer.parseInt(temp[2]);
-                    if (!(Integer.parseInt(r.getPreparationTime()) < min))
+                    int preparationTime = Integer.parseInt(r.getPreparationTime());
+                    int cookingTime = Integer.parseInt(r.getCookingTime());
+                    if (!((preparationTime + cookingTime) < min))
                         secondCheck = false;
                 }
 
