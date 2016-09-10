@@ -42,11 +42,13 @@ public class AdapterFavoritesList extends RecyclerView.Adapter<AdapterFavoritesL
 
     private Context context;
     private FragmentFavoritesList.OnFavoritesListFragmentInteractionListener mListener;
+    private FragmentFavoritesList ffl;
 
-    public AdapterFavoritesList(Context context, List<FavoriteItem> items, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener listener) {
+    public AdapterFavoritesList(Context context, List<FavoriteItem> items, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener listener, FragmentFavoritesList ffl) {
         this.context = context;
         mValues = items;
         mListener = listener;
+        this.ffl = ffl;
     }
 
     @Override
@@ -90,9 +92,10 @@ public class AdapterFavoritesList extends RecyclerView.Adapter<AdapterFavoritesL
                                     FavoritesHelper.saveFavorites(context);
                                     notifyItemInserted(position);
                                     notifyItemRangeChanged(position, getItemCount());
+                                    ffl.checkEmptyList(null);
                                 }
                             }).show();
-
+                    ffl.checkEmptyList(null);
                 }
 
             }

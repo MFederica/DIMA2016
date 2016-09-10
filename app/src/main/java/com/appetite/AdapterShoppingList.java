@@ -37,13 +37,15 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
     private final List<ShoppingItem> mValues;
     private final OnShoppingListFragmentInteractionListener mListener;
     private ImageLoader imageLoader = ImageLoader.getInstance();
+    private FragmentShoppingList fsl;
 
     private Context context;
 
-    public AdapterShoppingList(Context context, List<ShoppingItem> items, OnShoppingListFragmentInteractionListener listener) {
+    public AdapterShoppingList(Context context, List<ShoppingItem> items, OnShoppingListFragmentInteractionListener listener, FragmentShoppingList fsl) {
         this.context = context;
         mValues = items;
         mListener = listener;
+        this.fsl = fsl;
     }
 
     @Override
@@ -89,11 +91,12 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
                                     ShoppingListHelper.saveShoppingList(context);
                                     notifyItemInserted(position);
                                     notifyItemRangeChanged(position, getItemCount());
+                                    fsl.checkEmptyList(null);
                                 }
                             }).show();
 
                 }
-
+            fsl.checkEmptyList(null);
             }
         });
 

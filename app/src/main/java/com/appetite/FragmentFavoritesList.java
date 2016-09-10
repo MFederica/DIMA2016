@@ -19,6 +19,8 @@ import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
 import com.appetite.style.SimpleDividerItemDecoration;
 
+import java.util.List;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -74,7 +76,8 @@ public class FragmentFavoritesList extends Fragment {
             actionBar.setTitle(getString(R.string.drawer_item_favourite));
         }
 
-        View view = inflater.inflate(R.layout.fragment_favoriteslist, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_favoriteslist, container, false);
+        View view = rootView.findViewById(R.id.list);
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -86,10 +89,12 @@ public class FragmentFavoritesList extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adapter = new AdapterFavoritesList(context, FavoritesHelper.getInstance(context).favoritesList, mListener);
+            List<FavoriteItem> favoritesList = FavoritesHelper.getInstance(context).favoritesList;
+            checkEmptyList(rootView);
+            adapter = new AdapterFavoritesList(context, favoritesList, mListener, this);
             recyclerView.setAdapter(adapter);
         }
-        return view;
+        return rootView;
     }
 
 
@@ -130,5 +135,17 @@ public class FragmentFavoritesList extends Fragment {
         FavoritesHelper.saveFavorites(getContext());
         adapter.notifyItemInserted(position);
         adapter.notifyItemRangeChanged(position, adapter.getItemCount());
+    }
+
+    public void checkEmptyList(View rootView) {
+        if(rootView == null)
+            rootView = this.getView();
+        if(FavoritesHelper.getInstance(getContext()).favoritesList.size() == 0) {
+            rootView.findViewById(R.id.list).setVisibility(View.GONE);
+            rootView.findViewById(R.id.empty_favorites_list).setVisibility(View.VISIBLE);
+        } else {
+            rootView.findViewById(R.id.list).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.empty_favorites_list).setVisibility(View.GONE);
+        }
     }
 }

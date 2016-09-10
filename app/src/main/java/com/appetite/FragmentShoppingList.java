@@ -17,6 +17,8 @@ import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
 import com.appetite.style.SimpleDividerItemDecoration;
 
+import java.util.List;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -71,8 +73,8 @@ public class FragmentShoppingList extends Fragment {
         if (actionBar != null) {
             actionBar.setTitle(getString(R.string.drawer_item_shopping_list));
         }
-        View view = inflater.inflate(R.layout.fragment_shoppinglist, container, false);
-
+        View rootView = inflater.inflate(R.layout.fragment_shoppinglist, container, false);
+        View view = rootView.findViewById(R.id.list);
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -83,10 +85,12 @@ public class FragmentShoppingList extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
-            adapter = new AdapterShoppingList(context, ShoppingListHelper.getInstance(context).shoppingList, mListener);
+            List<ShoppingItem> shoppingList = ShoppingListHelper.getInstance(context).shoppingList;
+            checkEmptyList(rootView);
+            adapter = new AdapterShoppingList(context, shoppingList, mListener, this);
             recyclerView.setAdapter(adapter);
         }
-        return view;
+        return rootView;
     }
 
 
@@ -127,5 +131,17 @@ public class FragmentShoppingList extends Fragment {
         ShoppingListHelper.saveShoppingList(getContext());
         adapter.notifyItemInserted(position);
         adapter.notifyItemRangeChanged(position, adapter.getItemCount());
+    }
+
+    public void checkEmptyList(View rootView) {
+        if(rootView == null)
+            rootView = this.getView();
+        if(ShoppingListHelper.getInstance(getContext()).shoppingList.size() == 0) {
+            rootView.findViewById(R.id.list).setVisibility(View.GONE);
+            rootView.findViewById(R.id.empty_shopping_list).setVisibility(View.VISIBLE);
+        } else {
+            rootView.findViewById(R.id.list).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.empty_shopping_list).setVisibility(View.GONE);
+        }
     }
 }
