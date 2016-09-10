@@ -930,6 +930,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     public void onConfigurationChanged(Configuration configuration){
         super.onConfigurationChanged(configuration);
         mDrawerToggle.onConfigurationChanged(configuration);
+        resumeFilterView();
     }
 
     private String getLastTimeFilterActive() {
@@ -966,6 +967,18 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         break;
                     case "Hard":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_hard);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Less than 20 minutes":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.time_20);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Less than 30 minutes":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.time_30);
+                        menuItem.setChecked(true);
+                        break;
+                    case "Less than 60 minutes":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.time_60);
                         menuItem.setChecked(true);
                         break;
                     case "Asia":

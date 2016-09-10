@@ -59,7 +59,7 @@ public class FragmentRecipesList extends Fragment {
     private ArrayList<Recipe> recipesList = new ArrayList<Recipe>();
     private RecyclerView recyclerView;
     private AdapterRecipesList adapter;
-    private Map<Recipe, String> recipeDisplayer = new HashMap<>();
+    private HashMap<Recipe, String> recipeDisplayer = new HashMap<>();
 
 
     //Variable to communicate to the activity
@@ -113,7 +113,10 @@ public class FragmentRecipesList extends Fragment {
 
             adapter = new AdapterRecipesList(getContext(), recipesList);
             recipesList = savedInstanceState.getParcelableArrayList("key");
+            recipeDisplayer = (HashMap<Recipe, String>) savedInstanceState.getSerializable("displayer");
+            Log.e("DisplayerResored", recipeDisplayer.toString());
             adapter.notifyDataSetChanged();
+
         }
     }
 
@@ -245,6 +248,7 @@ public class FragmentRecipesList extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("key", recipesList);
+        outState.putSerializable("displayer", recipeDisplayer);
         super.onSaveInstanceState(outState);
     }
 
