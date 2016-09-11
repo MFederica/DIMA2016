@@ -160,7 +160,7 @@
 
     <string name="error_connection">Connection error  :(</string>
     <string name="empty_favorites_list">Your favourites list is empty!</string>
-    <string name="empty_favorites_list_subtitle">Do you like to eat?</string>
+    <string name="empty_favorites_list_subtitle">Appetizing recipes are around!</string>
     <string name="empty_shopping_list">Your shopping list is empty!</string>
     <string name="empty_shopping_list_subtitle">Not very hungry, uh?</string>
 
