@@ -4,22 +4,21 @@
     android:layout_height="match_parent"
     tools:context="com.appetite.FragmentCookingStep"
     android:background="@drawable/activity_cooking_background"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_gravity="center_horizontal"
         android:padding="16dp"
         android:id="@+id/fragment_cooking_step_image" />
 
     <TextView
         android:id="@+id/fragment_cooking_step_text"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/text_margin"
+        android:layout_marginTop="@dimen/text_margin"
+        android:layout_marginRight="@dimen/text_margin"
         android:textAppearance="?attr/textAppearanceListItem"
          />
 
