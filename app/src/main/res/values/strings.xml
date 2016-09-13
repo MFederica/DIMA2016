@@ -117,9 +117,9 @@
     <string name="action_free_hands">Hands-free mode</string>
 
     <!-- STT credentials --> 
-    <string name="STTdefaultUsername">49a839a0-3007-434b-b21b-bc77cb829f92</string>
+    <string name="STTdefaultUsername">78b9ddaa-55d1-498b-9b74-d8cf85d536d7</string>
      
-    <string name="STTdefaultPassword">8Ifu5wRuEQFz</string>
+    <string name="STTdefaultPassword">HNc8Me6TMbpc</string>
      
     <string name="STTdefaultTokenFactory">https://stream.watsonplatform.net/speech-to-text/api</string>
      

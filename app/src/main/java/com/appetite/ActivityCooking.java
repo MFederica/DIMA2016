@@ -225,7 +225,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            Toast.makeText(ActivityCooking.this, "invoco onBackPressed()", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(ActivityCooking.this, "invoco onBackPressed()", Toast.LENGTH_SHORT).show();
             onBackPressed();
             return true;
 
@@ -237,12 +237,14 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
             }
 
         } else if (id == R.id.action_free_hands) {
+            Log.d(TAG, "onOptionsItemSelected: Hands-Free Action clicked");
 
             // Write to sharedPreferences if we'll allow free_hands or not in the future
             SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
-            boolean newCheckedStatus = !(sharedPref.getBoolean(getString(R.string.saved_free_hands), true));
+            boolean newCheckedStatus = !(sharedPref.getBoolean(getString(R.string.saved_free_hands), false));
 
             if(newCheckedStatus) {
+                Log.d(TAG, "onOptionsItemSelected: Hands-Free Action TRUE");
                 // Ask for permission..
                 if (ContextCompat.checkSelfPermission(this,
                         Manifest.permission.RECORD_AUDIO)
@@ -261,6 +263,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                     startFreeHandsMode();
                 }
             } else {
+                Log.e(TAG, "onOptionsItemSelected: Hands-Free Action FALSE");
                 item.setChecked(false);
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putBoolean(getString(R.string.saved_free_hands), false);
@@ -579,7 +582,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                         Log.d(TAG, "onClick: DONE");
                         timerLayoutView.setVisibility(View.VISIBLE);
                         //creating timer
-                        startTimer(numberPicker.getValue()*1000); //TODO cambiare in 60000
+                        startTimer(numberPicker.getValue()*60000); //TODO cambiare in 60000 se nn gia fatto
                     }
                 });
         builder.show();
@@ -632,7 +635,11 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     // permission was granted, yay!
-                    ((MenuItem)findViewById(R.id.action_free_hands)).setChecked(true);
+                    try { //TODO rimuovere il try catch?
+                        invalidateOptionsMenu();
+                    } catch (NullPointerException e) {
+                        Log.e(TAG, "onRequestPermissionsResult: NullPointerException" + e );
+                    }
                     // Write to sharedPreferences if we'll allow free_hands or not in the future
                     SharedPreferences sharedPref = getSharedPreferences(getString(R.string.preference_free_hands), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();

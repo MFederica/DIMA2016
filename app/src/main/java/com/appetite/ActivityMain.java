@@ -459,29 +459,28 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         switch (menuItem.getItemId()) {
 
             case R.id.drawer_item_home:
-                Toast.makeText(getApplicationContext(), "Home Selected", Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(getApplicationContext(), "Home Selected", Toast.LENGTH_SHORT).show();
                 fragmentClass = FragmentHome.class;
                 break;
             //Replacing the main content with ContentFragment Which is our Inbox View;
             case R.id.drawer_item_categories:
-                Toast.makeText(getApplicationContext(), "Categories Selected", Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(getApplicationContext(), "Categories Selected", Toast.LENGTH_SHORT).show();
                 fragmentClass = FragmentCategoriesList.class;
                 break;
             // For rest of the options we just show a toast on click
             case R.id.drawer_item_how_to:
-                Toast.makeText(getApplicationContext(), "How to Selected", Toast.LENGTH_SHORT).show();
-                fragmentClass = FragmentHowTo.class;
-                break;
+                Toast.makeText(getApplicationContext(), "Not yet implemented", Toast.LENGTH_SHORT).show();
+                return true;
             case R.id.drawer_item_shopping_list:
-                Toast.makeText(getApplicationContext(), "Shopping list Selected", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getApplicationContext(), "Shopping list Selected", Toast.LENGTH_SHORT).show();
                 fragmentClass = FragmentShoppingList.class;
                 break;
             case R.id.drawer_item_favourite:
-                Toast.makeText(getApplicationContext(), "Favourites Selected", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(getApplicationContext(), "Favourites Selected", Toast.LENGTH_SHORT).show();
                 fragmentClass = FragmentFavoritesList.class;
                 break;
             default:
-                Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
                 return true;
         }
         fragment = Fragment.instantiate(this, fragmentClass.getName());
@@ -809,6 +808,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(View view) {
                         ((FragmentShoppingList)newFragment).addElement(shoppingItem, position);
+                        ((FragmentShoppingList)newFragment).checkEmptyList(null);
                     }
                 }).show();
     }

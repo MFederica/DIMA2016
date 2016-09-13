@@ -159,7 +159,7 @@ public class FragmentCategoriesList extends Fragment {
         recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new AdapterCategoriesList.OnItemClickListener(){
             public void onItemClick(String textName){
-                Toast.makeText(getContext(), textName, Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(getContext(), textName, Toast.LENGTH_SHORT).show();
                 mCallback.onCategorySelected(textName);
                 Log.e("FragmentCategoriesList", "onItemClick: " + textName);
                 /*EventFragment eventFragment = EventFragment.newInstance();

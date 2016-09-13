@@ -97,6 +97,12 @@ public class FragmentFavoritesList extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(!checkEmptyList(null))
+            adapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -137,15 +143,22 @@ public class FragmentFavoritesList extends Fragment {
         adapter.notifyItemRangeChanged(position, adapter.getItemCount());
     }
 
-    public void checkEmptyList(View rootView) {
+    /**
+     * Checks whether there are items in the favorites list or not, updating the view accordingly
+     * @param rootView
+     * @return true if empty, false otherwise
+     */
+    public boolean checkEmptyList(View rootView) {
         if(rootView == null)
             rootView = this.getView();
         if(FavoritesHelper.getInstance(getContext()).favoritesList.size() == 0) {
             rootView.findViewById(R.id.list).setVisibility(View.GONE);
             rootView.findViewById(R.id.empty_favorites_list).setVisibility(View.VISIBLE);
+            return true;
         } else {
             rootView.findViewById(R.id.list).setVisibility(View.VISIBLE);
             rootView.findViewById(R.id.empty_favorites_list).setVisibility(View.GONE);
+            return false;
         }
     }
 }

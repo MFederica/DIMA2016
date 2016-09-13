@@ -360,7 +360,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
         if (id == R.id.action_settings) {
             return true;
         } else if (id == android.R.id.home) {
-            Toast.makeText(ActivityRecipe.this, "invoco onBackPressed()", Toast.LENGTH_SHORT).show(); //TODO delete this line
+           // Toast.makeText(ActivityRecipe.this, "invoco onBackPressed()", Toast.LENGTH_SHORT).show(); //TODO delete this line
             onBackPressed();
             return true;
         }
@@ -511,7 +511,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
      */
     private void UIDownloadError() {
         Log.e(TAG, "UIDownloadError" );
-        Toast.makeText(getApplicationContext(), "ERRORE INTERNET PROVA TODO", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(getApplicationContext(), "ERRORE INTERNET PROVA TODO", Toast.LENGTH_SHORT).show();
         try {
             findViewById(R.id.progress_bar).setVisibility(View.GONE);
         } catch (NullPointerException e) {
