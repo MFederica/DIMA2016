@@ -164,6 +164,7 @@
     <string name="empty_favorites_list_subtitle">Appetizing recipes are around!</string>
     <string name="empty_shopping_list">Your shopping list is empty!</string>
     <string name="empty_shopping_list_subtitle">Not very hungry, uh?</string>
+    <string name="empty_recipes_list">No recipes found!</string>
 
 </resources>
 
