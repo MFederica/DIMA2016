@@ -28,7 +28,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_filters">Filters</string>
     <string name="category">Category</string>
-    <string name="time">Preparation Time</string>
+    <string name="time">Overall Time</string>
     <string name="difficulty">Difficulty</string>
     <string name="country">Country</string>
     <string-array name="filter">
