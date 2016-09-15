@@ -29,6 +29,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -39,6 +40,7 @@ import android.view.View;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -362,7 +364,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
                         return true;
                 }
-
+                showButtonFilter();
                 ArrayList<String> activated = filter.getActivatedFilters();
                 if(activated != null) {
                     for (int i = 0; i < activated.size(); i++){
@@ -441,6 +443,24 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         mDrawerToggle.syncState();
 
         mTitle = mDrawerTitle = getTitle();
+
+        final CardView filtersActive = (CardView) findViewById(R.id.activity_main_filters_active);
+        final Filter filter = Filter.getInstance(getApplicationContext());
+        showButtonFilter();
+        //Listener that reset the filter when the button is pressed
+        filtersActive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_fragment_container);
+                filter.resetFilters();
+                resetFilterView();
+                filtersActive.setVisibility(View.GONE);
+                if(f instanceof FragmentRecipesList) //TODO: Sarà lo stesso metodo che nella recipeList ma per la home
+                    ((FragmentRecipesList) f).onFilterChange();
+            }
+        });
+
+
     }
 
     @Override
@@ -469,8 +489,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 break;
             // For rest of the options we just show a toast on click
             case R.id.drawer_item_how_to:
-                Toast.makeText(getApplicationContext(), "Not yet implemented", Toast.LENGTH_SHORT).show();
-                return true;
+                fragmentClass = FragmentHowTo.class;
+                break;
             case R.id.drawer_item_shopping_list:
              //   Toast.makeText(getApplicationContext(), "Shopping list Selected", Toast.LENGTH_SHORT).show();
                 fragmentClass = FragmentShoppingList.class;
@@ -484,7 +504,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 return true;
         }
         fragment = Fragment.instantiate(this, fragmentClass.getName());
-
         fragmentTransaction.replace(R.id.main_fragment_container, fragment, fragmentClass.getSimpleName());
         fragmentTransaction.commit();
         return true;
@@ -1035,6 +1054,78 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 break;
         }
         return filterId;
+    }
+
+    private void resetFilterView() {
+        Filter filter = Filter.getInstance(getApplicationContext());
+        navigationViewFilters = (NavigationView) findViewById(R.id.nav_filters);
+        MenuItem menuItem;
+            for(String f: filter.getFilters().keySet()) {
+                switch (f) {
+                    case "Easy":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_easy);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Medium":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_medium);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Hard":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_hard);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Less than 20 minutes":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.time_20);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Less than 30 minutes":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.time_30);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Less than 60 minutes":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.time_60);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Asia":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_asia);
+                        menuItem.setChecked(false);
+                        break;
+                    case "England":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_england);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Italy":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_italy);
+                        menuItem.setChecked(false);
+                        break;
+                    case "France":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_france);
+                        menuItem.setChecked(false);
+                        break;
+                    case "America":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_america);
+                        menuItem.setChecked(false);
+                        break;
+                    case "Middle-Orient":
+                        menuItem = navigationViewFilters.getMenu().findItem(R.id.country_middle_orient);
+                        menuItem.setChecked(false);
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+
+    }
+
+    private void showButtonFilter() {
+        Filter filter = Filter.getInstance(getApplicationContext());
+        CardView filtersActive = (CardView)findViewById(R.id.activity_main_filters_active);
+        //Activate or deactivate the filter button in case we are in the home fragment or in the recipeListFragment
+        if (!filter.getActivatedFilters().isEmpty())
+            filtersActive.setVisibility(View.VISIBLE);
+        else
+            filtersActive.setVisibility(View.GONE);
     }
 
 }

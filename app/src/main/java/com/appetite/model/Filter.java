@@ -149,4 +149,14 @@ public  class Filter {
             activePerGroup.put(filterCategory, dictObject);
         }
     }
+
+    public void resetFilters() {
+        for(String filter: filters.keySet()) {
+            filters.put(filter, DEACTIVATE);
+        }
+        for(String key : activePerGroup.keySet()) {
+            activePerGroup.put(key, null);
+        }
+        Log.e("resetFilters: ", filters.toString());
+    }
 }

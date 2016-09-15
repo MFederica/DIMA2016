@@ -6,7 +6,6 @@
     android:layout_gravity="bottom|center_horizontal"
     android:layout_margin="60dp"
     android:visibility="gone"
-    android:backgroundTint="#FF0000"
     >
     <LinearLayout
         android:layout_width="wrap_content"
@@ -22,7 +21,6 @@
             android:paddingRight="6dp"
             />
         <TextView
-            android:id="@+id/activity_main_filters_active_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
