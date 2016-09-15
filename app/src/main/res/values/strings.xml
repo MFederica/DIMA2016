@@ -9,6 +9,7 @@
     <string name="title_activity_sign_in">Sign-in</string>
 
     <string name="filters">Filters</string>
+    <string name="filters_reset">Reset filters</string>
     <string name="filters_subtitle">Choose your recipes!</string>
     <string name="quantum_satis">q.s.</string>
 
