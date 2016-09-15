@@ -1,81 +1,87 @@
 package com.appetite;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.appetite.model.Category;
 import com.appetite.model.HowToItem;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
-import com.nostra13.universalimageloader.utils.DiskCacheUtils;
-import com.squareup.picasso.Picasso;
+import com.appetite.FragmentHowTo.OnHowToListFragmentInteractionListener;
+import com.google.android.youtube.player.YouTubeThumbnailView;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Federica on 09/09/2016.
+ * {@link RecyclerView.Adapter} that can display a {@link HowToItem} and makes a call to the
+ * specified {@link OnHowToListFragmentInteractionListener}.
+ * TODO: Replace the implementation with code for your data type.
  */
-public class AdapterHowToList extends ArrayAdapter<HowToItem> {
+public class AdapterHowToList extends RecyclerView.Adapter<AdapterHowToList.ViewHolder> {
+    private final static String TAG = AdapterHowToList.class.getSimpleName();
 
-    private final LayoutInflater inflater;
+    private final List<HowToItem> mValues;
+    private final OnHowToListFragmentInteractionListener mListener;
+    private FragmentHowTo fht;
 
-    public AdapterHowToList(Context context, int textViewResourceId, List<HowToItem> objects) {
-        super(context, textViewResourceId, objects);
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
+    private Context context;
 
-
-    @Override
-    public View getView(int position, View view, ViewGroup parent) {
-        if (view == null) {
-            view = inflater.inflate(R.layout.list_item, null);
-        }
-
-        TextView textView = (TextView) view.findViewById(R.id.list_item_text);
-        textView.setText(getItem(position).getTitle());
-        TextView disabledText = (TextView) view.findViewById(R.id.list_item_disabled_text);
-        disabledText.setText(getItem(position).getDisabledText());
-
-        if (isEnabled(position)) {
-            disabledText.setVisibility(View.INVISIBLE);
-            textView.setTextColor(Color.WHITE);
-        } else {
-            disabledText.setVisibility(View.VISIBLE);
-            textView.setTextColor(Color.GRAY);
-        }
-
-        return view;
-    }
-
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        // have to return true here otherwise disabled items won't show a divider in the list.
-        return true;
+    public AdapterHowToList(Context context, List<HowToItem> items, OnHowToListFragmentInteractionListener listener, FragmentHowTo fht) {
+        this.context = context;
+        mValues = items;
+        mListener = listener;
+        this.fht = fht;
     }
 
     @Override
-    public boolean isEnabled(int position) {
-        return getItem(position).isEnabled();
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.fragment_how_to_list_item, parent, false);
+        return new ViewHolder(view);
     }
 
-    public boolean anyDisabled() {
-        for (int i = 0; i < getCount(); i++) {
-            if (!isEnabled(i)) {
-                return true;
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
+        holder.mItem = mValues.get(position);
+        Log.e("A", "onBindViewHolder: position = " + position + ", item = "+ holder.mItem.getText());
+        holder.mTextView.setText(mValues.get(position).getText());
+
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onHowToListFragmentInteraction(holder.mItem, position); //TODO cambiare
+                }
             }
-        }
-        return false;
+        });
+
     }
 
+    @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final View mView;
+        public final YouTubeThumbnailView mThumbnailView;
+        public final TextView mTextView;
+        public HowToItem mItem;
+
+        public ViewHolder(View view) {
+            super(view);
+            mView = view;
+            mThumbnailView = (YouTubeThumbnailView) view.findViewById(R.id.fragment_how_to_item_thumbnail);
+            mTextView = (TextView) view.findViewById(R.id.fragment_how_to_item_text);
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + " '" + mTextView.getText() + "'";
+        }
+    }
 }
