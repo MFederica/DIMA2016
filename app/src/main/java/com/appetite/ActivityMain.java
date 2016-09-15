@@ -584,8 +584,9 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 if(searchCursor.moveToPosition(position)) {
                     selected = searchCursor.getString(1);
                 }
-                RecipeData data = new RecipeData(selected);
-                data.execute("");
+                Intent intent = new Intent(getApplication(), ActivityRecipe.class);
+                intent.putExtra(RECIPE_NAME_SELECTED, selected);
+                startActivity(intent);
                 if (searchView != null) {
                     searchView.setIconified(true);
 
@@ -602,8 +603,21 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onQueryTextSubmit(String s) {
                 Log.e("SearchView:", "inside onQueryTextSubmit" + s);
-                RecipeData data = new RecipeData(s); //TODO implementare qui fragment con lista di ricette se premi invio?
-                data.execute("");
+
+                String submitted = wellFormattedString(s);
+                boolean isRecipe = false;
+                for(String recipe: recipeNameList) {
+                    if(recipe.equals(submitted)) {
+                        isRecipe = true;
+                        break;
+                    }
+                }
+                if(isRecipe) {
+                    Intent intent = new Intent(getApplication(), ActivityRecipe.class);
+                    intent.putExtra(RECIPE_NAME_SELECTED, submitted);
+                    startActivity(intent);
+                }
+                //TODO implementare qui fragment con lista di ricette se premi invio?
                 if (searchView != null) {
                     searchView.setIconified(true);
 
