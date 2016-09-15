@@ -49,6 +49,7 @@ import java.util.Set;
  * create an instance of this fragment.
  */
 public class FragmentRecipesList extends Fragment {
+    private final static String TAG = FragmentRecipesList.class.getSimpleName();
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_CATEGORY_SELECTED_NAME = "com.appetite.CATEGORY_SELECTED";
@@ -321,5 +322,16 @@ public class FragmentRecipesList extends Fragment {
         recipeDisplayer.toString();
         recipesList.toString();
         adapter.notifyDataSetChanged();
+
+        // DISPLAY EMPTY MESSAGE OR NOT
+        if(recipesList.size() == 0) {
+            Log.d(TAG, "onItemsChanged: the list is EMPTY" );
+            getView().findViewById(R.id.fragment_recipes_list_recycler_view).setVisibility(View.GONE);
+            getView().findViewById(R.id.empty_recipes_list).setVisibility(View.VISIBLE);
+        } else {
+            Log.d(TAG, "onItemsChanged: the list contains ITEMS" );
+            getView().findViewById(R.id.fragment_recipes_list_recycler_view).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.empty_recipes_list).setVisibility(View.GONE);
+        }
     }
 }

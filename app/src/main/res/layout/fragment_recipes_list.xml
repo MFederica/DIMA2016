@@ -1,9 +1,10 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentRecipesList"
-    android:id="@+id/fragment_recipe_list_container">
+    tools:context=".FragmentRecipesList">
+
+    <include layout="@layout/empty_recipes_list" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/fragment_recipes_list_recycler_view"
@@ -16,4 +17,4 @@
         android:paddingRight="4dp"
         android:paddingTop="4dp"/>
 
-</RelativeLayout>
+</FrameLayout>
