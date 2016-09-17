@@ -3,6 +3,8 @@ package com.appetite;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,7 +45,7 @@ public class NetworkRecipeRequestFragment extends Fragment {
 
     // Declare some sort of interface that AsyncTask will use to communicate with the Activity
     public interface NetworkRecipeRequestListener {
-        void onRequestStarted();
+        void onRequestStarted(boolean isStarted);
         void onRequestProgressUpdate(int progress);
         void onRequestFinished(Recipe result);
     }
@@ -143,10 +145,23 @@ public class NetworkRecipeRequestFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             Log.d(TAG, "onPreExecute: ");
-            if (mListener != null) {
-                mListener.onRequestStarted();
+            ConnectivityManager cm = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+            if(isConnected) {
+                downloadState = DownloadState.DOWNLOADING;
+                if (mListener != null) {
+                    mListener.onRequestStarted(true);
+                }
             }
-            downloadState = DownloadState.DOWNLOADING;
+            else {
+                downloadState = DownloadState.ERROR;
+                this.cancel(true);
+                if (mListener != null) {
+                    mListener.onRequestStarted(false);
+                }
+            }
         }
 
         @Override

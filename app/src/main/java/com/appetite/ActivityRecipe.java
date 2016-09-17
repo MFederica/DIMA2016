@@ -523,6 +523,13 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
         }
         try {
             findViewById(R.id.download_error).setVisibility(View.VISIBLE);  //TODO errore connessione
+            findViewById(R.id.download_error_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UIDownloading();
+                    networkRecipeRequestFragment.startTask(recipeNameSelected);
+                }
+            });
         } catch (NullPointerException e) {
             Log.e(TAG, "UIDownloadError: NullPointerException download_error_stub: " + e );
         }
@@ -552,8 +559,11 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
     }
 
     @Override
-    public void onRequestStarted() {
-        UIDownloading();
+    public void onRequestStarted(boolean isStarted) {
+        if(isStarted)
+            UIDownloading();
+        else
+            UIDownloadError();
     };
 
     @Override
