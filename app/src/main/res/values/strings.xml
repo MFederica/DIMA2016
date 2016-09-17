@@ -155,11 +155,17 @@
     <string name="STT_command_STOP_TIMER_3">finish</string>
     <string name="STT_command_READ_STEP">read</string>
 
+    <!-- Google api Key -->
+    <string name="API_KEY">AIzaSyBRUwFqzeE4ROAcNn3iDR4g3DOG_uGfy5o</string>
+    <string name="error_thumbnail_view">There was an error initializing the YouTubeThumbnailView (%1$s)</string>
+    <string name="error_player">There was an error initializing the YouTubePlayer (%1$s)</string>
+
     <!-- Random Strings -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
     <string name="error_connection">Connection error  :(</string>
+    <string name="download_error_button">Retry</string>
     <string name="empty_favorites_list">Your favourites list is empty!</string>
     <string name="empty_favorites_list_subtitle">Appetizing recipes are around!</string>
     <string name="empty_shopping_list">Your shopping list is empty!</string>

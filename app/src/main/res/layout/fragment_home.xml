@@ -4,11 +4,21 @@
     android:layout_height="match_parent"
     tools:context=".FragmentHome">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <include layout="@layout/progress_bar_circle" />
+
+    <include layout="@layout/download_error" />
+
+    <include layout="@layout/empty_recipes_list" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/fragment_home_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Fragment Home" />
+        android:scrollbars="vertical"
+        android:scrollbarStyle="outsideOverlay"
+        android:background="@color/colorBackground"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp"/>
 
 </FrameLayout>

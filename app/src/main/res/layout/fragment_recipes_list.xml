@@ -4,6 +4,10 @@
     android:layout_height="match_parent"
     tools:context=".FragmentRecipesList">
 
+    <include layout="@layout/progress_bar_circle" />
+
+    <include layout="@layout/download_error" />
+
     <include layout="@layout/empty_recipes_list" />
 
     <android.support.v7.widget.RecyclerView

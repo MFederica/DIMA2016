@@ -18,7 +18,7 @@
     </item>
 
 
-    <item android:title="@string/filter_time">
+    <item android:title="@string/time">
     <group>
         <menu >
             <item

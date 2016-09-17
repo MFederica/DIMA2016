@@ -357,9 +357,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
     public boolean onOptionsItemSelected(MenuItem item) {
         Log.e(TAG, "onOptionsItemSelected: " );
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == android.R.id.home) {
+        if (id == android.R.id.home) {
            // Toast.makeText(ActivityRecipe.this, "invoco onBackPressed()", Toast.LENGTH_SHORT).show(); //TODO delete this line
             onBackPressed();
             return true;

@@ -172,6 +172,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.difficulty_medium:
                         filterKey = getResources().getString(R.string.difficulty_medium);
@@ -186,6 +188,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.difficulty_hard:
                         filterKey = getResources().getString(R.string.difficulty_hard);
@@ -200,6 +204,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
 
                     //these have different exclusive behaviour that must be dealt
@@ -226,6 +232,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.time_30:
                         previousTimeFilter = getLastTimeFilterActive();
@@ -250,6 +258,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.time_60:
                         previousTimeFilter = getLastTimeFilterActive();
@@ -274,6 +284,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
 
                     case R.id.country_asia:
@@ -289,6 +301,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.country_america:
                         filterKey = getResources().getString(R.string.country_america);
@@ -303,6 +317,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.country_england:
                         filterKey = getResources().getString(R.string.country_england);
@@ -317,6 +333,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.country_france:
                         filterKey = getResources().getString(R.string.country_france);
@@ -331,6 +349,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.country_italy:
                         filterKey = getResources().getString(R.string.country_italy);
@@ -345,6 +365,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     case R.id.country_middle_orient:
                         filterKey = getResources().getString(R.string.country_middle_orient);
@@ -359,6 +381,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         }
                         if(f instanceof FragmentRecipesList)
                             ((FragmentRecipesList) f).onFilterChange();
+                        if(f instanceof FragmentHome)
+                            ((FragmentHome) f).onFilterChange();
                         break;
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
@@ -457,6 +481,8 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                 filtersActive.setVisibility(View.GONE);
                 if(f instanceof FragmentRecipesList) //TODO: Sarà lo stesso metodo che nella recipeList ma per la home
                     ((FragmentRecipesList) f).onFilterChange();
+                if(f instanceof FragmentHome)
+                    ((FragmentHome) f).onFilterChange();
             }
         });
 
@@ -652,11 +678,6 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         if(id == R.id.button_filters) {
             DrawerLayout drawer_filters = (DrawerLayout) this.findViewById(R.id.drawer_layout);

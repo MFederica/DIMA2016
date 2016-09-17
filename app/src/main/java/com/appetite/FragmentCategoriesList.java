@@ -3,6 +3,8 @@ package com.appetite;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,7 +18,6 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
@@ -37,17 +38,11 @@ import java.util.Map;
  * Activities that contain this fragment must implement the
  *
  * to handle interaction events.
- * Use the {@link FragmentCategoriesList#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class FragmentCategoriesList extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private final static String TAG = FragmentCategoriesList.class.getSimpleName();
+    private static final String DOWNLOAD_STATE = "com.appetite.FragmentCategoriesList.CATEGORIES_LIST.DOWNLOAD_STATE";
+    private static final String CATEGORIES_LIST = "com.appetite.FragmentCategoriesList.CATEGORIES_LIST";
 
     //Variables for the recycler view
     private ArrayList<Category> categoryList = new ArrayList<Category>();
@@ -62,34 +57,38 @@ public class FragmentCategoriesList extends Fragment {
     private final String categoryTable = "dima-mobilehub-516910810-Category";
     private final String categoryBucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/Category/";
 
+    CategoryData data;
+
     //Variable to communicate to the activity
     OnCategorySelectedListener mCallback;
+
+    public enum DownloadState {
+        IDLE, DOWNLOADING, COMPLETED, ERROR, STOPPED
+    }
+    DownloadState downloadState = DownloadState.IDLE;
 
     public FragmentCategoriesList() {
 
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * {} interface
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentCategoriesList.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FragmentCategoriesList newInstance(String param1, String param2) {
-        FragmentCategoriesList fragment = new FragmentCategoriesList();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            Log.e(TAG, "onCreate: savedInstanceState != null" );
+            downloadState = (DownloadState) savedInstanceState.getSerializable(DOWNLOAD_STATE);
+            categoryList = savedInstanceState.getParcelableArrayList(CATEGORIES_LIST);
+            adapter = new AdapterCategoriesList(getContext(), categoryList);
+        } else {
+            Log.e(TAG, "onCreate: savedInstanceState == null (1st invocation)");
+        }
+        if(downloadState == DownloadState.IDLE || downloadState == DownloadState.DOWNLOADING) {
+            data = new CategoryData();
+            data.execute("");
+        }
+
+        /*
         Bundle bundle = ((ActivityMain) getActivity()).getCategoryBundle();
         if(bundle != null) {savedInstanceState = bundle;}
         if(savedInstanceState == null || !savedInstanceState.containsKey("key")) {
@@ -109,7 +108,7 @@ public class FragmentCategoriesList extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
+*/
     }
 
     @Override
@@ -168,7 +167,19 @@ public class FragmentCategoriesList extends Fragment {
             }
         });
 
+        checkDownload(downloadState, rootView);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
+        super.onDestroy();
+        if ((data != null) && (data.getStatus() == AsyncTask.Status.RUNNING)) {
+            data.cancel(true);
+            Log.d(TAG, "onDestroy: TASK CANCELLATO");
+            downloadState = DownloadState.DOWNLOADING; //TODO verificare se serve
+        }
     }
 
 
@@ -200,6 +211,26 @@ public class FragmentCategoriesList extends Fragment {
         protected CategoryData() {
 
         }
+
+        @Override
+        protected void onPreExecute() {
+            Log.d(TAG, "onPreExecute: ");
+            ConnectivityManager cm = (ConnectivityManager)getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+            if(isConnected) {
+                downloadState = DownloadState.DOWNLOADING;
+            }
+            else {
+                downloadState = DownloadState.ERROR;
+                this.cancel(true);
+                checkDownload(downloadState);
+            }
+        }
+
+
+
         /**
          * This method runs in background to retrieve data from database
          * @param strings
@@ -210,34 +241,155 @@ public class FragmentCategoriesList extends Fragment {
             try {
                 ScanRequest scanRequest = new ScanRequest().withTableName(categoryTable);
                 ScanResult result = dynamoDBClient.scan(scanRequest);
-                for (Map<String, AttributeValue> item : result.getItems()) {
+                if(result.getCount() != 0) {
+                    // WE HAVE THE RESULT
+                    for (Map<String, AttributeValue> item : result.getItems()) {
 
-                    String name = item.get("name").getS();
-                    String imageUri = categoryBucket + item.get("image").getS() + ".jpg";
-                    Log.e("ImageURI:", imageUri);
-                    //int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
-                    Category category = new Category(name, imageUri);
-                    categoryList.add(category);
+                        String name = item.get("name").getS();
+                        String imageUri = categoryBucket + item.get("image").getS() + ".jpg";
+                        Log.e("ImageURI:", imageUri);
+                        //int imageResource = getResources().getIdentifier(uri, null, getActivity().getPackageName());
+                        Category category = new Category(name, imageUri);
+                        categoryList.add(category);
+                    }
+                    downloadState = DownloadState.COMPLETED;
+                    return categoryList;
+                } else {
+                    // WE DON'T HAVE THE RESULT
+                    downloadState = DownloadState.COMPLETED; //TODO recipe non presente nel DB
+                    return null;
                 }
-                return categoryList;
             } catch (RuntimeException e) {
-                Log.e("FragmentCategoriesList", "doInBackground: Error");
+                // CONNECTION ERROR
+                downloadState = DownloadState.ERROR;
+                Log.e(TAG, "doInBackground: RuntimeException: " + e.getMessage()); //TODO errore connessione
                 return null;
             }
         }
 
         protected void onPostExecute(ArrayList<Category> result) {
                 adapter.notifyDataSetChanged();
+                checkDownload(downloadState);
             }
         }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("key", categoryList);
+        outState.putParcelableArrayList(CATEGORIES_LIST, categoryList);
+        outState.putSerializable(DOWNLOAD_STATE, downloadState);
         super.onSaveInstanceState(outState);
     }
 
     public interface OnCategorySelectedListener {
         public void onCategorySelected(String textName);
+    }
+
+    /**
+     * Updates the UI w.r.t. the status of the download of the recipe
+     * @param mState status of the download of the recipe
+     */
+    private void checkDownload(DownloadState mState, View view) {
+        Log.d(TAG, "checkDownload: downloadingState = " + mState.toString());
+
+        if(mState == DownloadState.DOWNLOADING) {
+            UIDownloading(view);
+        } else
+        if(mState == DownloadState.COMPLETED) {
+            UIDownloadCompleted(view);
+        } else
+        if(mState == DownloadState.ERROR) {
+            UIDownloadError(view );
+        }
+    }
+
+    /**
+     * Updates the UI w.r.t. the status of the download of the recipe
+     * @param mState status of the download of the recipe
+     */
+    private void checkDownload(DownloadState mState) {
+        checkDownload(mState, null);
+    }
+
+    /**
+     * Show a progress bar
+     */
+    private void UIDownloading(View view) {
+        if(view == null)
+            view = getView();
+        Log.e(TAG, "UIDownloading" );
+        try {
+            view.findViewById(R.id.fragment_category_recycler_view).setVisibility(View.GONE);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloading: NullPointerException container_full: " + e );
+        }
+        try {
+            view.findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloading: NullPointerException progress_bar_stub: " + e );
+        }
+        try {
+            view.findViewById(R.id.download_error).setVisibility(View.GONE);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloading: NullPointerException download_error: " + e );
+        }
+    }
+
+    /**
+     * Show a message of connection error
+     */
+    private void UIDownloadError(View view) {
+        if(view == null)
+            view = getView();
+        Log.e(TAG, "UIDownloadError" );
+        // Toast.makeText(getApplicationContext(), "ERRORE INTERNET PROVA TODO", Toast.LENGTH_SHORT).show();
+        try {
+            view.findViewById(R.id.progress_bar).setVisibility(View.GONE);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloadError: NullPointerException progress_bar: " + e );
+        }
+        try {
+            view.findViewById(R.id.fragment_category_recycler_view).setVisibility(View.GONE);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloadError: NullPointerException container_full: " + e );
+        }
+        try {
+            view.findViewById(R.id.download_error).setVisibility(View.VISIBLE);  //TODO errore connessione
+            view.findViewById(R.id.download_error_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UIDownloading(null);
+                    data = new CategoryData();
+                    data.execute("");
+                }
+            });
+        } catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloadError: NullPointerException download_error_stub: " + e );
+        }
+    }
+
+    /**
+     * Show the recipe with all its content
+     */
+    private void UIDownloadCompleted(View view) {
+        if(view == null)
+            view = getView();
+        Log.e(TAG, "UIDownloadCompleted" );
+
+        try {
+            view.findViewById(R.id.fragment_category_recycler_view).setVisibility(View.VISIBLE);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "UIShowList: NullPointerException container_full: " + e );
+        }
+        try {
+            view.findViewById(R.id.progress_bar).setVisibility(View.GONE);
+        }catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloadCompleted: NullPointerException progress_bar: " + e );
+        }
+        try {
+            view.findViewById(R.id.download_error).setVisibility(View.GONE);
+        }
+        catch (NullPointerException e) {
+            Log.e(TAG, "UIDownloadCompleted: NullPointerException download_error: " + e );
+        }
     }
 }
