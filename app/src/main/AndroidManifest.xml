@@ -29,7 +29,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-
         <service android:name=".BroadcastService" />
 
         <activity
@@ -74,6 +73,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.appetite.ActivityRecipe" />
+        </activity>
+        <activity android:name=".ActivityVideoPlayer" android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.appetite.ActivityMain" />
         </activity>
     </application>
 

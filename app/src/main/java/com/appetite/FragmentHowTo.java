@@ -17,9 +17,11 @@ import com.appetite.model.HowToItem;
 import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
 import com.appetite.style.SimpleDividerItemDecoration;
+import com.google.android.youtube.player.YouTubeThumbnailView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -39,14 +41,16 @@ public class FragmentHowTo extends Fragment {
     //List of videos
     private static final List<HowToItem> VIDEO_LIST;
     static {
-        List<HowToItem> list = new ArrayList<HowToItem>();
-        list.add(new HowToItem("YouTube Collection", "Y_UmWdcTrrc")); //TODO nomi in R.string, URL anche no..imho
-        list.add(new HowToItem("GMail Tap", "1KhZKNZO8mQ"));
-        list.add(new HowToItem("Chrome Multitask", "UiLSiqyDf4Y"));
-        list.add(new HowToItem("Google Fiber", "re0VRK6ouwI"));
-        list.add(new HowToItem("Autocompleter", "blB_X38YSxQ"));
-        list.add(new HowToItem("GMail Motion", "Bu927_ul_X0"));
-        list.add(new HowToItem("Translate for Animals", "3I24bSteJpw"));
+        ArrayList<HowToItem> list = new ArrayList<HowToItem>();
+        list.add(new HowToItem("How to Apply Fondant ", "EYFLLlOtGYI", "http://img.youtube.com/vi/EYFLLlOtGYI/1.jpg"));
+        list.add(new HowToItem("Assemble a piping bag", "J4eJj2SAjk4","http://img.youtube.com/vi/J4eJj2SAjk4/2.jpg"));
+        list.add(new HowToItem("How to Caramelize Sugar", "vxTLy7hUkeU", "http://img.youtube.com/vi/vxTLy7hUkeU/1.jpg"));
+        list.add(new HowToItem("Make Creamy Mashed Potatoes", "5N6AMGf0G88", "http://img.youtube.com/vi/5N6AMGf0G88/1.jpg"));
+        list.add(new HowToItem("Crack and Separate Eggs", "aJH2l5x7o3s", "http://img.youtube.com/vi/aJH2l5x7o3s/2.jpg"));
+        list.add(new HowToItem("Cook the Pasta Like a Pro", "uDmyDjaC9DA", "http://img.youtube.com/vi/uDmyDjaC9DA/2.jpg"));
+        list.add(new HowToItem("Master Risotto", "fCWp6CSeXB4", "http://img.youtube.com/vi/fCWp6CSeXB4/1.jpg"));
+        list.add(new HowToItem("Cook the Perfect Steak", "nE4xh6VDZhU", "http://img.youtube.com/vi/nE4xh6VDZhU/2.jpg"));
+        list.add(new HowToItem("Reach the Perfect Temperature for Frying", "ntbpM5_B9vY", "http://img.youtube.com/vi/ntbpM5_B9vY/2.jpg"));
         VIDEO_LIST = Collections.unmodifiableList(list);
     }
 
@@ -55,6 +59,7 @@ public class FragmentHowTo extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public FragmentHowTo() {
+
     }
 
     // TODO: Customize parameter initialization
@@ -101,6 +106,7 @@ public class FragmentHowTo extends Fragment {
             adapter = new AdapterHowToList(context, VIDEO_LIST, mListener, this);
             recyclerView.setAdapter(adapter);
         }
+
         return rootView;
     }
 

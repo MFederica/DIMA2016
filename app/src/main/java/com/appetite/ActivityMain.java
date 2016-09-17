@@ -54,6 +54,7 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExp
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.appetite.model.FavoriteItem;
 import com.appetite.model.Filter;
+import com.appetite.model.HowToItem;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingItem;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
-        FragmentShoppingList.OnShoppingListFragmentInteractionListener, FragmentShoppingListIngredients.OnShoppingListIngredientFragmentInteractionListener, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener {
+        FragmentShoppingList.OnShoppingListFragmentInteractionListener, FragmentShoppingListIngredients.OnShoppingListIngredientFragmentInteractionListener, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener, FragmentHowTo.OnHowToListFragmentInteractionListener  {
     /**
      * Class name for log messages.
      */
@@ -781,6 +782,14 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
         Intent intent = new Intent(this, ActivityRecipe.class);
         intent.putExtra(RECIPE_SELECTED, recipeSelected);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onHowToListFragmentInteraction(HowToItem item, int position) {
+        Log.e(TAG, "onHowToListFragmentInteraction: " );
+        Intent intent = new Intent(this, ActivityVideoPlayer.class);
+        intent.putExtra(ActivityVideoPlayer.VIDEO_SELECTED, item.getVideoId());
         startActivity(intent);
     }
 

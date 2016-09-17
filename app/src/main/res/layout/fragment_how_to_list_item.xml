@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="95dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
-    android:gravity="center"
-    android:background="?android:attr/activatedBackgroundIndicator">
+    android:padding="16dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:background="?android:attr/selectableItemBackground">
 
-    <com.google.android.youtube.player.YouTubeThumbnailView
+    <com.appetite.style.GridImageView
         android:id="@+id/fragment_how_to_item_thumbnail"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:src="@drawable/no_thumbnail"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"/>
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/no_thumbnail"/>
 
     <TextView
         android:id="@+id/fragment_how_to_item_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="5dp"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="#fff"/>
+        android:layout_marginLeft="@dimen/text_margin"
+        android:textAppearance="?attr/textAppearanceListItem"/>
 
 </LinearLayout>
