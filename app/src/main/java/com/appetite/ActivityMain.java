@@ -974,6 +974,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
      * @return
      */
     private String wellFormattedString(String s) {
+        s = s.toLowerCase();
         String[] temp = s.split(" ");
         String output = Character.toUpperCase(temp[0].charAt(0)) + temp[0].substring(1) + " ";
         for(int i = 1; i < temp.length; i++) {
