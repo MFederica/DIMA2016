@@ -277,43 +277,58 @@ public class FragmentRecipesList extends Fragment {
         public ArrayList<Recipe> doInBackground(String...strings) {
             //set the uri of the string (now is equal for every entry)
             try {
-                Log.e("RecipeList:", "The name of the category is:" + categorySelectedName);
-                Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
-                eav.put(":category", new AttributeValue().withS(categorySelectedName));
+                List<Recipe> result;
+                String pathImage;
+                if (!categorySelectedName.equals("Vegetarian")) {
+                    Log.e("RecipeList:", "The name of the category is:" + categorySelectedName);
+                    Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+                    eav.put(":category", new AttributeValue().withS(categorySelectedName));
 
-                DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-                        .withFilterExpression("Category = :category")
-                        .withExpressionAttributeValues(eav);
+                    DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                            .withFilterExpression("Category = :category")
+                            .withExpressionAttributeValues(eav);
 
-                List<Recipe> result = mapper.scan(Recipe.class, scanExpression); //TODO handle timeout (manda eccezione a volte)
+                    result = mapper.scan(Recipe.class, scanExpression); //TODO handle timeout (manda eccezione a volte)
 
-                Log.e("RecipeList", "The results are:" + result.toString());
+                    Log.e("RecipeList", "The results are:" + result.toString());
 
-                if(result.size() != 0) {
-                    // WE HAVE THE RESULT
-                    for (Recipe item : result) {
-                        //Get all attributes from the DB
-                        //modify the image uri , save it back and save in list
-                        String imageUri = categorySelectedName + "/" + item.getImage() + ".jpg";
-                        item.setImage(imageUri);
-                        recipesList.add(item);
-                        recipeDisplayer.put(item, DISPLAY);
+                } else {
 
+                    Map<String, AttributeValue> eav = new HashMap<String, AttributeValue>();
+                    eav.put(":vegetarian", new AttributeValue().withS("1"));
+
+                    DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                            .withFilterExpression("Vegetarian = :vegetarian")
+                            .withExpressionAttributeValues(eav);
+
+                    result = mapper.scan(Recipe.class, scanExpression);
+
+                }
+                    if (result.size() != 0) {
+                        // WE HAVE THE RESULT
+                        for (Recipe item : result) {
+                            //Get all attributes from the DB
+                            //modify the image uri , save it back and save in list
+                            String imageUri = item.getCategory() + "/" + item.getImage() + ".jpg";
+                            item.setImage(imageUri);
+                            recipesList.add(item);
+                            recipeDisplayer.put(item, DISPLAY);
+
+                        }
+                        Log.e("recipeDisplayer: ", recipeDisplayer.toString());
+                        downloadState = DownloadState.COMPLETED;
+                        return recipesList;
+                    } else {
+                        // WE DON'T HAVE THE RESULT
+                        downloadState = DownloadState.COMPLETED; //TODO recipe non presente nel DB
+                        return null;
                     }
-                    Log.e("recipeDisplayer: ", recipeDisplayer.toString());
-                    downloadState = DownloadState.COMPLETED;
-                    return recipesList;
-                }  else {
-                    // WE DON'T HAVE THE RESULT
-                    downloadState = DownloadState.COMPLETED; //TODO recipe non presente nel DB
+                }catch(RuntimeException e){
+                    // CONNECTION ERROR
+                    downloadState = DownloadState.ERROR;
+                    Log.e(TAG, "doInBackground: RuntimeException: " + e.getMessage()); //TODO errore connessione
                     return null;
                 }
-            } catch (RuntimeException e) {
-                // CONNECTION ERROR
-                downloadState = DownloadState.ERROR;
-                Log.e(TAG, "doInBackground: RuntimeException: " + e.getMessage()); //TODO errore connessione
-                return null;
-            }
         }
 
 
