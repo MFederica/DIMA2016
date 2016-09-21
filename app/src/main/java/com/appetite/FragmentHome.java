@@ -336,7 +336,7 @@ public class FragmentHome extends Fragment {
                 int min = Integer.parseInt(temp[2]);
                 int preparationTime = Integer.parseInt(r.getPreparationTime());
                 int cookingTime = Integer.parseInt(r.getCookingTime());
-                if (!((preparationTime + cookingTime) < min))
+                if (!((preparationTime + cookingTime) <= min))
                     secondCheck = false;
             }
 
@@ -405,7 +405,7 @@ public class FragmentHome extends Fragment {
             view = getView();
         Log.e(TAG, "UIDownloading" );
         try {
-            view.findViewById(R.id.fragment_home_recycler_view).setVisibility(View.GONE);
+            view.findViewById(R.id.fragment_home_content).setVisibility(View.GONE);
         } catch (NullPointerException e) {
             Log.e(TAG, "UIDownloading: NullPointerException container_full: " + e );
         }
@@ -445,7 +445,7 @@ public class FragmentHome extends Fragment {
             Log.e(TAG, "UIDownloading: NullPointerException container_empty: " + e );
         }
         try {
-            view.findViewById(R.id.fragment_home_recycler_view).setVisibility(View.GONE);
+            view.findViewById(R.id.fragment_home_content).setVisibility(View.GONE);
         } catch (NullPointerException e) {
             Log.e(TAG, "UIDownloadError: NullPointerException container_full: " + e );
         }
@@ -454,6 +454,7 @@ public class FragmentHome extends Fragment {
             view.findViewById(R.id.download_error_button).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Log.e(TAG, "onClick: AAAAAAAAAA" );
                     UIDownloading(null);
                     data = new RecipeData();
                     data.execute("");
@@ -499,7 +500,7 @@ public class FragmentHome extends Fragment {
         if(recipesList.size() == 0) {
             Log.d(TAG, "onItemsChanged: the list is EMPTY" );
             try {
-                view.findViewById(R.id.fragment_home_recycler_view).setVisibility(View.GONE);
+                view.findViewById(R.id.fragment_home_content).setVisibility(View.GONE);
             } catch (NullPointerException e) {
                 Log.e(TAG, "UIShowList: NullPointerException container_full: " + e );
             }
@@ -511,7 +512,7 @@ public class FragmentHome extends Fragment {
         } else {
             Log.d(TAG, "onItemsChanged: the list contains ITEMS" );
             try {
-                view.findViewById(R.id.fragment_home_recycler_view).setVisibility(View.VISIBLE);
+                view.findViewById(R.id.fragment_home_content).setVisibility(View.VISIBLE);
             } catch (NullPointerException e) {
                 Log.e(TAG, "UIShowList: NullPointerException container_full: " + e );
             }

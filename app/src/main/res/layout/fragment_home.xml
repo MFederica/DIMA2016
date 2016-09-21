@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".FragmentHome">
 
     <include layout="@layout/progress_bar_circle" />
@@ -9,16 +10,57 @@
     <include layout="@layout/download_error" />
 
     <include layout="@layout/empty_recipes_list" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/fragment_home_recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:scrollbarStyle="outsideOverlay"
-        android:background="@color/colorBackground"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"
-        android:paddingTop="4dp"/>
+        android:id="@+id/fragment_home_content">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            >
+            <ImageView
+                android:src="@drawable/home"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                android:background="@color/colorImageBackground"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/scrim_uniform"/>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:text="Cook with us!"
 
+                android:textColor="@android:color/white"
+                android:textSize="35sp">
+
+            </TextView>
+        </FrameLayout>
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="200dp"
+            android:clipToPadding="false">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="888dp">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/fragment_home_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorBackground"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingLeft="4dp"
+                    android:paddingRight="4dp"
+                    android:paddingTop="4dp"/>
+            </RelativeLayout>
+
+
+        </android.support.v4.widget.NestedScrollView>
+    </FrameLayout>
 </FrameLayout>

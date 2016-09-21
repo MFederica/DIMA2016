@@ -17,7 +17,7 @@
     <ImageView
         android:id="@+id/splashImage"
         android:scaleType="fitCenter"
-        android:src="@mipmap/splash_icon"
+        android:src="@mipmap/logo_android_cook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -32,7 +32,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textColor="@color/splash_text"
+        android:textColor="@color/colorPrimary"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
         android:textSize="36dp" />

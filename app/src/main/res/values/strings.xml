@@ -44,13 +44,13 @@
     </string-array>
 
     <string-array name="Preparation_Time">
-        <item>Less than 20 minutes</item>
         <item>Less than 30 minutes</item>
         <item>Less than 60 minutes</item>
+        <item>Less than 90 minutes</item>
     </string-array>
 
     <string-array name="Country">
-        <item>Asia</item>
+        <item>Japan</item>
         <item>Italy</item>
         <item>France</item>
         <item>America</item>
@@ -64,10 +64,10 @@
     <string name="difficulty_easy">Easy</string>
     <string name="difficulty_medium">Medium</string>
     <string name="difficulty_hard">Hard</string>
-    <string name="time_20">Less than 20 minutes</string>
-    <string name="time_30">Less than 30 minutes</string>
-    <string name="time_60">Less than 60 minutes</string>
-    <string name="country_asia">Asia</string>
+    <string name="time_20">Less than 30 minutes</string>
+    <string name="time_30">Less than 60 minutes</string>
+    <string name="time_60">Less than 90 minutes</string>
+    <string name="country_asia">Japan</string>
     <string name="country_italy">Italy</string>
     <string name="country_france">France</string>
     <string name="country_america">America</string>
@@ -172,5 +172,9 @@
     <string name="empty_shopping_list_subtitle">Not very hungry, uh?</string>
     <string name="empty_recipes_list">No recipes found!</string>
 
+    <string name="cooking_connecting_STT">Warm up your voice..</string>
+    <string name="cooking_connected_STT">I\'m listening to you, chief!</string>
+    <string name="cooking_not_connected_STT">&#160;</string>
+    <string name="cooking_connection_closed_STT">&#160;</string>
 </resources>
 

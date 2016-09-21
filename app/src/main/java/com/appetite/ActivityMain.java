@@ -1065,19 +1065,19 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_hard);
                         menuItem.setChecked(true);
                         break;
-                    case "Less than 20 minutes":
+                    case "Less than 30 minutes":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.time_20);
                         menuItem.setChecked(true);
                         break;
-                    case "Less than 30 minutes":
+                    case "Less than 60 minutes":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.time_30);
                         menuItem.setChecked(true);
                         break;
-                    case "Less than 60 minutes":
+                    case "Less than 90 minutes":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.time_60);
                         menuItem.setChecked(true);
                         break;
-                    case "Asia":
+                    case "Japan":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.country_asia);
                         menuItem.setChecked(true);
                         break;
@@ -1118,13 +1118,13 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
     private MenuItem getPreviousMenuItem(String name) {
         MenuItem filterId = null;
         switch(name) {
-            case "Less than 20 minutes":
+            case "Less than 30 minutes":
                 filterId = navigationViewFilters.getMenu().findItem(R.id.time_20);
                 break;
-            case "Less than 30 minutes":
+            case "Less than 60 minutes":
                 filterId = navigationViewFilters.getMenu().findItem(R.id.time_30);
                 break;
-            case "Less than 60 minutes":
+            case "Less than 90 minutes":
                 filterId = navigationViewFilters.getMenu().findItem(R.id.time_60);
                 break;
             default:
@@ -1151,19 +1151,19 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.difficulty_hard);
                         menuItem.setChecked(false);
                         break;
-                    case "Less than 20 minutes":
+                    case "Less than 30 minutes":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.time_20);
                         menuItem.setChecked(false);
                         break;
-                    case "Less than 30 minutes":
+                    case "Less than 60 minutes":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.time_30);
                         menuItem.setChecked(false);
                         break;
-                    case "Less than 60 minutes":
+                    case "Less than 90 minutes":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.time_60);
                         menuItem.setChecked(false);
                         break;
-                    case "Asia":
+                    case "Japan":
                         menuItem = navigationViewFilters.getMenu().findItem(R.id.country_asia);
                         menuItem.setChecked(false);
                         break;

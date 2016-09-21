@@ -57,7 +57,7 @@ public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRe
     static final String RECIPE_NAME = "com.appetite.ActivityRecipe.RECIPE_NAME"; //used to save the recipe in the instance state
     static final String DOWNLOADING_STATE = "com.appetite.ActivityRecipe.DOWNLOADING_STATE";
     int[] colorIntArray = {R.color.difficulty_3,R.color.difficulty_1,R.color.colorAccent};
-    int[] iconIntArray = {R.drawable.ic_favorite_border,R.drawable.ic_add_shopping_cart,R.drawable.ic_action_restaurant};
+    int[] iconIntArray = {R.drawable.ic_favorite_border,R.drawable.ic_add_shopping_cart,R.drawable.ic_cooking};
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide

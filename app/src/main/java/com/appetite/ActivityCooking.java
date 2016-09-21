@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -149,7 +150,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         timerLayoutView = (View) findViewById(R.id.activity_cooking_timer);
         timerView = (TextView) findViewById(R.id.activity_cooking_timer_time);
         mHandler = new Handler();
-        displayStatus("Not connected");
+        displayStatus(getResources().getString(R.string.cooking_not_connected_STT), null);
 
     }
     
@@ -355,7 +356,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     public void onOpen() {
         Log.d(TAG, "onOpen");
         Log.d(TAG, "onOpen: successfully connected to the STT service");
-        displayStatus("successfully connected to the STT service");
+        displayStatus(getResources().getString(R.string.cooking_connected_STT), "#388E3C");
         mState = ConnectionState.CONNECTED;
     }
 
@@ -368,7 +369,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
     public void onClose(int code, String reason, boolean remote) {
         Log.d(TAG, "onClose, code: " + code + " reason: " + reason);
         Log.d(TAG, "onClose: connection closed");
-        displayStatus("connection closed");
+        displayStatus(getResources().getString(R.string.cooking_connection_closed_STT), null);
         mState = ConnectionState.IDLE;
     }
 
@@ -418,11 +419,13 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
         }
     }
 
-    private void displayStatus(final String status) {
+    private void displayStatus(final String status, final String color) {
         final Runnable runnableUi = new Runnable(){
             @Override
             public void run() {
                 TextView textResult = (TextView)findViewById(R.id.activity_cooking_sttStatus);
+                if(color != null)
+                    textResult.setTextColor(Color.parseColor(color));
                 textResult.setText(status);
             }
         };
@@ -651,7 +654,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
                     mRecognitionResults = "";
                     SpeechToText.sharedInstance().setModel(voiceModel);
                     Log.d(TAG, "onCreate: connecting to the STT service...");
-                    displayStatus("connecting to the STT service...");
+                    displayStatus(getResources().getString(R.string.cooking_connecting_STT), "#FFA000");
                     // start recognition //TODO spostare in un retainedFragment?!
                     new AsyncTask<Void, Void, Void>(){
                         @Override
@@ -688,7 +691,7 @@ public class ActivityCooking extends AppCompatActivity implements ISpeechDelegat
             mRecognitionResults = "";
             SpeechToText.sharedInstance().setModel(voiceModel);
             Log.d(TAG, "onCreate: connecting to the STT service...");
-            displayStatus("connecting to the STT service...");
+            displayStatus(getResources().getString(R.string.cooking_connecting_STT), "#FFA000");
             // start recognition //TODO spostare in un retainedFragment?!
             new AsyncTask<Void, Void, Void>() {
                 @Override
