@@ -52,12 +52,16 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.ArgumentMarshall
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.appetite.model.FavoriteItem;
 import com.appetite.model.Filter;
 import com.appetite.model.HowToItem;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingItem;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,6 +134,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG, "onCreate: " );
         super.onCreate(savedInstanceState);
         // Obtain a reference to the mobile client. It is created in the Application class,
         // but in case a custom Application class is not used, we initialize it here if necessary.
@@ -140,7 +145,7 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
         identityManager = awsMobileClient.getIdentityManager();
 
         setSharedPref();
-
+        //Log.e(TAG, "onCreate: recipeNameList.size() = " + recipeNameList.size() );
         if(recipeNameList != null) {
             Log.e("MainActivity:", recipeNameList.toString());
         }
@@ -684,6 +689,43 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
             DrawerLayout drawer_filters = (DrawerLayout) this.findViewById(R.id.drawer_layout);
            drawer_filters.openDrawer(Gravity.RIGHT);
         }
+        if(id == R.id.search) {
+            //Log.e(TAG, "onOptionsItemSelected: SEARCHHHHHHHHHHHHHH" );
+
+            if(recipeNameList.size() == 0) {
+                Log.e(TAG, "onOptionsItemSelected: ZEROO" );
+                // START - DOWNLOAD RECIPES NAME
+                Thread thread2 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
+                            DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
+                            //Retrieve the name of the recipes from the DB, is not done anymore if already present
+                            //Are saved the sharedPreferences for the search
+                            ScanRequest scanRequest = new ScanRequest().withTableName(Application.tableName);
+                            ScanResult result = dynamoDBClient.scan(scanRequest);
+                            for (Map<String, AttributeValue> item : result.getItems()) {
+                                String name = item.get("Name").getS();
+                                recipeNameList.add(name);
+                            }
+                            //Saving it in the shared preferences, they will be used to search recipes
+                            SharedPreferences sharedPref = getSharedPreferences("recipeNameList", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            Set<String> r = new HashSet<String>(recipeNameList);
+                            editor.putStringSet("recipeNameList", r);
+                            editor.apply();
+                        } catch (RuntimeException e) {
+                            Log.e("ActivitySplash", "HTTP exception");
+                        }
+                    }
+                });
+                thread2.start();
+                // END - RECIPES NAMES
+            }
+            Log.e(TAG, "onOptionsItemSelected: recipeNameList.size() = " + recipeNameList.size());
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -945,27 +987,17 @@ public class ActivityMain extends AppCompatActivity implements NavigationView.On
 
 
     /**
-     * Method needed to retireve shared preferences when they are set
+     * Method needed to retrieve shared preferences when they are set
      */
     public void setSharedPref() {
+        Log.e(TAG, "setSharedPref: SET SHARED PREF ##############" );
+        SharedPreferences sharedPref = null;
+        Log.e(TAG, "run: GET SHARED @@@@@@@@@@@@@" );
+        sharedPref = getSharedPreferences("recipeNameList", Context.MODE_PRIVATE);
+        Set<String> emptySet = new HashSet<>();
+        Set<String> s = sharedPref.getStringSet("recipeNameList", emptySet);
+        recipeNameList = new ArrayList<String>(s);
 
-        Thread thread2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean sharedNotNull = false;
-                SharedPreferences sharedPref = null;
-                 while(!sharedNotNull) {
-                     sharedPref = getSharedPreferences(
-                             "recipeNameList", Context.MODE_PRIVATE);
-                     if (sharedPref != null) {
-                         sharedNotNull = true;
-                     }
-                 }
-                    Set<String> s = sharedPref.getStringSet("recipeNameList", null);
-                    recipeNameList = new ArrayList<String>(s);
-                }
-        });
-        thread2.start();
     }
 
     /**

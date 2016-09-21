@@ -8,10 +8,17 @@
 //
 package com.appetite;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.amazonaws.mobile.AWSMobileClient;
+import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.appetite.model.FavoritesHelper;
 import com.appetite.model.ShoppingListHelper;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -21,6 +28,11 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Application class responsible for initializing singletons and other common components.
  */
@@ -29,6 +41,9 @@ public class Application extends MultiDexApplication {
     private final static String LOG_TAG = Application.class.getSimpleName();
     public final static int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
 
+    public final static String tableName = "dima-mobilehub-516910810-RecipeName";
+    private ArrayList<String> recipeNameList = new ArrayList<String>();
+
     @Override
     public void onCreate() {
         Log.d(LOG_TAG, "Application.onCreate - Initializing application...");
@@ -36,6 +51,12 @@ public class Application extends MultiDexApplication {
         initializeApplication();
         Log.d(LOG_TAG, "Application.onCreate - Application initialized OK");
 
+    }
+
+    private void initializeApplication() {
+        AWSMobileClient.initializeMobileClientIfNecessary(getApplicationContext());
+
+        // ...Put any application-specific initialization logic here...
         // UNIVERSAL IMAGE LOADER SETUP
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .imageScaleType(ImageScaleType.EXACTLY)
@@ -76,12 +97,35 @@ public class Application extends MultiDexApplication {
         }
         Log.d(LOG_TAG, "Instance of FavoritesHelper contains recipes: "+ stringa);
         //TODO rimuovere: fino a qua (logger)
-    }
 
-    private void initializeApplication() {
-        AWSMobileClient.initializeMobileClientIfNecessary(getApplicationContext());
-
-        // ...Put any application-specific initialization logic here...
+        // START - DOWNLOAD RECIPES NAME
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    AmazonDynamoDB dynamoDBClient = AWSMobileClient.defaultMobileClient().getDynamoDBClient();
+                    DynamoDBMapper mapper = new DynamoDBMapper(dynamoDBClient);
+                    //Retrieve the name of the recipes from the DB, is not done anymore if already present
+                    //Are saved the sharedPreferences for the search
+                    ScanRequest scanRequest = new ScanRequest().withTableName(tableName);
+                    ScanResult result = dynamoDBClient.scan(scanRequest);
+                    for (Map<String, AttributeValue> item : result.getItems()) {
+                        String name = item.get("Name").getS();
+                        recipeNameList.add(name);
+                    }
+                    //Saving it in the shared preferences, they will be used to search recipes
+                    SharedPreferences sharedPref = getSharedPreferences("recipeNameList", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    Set<String> r = new HashSet<String>(recipeNameList);
+                    editor.putStringSet("recipeNameList", r);
+                    editor.apply();
+                } catch (RuntimeException e) {
+                    Log.e("ActivitySplash", "HTTP exception");
+                }
+            }
+        });
+        thread2.start();
+        // END - RECIPES NAMES
     }
 
     /**
