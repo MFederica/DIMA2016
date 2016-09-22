@@ -29,10 +29,10 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <service android:name=".BroadcastService" />
+        <service android:name=".cooking.BroadcastService" />
 
         <activity
-            android:name=".activity.ActivitySplash"
+            android:name=".main.ActivitySplash"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:label="@string/app_name">
             <intent-filter>
@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ActivityMain"
+            android:name=".main.ActivityMain"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -51,33 +51,33 @@
             android:resource="@xml/searchable" />
 
         <activity
-            android:name=".activity.ActivityRecipe"
+            android:name=".recipe.ActivityRecipe"
             android:label="@string/title_activity_recipe"
-            android:parentActivityName=".activity.ActivityMain"
+            android:parentActivityName=".main.ActivityMain"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.ActivityMain" />
+                android:value=".main.ActivityMain" />
         </activity>
         <activity
-            android:name=".activity.ActivitySearchResult"
+            android:name=".main.ActivitySearchResult"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ActivityCooking"
+            android:name=".cooking.ActivityCooking"
             android:label="@string/title_activity_activity_cooking"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.ActivityRecipe" />
+                android:value=".recipe.ActivityRecipe" />
         </activity>
-        <activity android:name=".activity.ActivityVideoPlayer" android:configChanges="orientation|screenSize">
+        <activity android:name=".main.ActivityVideoPlayer" android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.ActivityMain" />
+                android:value=".main.ActivityMain" />
         </activity>
     </application>
 

@@ -14,6 +14,6 @@
     android:layout_height="match_parent"
 
     app:layoutManager="LinearLayoutManager"
-    tools:context=".fragment.FragmentFavoritesList"
+    tools:context=".favourites.FragmentFavoritesList"
     tools:listitem="@layout/fragment_favoriteslist_item" />
     </FrameLayout>

@@ -2,7 +2,7 @@ package com.appetite.model;
 
 import android.content.Context;
 
-import com.appetite.activity.ActivityMain;
+import com.appetite.main.ActivityMain;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
