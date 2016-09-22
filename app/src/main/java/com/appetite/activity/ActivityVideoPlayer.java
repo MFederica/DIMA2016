@@ -56,6 +56,7 @@ public class ActivityVideoPlayer extends YouTubeFailureRecoveryActivity implemen
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
                                         boolean wasRestored) {
         this.player = player;
+        player.setShowFullscreenButton(false);
         // Specify that we want to handle fullscreen behavior ourselves.
         player.addFullscreenControlFlag(YouTubePlayer.FULLSCREEN_FLAG_CUSTOM_LAYOUT);
         player.setOnFullscreenListener(this);
