@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +25,8 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.appetite.R;
+import com.appetite.adapter.AdapterCategoriesList;
 import com.appetite.model.Category;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -41,8 +43,8 @@ import java.util.Map;
  */
 public class FragmentCategoriesList extends Fragment {
     private final static String TAG = FragmentCategoriesList.class.getSimpleName();
-    private static final String DOWNLOAD_STATE = "com.appetite.FragmentCategoriesList.CATEGORIES_LIST.DOWNLOAD_STATE";
-    private static final String CATEGORIES_LIST = "com.appetite.FragmentCategoriesList.CATEGORIES_LIST";
+    private static final String DOWNLOAD_STATE = "com.appetite.fragment.FragmentCategoriesList.CATEGORIES_LIST.DOWNLOAD_STATE";
+    private static final String CATEGORIES_LIST = "com.appetite.fragment.FragmentCategoriesList.CATEGORIES_LIST";
 
     //Variables for the recycler view
     private ArrayList<Category> categoryList = new ArrayList<Category>();

@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,43 +13,57 @@ import android.view.View;
 import android.view.ViewGroup;
 
 //import com.dmfm.appetite.R;
-import com.appetite.model.ShoppingItem;
-import com.appetite.model.ShoppingListHelper;
+import com.appetite.R;
+import com.appetite.adapter.AdapterHowToList;
+import com.appetite.model.HowToItem;
 import com.appetite.style.SimpleDividerItemDecoration;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnShoppingListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnHowToListFragmentInteractionListener}
  * interface.
  */
-public class FragmentShoppingList extends Fragment {
+public class FragmentHowTo extends Fragment {
 
-    //TODO implementare la possibilità di cambiare il numero di servings nella shopping list
-    //TODO (o perlomeno mostrarlo perchè ora si moltiplica..)!!
-
-    //TODO fare un fragment di lista di ricette e poi una volta dentro vedere gli ingredienti comprati
-
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+
     private int mColumnCount = 1;
-    private OnShoppingListFragmentInteractionListener mListener;
-    private AdapterShoppingList adapter;
+    private OnHowToListFragmentInteractionListener mListener;
+    private AdapterHowToList adapter;
+
+    //List of videos
+    private static final List<HowToItem> VIDEO_LIST;
+    static {
+        ArrayList<HowToItem> list = new ArrayList<HowToItem>();
+        list.add(new HowToItem("How to Apply Fondant ", "EYFLLlOtGYI", "http://img.youtube.com/vi/EYFLLlOtGYI/1.jpg"));
+        list.add(new HowToItem("Assemble a piping bag", "J4eJj2SAjk4","http://img.youtube.com/vi/J4eJj2SAjk4/2.jpg"));
+        list.add(new HowToItem("How to Caramelize Sugar", "vxTLy7hUkeU", "http://img.youtube.com/vi/vxTLy7hUkeU/1.jpg"));
+        list.add(new HowToItem("Make Creamy Mashed Potatoes", "5N6AMGf0G88", "http://img.youtube.com/vi/5N6AMGf0G88/1.jpg"));
+        list.add(new HowToItem("Crack and Separate Eggs", "aJH2l5x7o3s", "http://img.youtube.com/vi/aJH2l5x7o3s/2.jpg"));
+        list.add(new HowToItem("Cook the Pasta Like a Pro", "uDmyDjaC9DA", "http://img.youtube.com/vi/uDmyDjaC9DA/2.jpg"));
+        list.add(new HowToItem("Master Risotto", "fCWp6CSeXB4", "http://img.youtube.com/vi/fCWp6CSeXB4/1.jpg"));
+        list.add(new HowToItem("Cook the Perfect Steak", "nE4xh6VDZhU", "http://img.youtube.com/vi/nE4xh6VDZhU/2.jpg"));
+        list.add(new HowToItem("Reach the Perfect Temperature for Frying", "ntbpM5_B9vY", "http://img.youtube.com/vi/ntbpM5_B9vY/2.jpg"));
+        VIDEO_LIST = Collections.unmodifiableList(list);
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public FragmentShoppingList() {
+    public FragmentHowTo() {
+
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static FragmentShoppingList newInstance(int columnCount) {
-        FragmentShoppingList fragment = new FragmentShoppingList();
+    public static FragmentHowTo newInstance(int columnCount) {
+        FragmentHowTo fragment = new FragmentHowTo();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -71,11 +85,12 @@ public class FragmentShoppingList extends Fragment {
         // Change the action bar title
         final ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(getString(R.string.drawer_item_shopping_list));
+            actionBar.setTitle(getString(R.string.drawer_item_how_to));
         }
-        View rootView = inflater.inflate(R.layout.fragment_shoppinglist, container, false);
-        View view = rootView.findViewById(R.id.list);
-        // Set the adapter
+
+        // Set the recycler view..
+        View rootView = inflater.inflate(R.layout.fragment_how_to_list, container, false);
+        View view = rootView.findViewById(R.id.fragment_how_to_recycler_view);
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
@@ -85,11 +100,11 @@ public class FragmentShoppingList extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             recyclerView.addItemDecoration(new SimpleDividerItemDecoration(context));
-            List<ShoppingItem> shoppingList = ShoppingListHelper.getInstance(context).shoppingList;
-            checkEmptyList(rootView);
-            adapter = new AdapterShoppingList(context, shoppingList, mListener, this);
+        //..and the adapter
+            adapter = new AdapterHowToList(context, VIDEO_LIST, mListener, this);
             recyclerView.setAdapter(adapter);
         }
+
         return rootView;
     }
 
@@ -97,8 +112,8 @@ public class FragmentShoppingList extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnShoppingListFragmentInteractionListener) {
-            mListener = (OnShoppingListFragmentInteractionListener) context;
+        if (context instanceof OnHowToListFragmentInteractionListener) {
+            mListener = (OnHowToListFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnShoppingListFragmentInteractionListener");
@@ -121,27 +136,8 @@ public class FragmentShoppingList extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnShoppingListFragmentInteractionListener {
+    public interface OnHowToListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onShoppingListFragmentInteraction(ShoppingItem item, int position);
-    }
-
-    public void addElement(ShoppingItem shoppingItem, int position) {
-        ShoppingListHelper.getInstance(getContext()).shoppingList.add(position, shoppingItem);
-        ShoppingListHelper.saveShoppingList(getContext());
-        adapter.notifyItemInserted(position);
-        adapter.notifyItemRangeChanged(position, adapter.getItemCount());
-    }
-
-    public void checkEmptyList(View rootView) {
-        if(rootView == null)
-            rootView = this.getView();
-        if(ShoppingListHelper.getInstance(getContext()).shoppingList.size() == 0) {
-            rootView.findViewById(R.id.list).setVisibility(View.GONE);
-            rootView.findViewById(R.id.empty_shopping_list).setVisibility(View.VISIBLE);
-        } else {
-            rootView.findViewById(R.id.list).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.empty_shopping_list).setVisibility(View.GONE);
-        }
+        void onHowToListFragmentInteraction(HowToItem item, int position);
     }
 }

@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,10 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.appetite.FragmentRecipePreparation.OnListFragmentInteractionListener;
+import com.appetite.fragment.FragmentRecipePreparation.OnListFragmentInteractionListener;
+import com.appetite.R;
+import com.appetite.activity.ActivityMain;
 import com.appetite.model.Recipe;
 import com.appetite.style.GridImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;

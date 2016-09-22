@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.fragment;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -13,10 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 //import com.dmfm.appetite.R;
+import com.appetite.R;
+import com.appetite.adapter.AdapterRecipePreparation;
 import com.appetite.model.Recipe;
 import com.appetite.style.SimpleDividerItemDecoration;
-
-import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -68,14 +68,14 @@ public class FragmentRecipePreparation extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_preparation_list, container, false);
-
-        int value = getContext().getResources().getConfiguration().orientation;
+        mColumnCount = 1;
+        /* int value = getContext().getResources().getConfiguration().orientation;
         if (value == Configuration.ORIENTATION_PORTRAIT) {
             mColumnCount = 1;
         }
         if (value == Configuration.ORIENTATION_LANDSCAPE) {
             mColumnCount = 2;
-        }
+        } */
 
         // Set the adapter
         if (view instanceof RecyclerView) {

@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.fragment;
 
 import android.app.Activity;
 import android.content.Context;
@@ -24,6 +24,8 @@ import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.appetite.R;
+import com.appetite.adapter.AdapterRecipesList;
 import com.appetite.model.Filter;
 import com.appetite.model.Recipe;
 
@@ -49,9 +51,9 @@ public class FragmentRecipesList extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_CATEGORY_SELECTED_NAME = "com.appetite.CATEGORY_SELECTED";
 
-    private static final String DOWNLOAD_STATE = "com.appetite.FragmentRecipesList.DOWNLOAD_STATE";
-    private static final String RECIPES_LIST = "com.appetite.FragmentRecipesList.RECIPES_LIST";
-    private static final String RECIPES_DISPLAYER = "com.appetite.FragmentRecipesList.RECIPES_DISPLAYER";
+    private static final String DOWNLOAD_STATE = "com.appetite.fragment.FragmentRecipesList.DOWNLOAD_STATE";
+    private static final String RECIPES_LIST = "com.appetite.fragment.FragmentRecipesList.RECIPES_LIST";
+    private static final String RECIPES_DISPLAYER = "com.appetite.fragment.FragmentRecipesList.RECIPES_DISPLAYER";
 
     private String categorySelectedName;
 

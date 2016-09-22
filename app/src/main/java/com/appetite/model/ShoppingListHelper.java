@@ -1,9 +1,8 @@
 package com.appetite.model;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
-import com.appetite.ActivityMain;
+import com.appetite.activity.ActivityMain;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

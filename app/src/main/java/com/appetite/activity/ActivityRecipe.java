@@ -1,8 +1,7 @@
-package com.appetite;
+package com.appetite.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -17,13 +16,10 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
-import android.view.ViewStub;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -31,14 +27,17 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import com.appetite.fragment.FragmentRecipeInformation;
+import com.appetite.fragment.FragmentRecipeIngredients;
+import com.appetite.fragment.FragmentRecipePreparation;
+import com.appetite.fragment.FragmentShoppingList;
+import com.appetite.NetworkRecipeRequestFragment;
 import com.appetite.R;
+import com.appetite.ScrollAwareFABBehavior;
 import com.appetite.model.FavoritesHelper;
 import com.appetite.model.Recipe;
 import com.appetite.model.ShoppingListHelper;
@@ -49,13 +48,12 @@ import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.List;
 
 public class ActivityRecipe extends AppCompatActivity implements NetworkRecipeRequestFragment.NetworkRecipeRequestListener {
     private final static String TAG = ActivityRecipe.class.getSimpleName(); //logger tag for debugging
-    static final String RECIPE = "com.appetite.ActivityRecipe.RECIPE"; //used to save the recipe in the instance state
-    static final String RECIPE_NAME = "com.appetite.ActivityRecipe.RECIPE_NAME"; //used to save the recipe in the instance state
-    static final String DOWNLOADING_STATE = "com.appetite.ActivityRecipe.DOWNLOADING_STATE";
+    static final String RECIPE = "com.appetite.activity.ActivityRecipe.RECIPE"; //used to save the recipe in the instance state
+    static final String RECIPE_NAME = "com.appetite.activity.ActivityRecipe.RECIPE_NAME"; //used to save the recipe in the instance state
+    static final String DOWNLOADING_STATE = "com.appetite.activity.ActivityRecipe.DOWNLOADING_STATE";
     int[] colorIntArray = {R.color.difficulty_3,R.color.difficulty_1,R.color.colorAccent};
     int[] iconIntArray = {R.drawable.ic_favorite_border,R.drawable.ic_add_shopping_cart,R.drawable.ic_cooking};
 

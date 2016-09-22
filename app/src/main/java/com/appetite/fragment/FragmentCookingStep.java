@@ -1,8 +1,7 @@
-package com.appetite;
+package com.appetite.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appetite.R;
+import com.appetite.activity.ActivityMain;
 import com.appetite.model.Recipe;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -33,8 +34,8 @@ import java.io.File;
 public class FragmentCookingStep extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_STEP_NUMBER = "com.appetite.FragmentCookingStep.ARG_STEP_NUMBER";
-    private static final String ARG_RECIPE = "com.appetite.FragmentCookingStep.ARG_RECIPE";
+    private static final String ARG_STEP_NUMBER = "com.appetite.fragment.FragmentCookingStep.ARG_STEP_NUMBER";
+    private static final String ARG_RECIPE = "com.appetite.fragment.FragmentCookingStep.ARG_RECIPE";
 
     private final String bucket = "http://dima-mobilehub-516910810-category.s3.amazonaws.com/";
 

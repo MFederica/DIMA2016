@@ -1,21 +1,23 @@
-package com.appetite;
+package com.appetite.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.appetite.FragmentShoppingList.OnShoppingListFragmentInteractionListener;
+import com.appetite.fragment.FragmentFavoritesList;
+import com.appetite.fragment.FragmentShoppingList.OnShoppingListFragmentInteractionListener;
+import com.appetite.R;
+import com.appetite.activity.ActivityMain;
+import com.appetite.model.FavoriteItem;
+import com.appetite.model.FavoritesHelper;
 import com.appetite.model.ShoppingItem;
-import com.appetite.model.ShoppingListHelper;
 import com.appetite.style.GridImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -31,43 +33,41 @@ import java.util.List;
  * specified {@link OnShoppingListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingList.ViewHolder> {
-    private final static String TAG = AdapterShoppingList.class.getSimpleName();
+public class AdapterFavoritesList extends RecyclerView.Adapter<AdapterFavoritesList.ViewHolder> {
+    private final static String TAG = AdapterFavoritesList.class.getSimpleName();
 
-    private final List<ShoppingItem> mValues;
-    private final OnShoppingListFragmentInteractionListener mListener;
+    private final List<FavoriteItem> mValues;
     private ImageLoader imageLoader = ImageLoader.getInstance();
-    private FragmentShoppingList fsl;
 
     private Context context;
+    private FragmentFavoritesList.OnFavoritesListFragmentInteractionListener mListener;
+    private FragmentFavoritesList ffl;
 
-    public AdapterShoppingList(Context context, List<ShoppingItem> items, OnShoppingListFragmentInteractionListener listener, FragmentShoppingList fsl) {
+    public AdapterFavoritesList(Context context, List<FavoriteItem> items, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener listener, FragmentFavoritesList ffl) {
         this.context = context;
         mValues = items;
         mListener = listener;
-        this.fsl = fsl;
+        this.ffl = ffl;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_shoppinglist_item, parent, false);
+                .inflate(R.layout.fragment_favoriteslist_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
-        Log.e("A", "onBindViewHolder: position = " + position + ", item = "+ holder.mItem.getRecipe());
+        Log.e("A", "onBindViewHolder: position = " + position + ", item = "+ holder.mItem);
         holder.mRecipeNameView.setText(mValues.get(position).getRecipe());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onShoppingListFragmentInteraction(holder.mItem, position);
+                if (mListener != null) {
+                    mListener.onFavoritesListFragmentInteraction(holder.mItem);
                 }
             }
         });
@@ -75,31 +75,30 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
         holder.mRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e(TAG, "onBindViewHolder ONCLICK: position = " + position + ", item = "+ holder.mItem.getRecipe());
-                if (ShoppingListHelper.getInstance(context).removeRecipe(holder.mItem)) {
-                    ShoppingListHelper.saveShoppingList(context);
+                Log.e(TAG, "onBindViewHolder ONCLICK: position = " + position + ", item = "+ holder.mItem);
+                if (FavoritesHelper.getInstance(context).removeRecipe(holder.mItem.getRecipe())) {
+                    FavoritesHelper.saveFavorites(context);
                     notifyItemRemoved(position);
 
                     notifyItemRangeChanged(position, getItemCount());
 
-                    Snackbar.make(view, R.string.fragment_shoppinglist_snackbar_removed, Snackbar.LENGTH_LONG)
-                            .setAction(R.string.fragment_shoppinglist_snackbar_undo, new View.OnClickListener() {
+                    Snackbar.make(view, R.string.fragment_favoriteslist_snackbar_removed, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.fragment_favoriteslist_snackbar_undo, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Log.e(TAG, "onClick: ADD again " + holder.mItem.getRecipe());
-                                    ShoppingListHelper.getInstance(context).shoppingList.add(position, holder.mItem);
-                                    ShoppingListHelper.saveShoppingList(context);
+                                    Log.e(TAG, "onClick: ADD again " + holder.mItem);
+                                    FavoritesHelper.getInstance(context).favoritesList.add(position, holder.mItem);
+                                    FavoritesHelper.saveFavorites(context);
                                     notifyItemInserted(position);
                                     notifyItemRangeChanged(position, getItemCount());
-                                    fsl.checkEmptyList(null);
+                                    ffl.checkEmptyList(null);
                                 }
                             }).show();
-
+                    ffl.checkEmptyList(null);
                 }
-            fsl.checkEmptyList(null);
+
             }
         });
-
         String imageUri = ActivityMain.PATH_RECIPE + holder.mItem.getImage();
         holder.image.setImageBitmap(null);
 
@@ -146,14 +145,14 @@ public class AdapterShoppingList extends RecyclerView.Adapter<AdapterShoppingLis
         public final GridImageView image;
         public final TextView mRecipeNameView;
         public final ImageButton mRemoveButton;
-        public ShoppingItem mItem;
+        public FavoriteItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            image = (GridImageView) view.findViewById(R.id.fragment_shoppinglist_image);
-            mRecipeNameView = (TextView) view.findViewById(R.id.fragment_shoppinglist_recipe);
-            mRemoveButton = (ImageButton) view.findViewById(R.id.fragment_shoppinglist_remove);
+            image = (GridImageView) view.findViewById(R.id.fragment_favoriteslist_image);
+            mRecipeNameView = (TextView) view.findViewById(R.id.fragment_favoriteslist_recipe);
+            mRemoveButton = (ImageButton) view.findViewById(R.id.fragment_favoriteslist_remove);
         }
 
         @Override

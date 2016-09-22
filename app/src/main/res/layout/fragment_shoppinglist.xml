@@ -14,7 +14,7 @@
     android:layout_height="match_parent"
 
     app:layoutManager="LinearLayoutManager"
-    tools:context=".FragmentShoppingList"
+    tools:context=".fragment.FragmentShoppingList"
     tools:listitem="@layout/fragment_shoppinglist_item"
     />
 </FrameLayout>

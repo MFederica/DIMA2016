@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +10,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 //TODO INTERFACCIA: decommenta 1/3
-//import com.appetite.FragmentRecipeIngredients.OnListFragmentInteractionListener;
-import com.appetite.model.Recipe;
+//import com.appetite.fragment.FragmentRecipeIngredients.OnListFragmentInteractionListener;
+import com.appetite.Application;
+import com.appetite.R;
 import com.appetite.model.RecipeIngredient;
 import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;

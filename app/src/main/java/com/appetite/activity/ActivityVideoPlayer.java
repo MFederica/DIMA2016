@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.activity;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toolbar;
 
+import com.appetite.R;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 
@@ -21,7 +21,7 @@ public class ActivityVideoPlayer extends YouTubeFailureRecoveryActivity implemen
         CompoundButton.OnCheckedChangeListener,
         YouTubePlayer.OnFullscreenListener {
 
-    public final static String VIDEO_SELECTED = "com.appetite.ActivityVideoPlayer.VIDEO_SELECTED";
+    public final static String VIDEO_SELECTED = "com.appetite.activity.ActivityVideoPlayer.VIDEO_SELECTED";
 
     private static final int PORTRAIT_ORIENTATION = Build.VERSION.SDK_INT < 9
             ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

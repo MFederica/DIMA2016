@@ -1,4 +1,4 @@
-package com.appetite;
+package com.appetite.activity;
 
 
 import android.app.Activity;

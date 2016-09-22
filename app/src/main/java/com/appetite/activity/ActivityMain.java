@@ -6,7 +6,7 @@
 //
 // Source code generated from template: aws-my-sample-app-android v0.7
 //
-package com.appetite;
+package com.appetite.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +14,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -39,22 +38,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amazonaws.mobile.AWSMobileClient;
 import com.amazonaws.mobile.user.IdentityManager;
-import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.ArgumentMarshaller;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBMapper;
 import com.amazonaws.mobileconnectors.dynamodbv2.dynamodbmapper.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
+import com.appetite.Application;
+import com.appetite.fragment.FragmentCategoriesList;
+import com.appetite.fragment.FragmentFavoritesList;
+import com.appetite.fragment.FragmentHome;
+import com.appetite.fragment.FragmentHowTo;
+import com.appetite.fragment.FragmentRecipesList;
+import com.appetite.fragment.FragmentShoppingList;
+import com.appetite.fragment.FragmentShoppingListIngredients;
+import com.appetite.R;
 import com.appetite.model.FavoriteItem;
 import com.appetite.model.Filter;
 import com.appetite.model.HowToItem;
@@ -67,15 +69,15 @@ import java.util.Map;
 import java.util.Set;
 
 public class ActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentCategoriesList.OnCategorySelectedListener, FragmentRecipesList.OnRecipeSelectedListener,
-        FragmentShoppingList.OnShoppingListFragmentInteractionListener, FragmentShoppingListIngredients.OnShoppingListIngredientFragmentInteractionListener, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener, FragmentHowTo.OnHowToListFragmentInteractionListener  {
+        FragmentShoppingList.OnShoppingListFragmentInteractionListener, FragmentShoppingListIngredients.OnShoppingListIngredientFragmentInteractionListener, FragmentFavoritesList.OnFavoritesListFragmentInteractionListener, FragmentHowTo.OnHowToListFragmentInteractionListener {
     /**
      * Class name for log messages.
      */
     private final static String TAG = ActivityMain.class.getSimpleName();
 
-    public final static String RECIPE_SELECTED = "com.appetite.ActivityMain.RECIPE_SELECTED";
-    public final static String RECIPE_NAME_SELECTED = "com.appetite.ActivityMain.RECIPE_NAME_SELECTED";
-    public final static String FRAGMENT = "com.appetite.ActivityMain.FRAGMENT";
+    public final static String RECIPE_SELECTED = "com.appetite.activity.ActivityMain.RECIPE_SELECTED";
+    public final static String RECIPE_NAME_SELECTED = "com.appetite.activity.ActivityMain.RECIPE_NAME_SELECTED";
+    public final static String FRAGMENT = "com.appetite.activity.ActivityMain.FRAGMENT";
     public final static String fileShoppingListName = "shopping_list";
     public final static String fileFavoritesName = "favorites";
 

@@ -1,13 +1,9 @@
-package com.appetite;
+package com.appetite.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,8 +15,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.appetite.R;
+import com.appetite.activity.ActivityMain;
+import com.appetite.adapter.AdapterShoppingListIngredient;
 import com.appetite.model.ShoppingItem;
 import com.appetite.model.ShoppingListHelper;
 import com.appetite.style.SimpleDividerItemDecoration;
@@ -44,8 +42,8 @@ import java.io.File;
 public class FragmentShoppingListIngredients extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_SHOPPING_ITEM = "com.appetite.FragmentShoppingListIngredients.SHOPPING_ITEM";
-    private static final String ARG_SHOPPING_POSITION = "com.appetite.FragmentShoppingListIngredients.SHOPPING_POSITION";
+    private static final String ARG_SHOPPING_ITEM = "com.appetite.fragment.FragmentShoppingListIngredients.SHOPPING_ITEM";
+    private static final String ARG_SHOPPING_POSITION = "com.appetite.fragment.FragmentShoppingListIngredients.SHOPPING_POSITION";
 
     // TODO: Rename and change types of parameters
     private ShoppingItem shoppingItem;
