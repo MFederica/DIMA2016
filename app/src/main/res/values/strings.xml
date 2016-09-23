@@ -173,7 +173,7 @@
     <string name="empty_recipes_list">No recipes found!</string>
 
     <string name="cooking_connecting_STT">Warm up your voice..</string>
-    <string name="cooking_connected_STT">I\'m listening to you, chief!</string>
+    <string name="cooking_connected_STT">I\'m listening to you, chef!</string>
     <string name="cooking_not_connected_STT">&#160;</string>
     <string name="cooking_connection_closed_STT">&#160;</string>
 </resources>
